@@ -4,31 +4,31 @@ This CSK module provides an easy access to IOLink functionality of AppSpace cont
 For further information check out the [documentation](https://raw.githack.com/SICKAppSpaceCodingStarterKit/CSK_Module_MultiIOLinkSMI/blob/main/docu/CSK_Module_MultiIOLinkSMI.html) in the folder "docu".
 
 ## How to Run
+Before setting up communication with IO-Link sensor, the sensor port must be powered using [CSK_Module_PowerManager](https://github.com/SICKAppSpaceCodingStarterKit/CSK_Module_PowerManager).
+The app includes an intuitive GUI to setup communication with IOLink device.
 
 ### Communuication setup
-Before setting up communication with IO-Link sensor, the sensor port must be powered using [CSK_Module_PowerManager](https://github.com/SICKAppSpaceCodingStarterKit/CSK_Module_PowerManager)
-The app includes an intuitive GUI to setup communication with IOLink device:
-![plot](./docu/media/mainPage.png)
+
 1. After powering the used port, select it in UI
 2. Activate the port
 3. If there is an IO-Link device connected to activated port, you will see all available information about its identification
 4. You can send and receive values to/from device as decimal byte arrays for testing purposes (no IODD needed)
+![plot](./docu/media/mainPage.png)
 
 If there is available [IODD interpreter](https://github.com/SICKAppSpaceCodingStarterKit/CSK_Module_IODDInterpreter) with loaded IODD file for the connected device, it is possible to create customized IODD read and write messages:
 
 ### Read data
 
-![plot](./docu/media/readData.png)
 1. Create a new Read Message
 2. Rename it if necessary
 3. Select when you want to read data, periodically (period in ms) or on some CROWN event
 4. select process data you want to read from device
 5. select parameters you want to read from device
 6. See result of reading the message. You can refresh the latest received payload or initiate reading from UI.
+![plot](./docu/media/readData.png)
 
 ### Write data
 
-![plot](./docu/media/writeData.png)
 1. Create a new Write Message
 2. Rename it if necessary
 3. select process data you want to write to device
@@ -36,6 +36,7 @@ If there is available [IODD interpreter](https://github.com/SICKAppSpaceCodingSt
 5. See the latest message written to the device
 6. Get the JSON template that can must be used for message to be written
 7. Test writing message to the device by coping and editing the JSON template
+![plot](./docu/media/writeData.png)
 
 ## Dependencies
 
