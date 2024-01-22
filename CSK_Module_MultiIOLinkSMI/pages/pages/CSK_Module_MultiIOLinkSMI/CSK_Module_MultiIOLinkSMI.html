@@ -1,187 +1,951 @@
 <layout-row id="RowLayout1">
-	<layout-column id="ColumnLayout1" style="align-items:stretch">
-		<davinci-value-display id="VD_Info"
-			label="Place your custom features here...">
-		</davinci-value-display>
-	</layout-column>
-	<layout-column id="ColumnLayout2" style="align-items: stretch">
-		<stacked-view id="SV_UserRole">
-			<stacked-pane id="SP_LoginOK" value="true">
-				<layout-row id="RowLayout5">
-					<layout-column id="ColumnLayout7" style="align-items: stretch">
-						<davinci-tabs id="Tabs_Setup" type="modern">
-							<davinci-tab id="Tab_Settings" label="Setup">
-								<layout-row id="RowLayout8">
-									<layout-column id="ColumnLayout9" style="align-items: stretch">
-										<layout-row id="RowLayout11"
-											style="justify-content: space-between; align-items: center">
-											<layout-column id="ColumnLayout33" style="align-items: stretch">
-												<davinci-value-display id="VD_SelectInstance"
-													value="Selected Instance">
-												</davinci-value-display>
-											</layout-column>
-											<layout-column id="ColumnLayout22" style="align-items: stretch">
-												<davinci-drop-down id="DD_SelectInstance">
-												<crown-binding event="change"
-													name="CSK_MultiIOLinkSMI/setSelectedInstance"
-													path="param/args/instance" auto-commit
-													converter="function(value) {return Number(value);}">
-												</crown-binding>
-												<crown-edpws-binding property="value"
-													name="CSK_MultiIOLinkSMI/OnNewSelectedInstance" update-on-resume
-													converter="function(value) {return value.toString();}">
-												</crown-edpws-binding>
-												<crown-edpws-binding property="data"
-													name="CSK_MultiIOLinkSMI/OnNewInstanceList" update-on-resume
-													converter="convertToList">
-												</crown-edpws-binding>
-												</davinci-drop-down>
-											</layout-column>
-										</layout-row>
-										<layout-row id="RowLayout10" style="align-items: center">
-											<layout-column id="ColumnLayout10" style="align-items: stretch">
-												<davinci-value-display id="VD_RegisteredEvent"
-													value="Registered event:">
-												</davinci-value-display>
-											</layout-column>
-											<layout-column id="ColumnLayout11" style="align-items: stretch">
-												<davinci-text-field id="TF_RegisteredEvent" type="text"
-													placeholder="e.g. CSK_ImagePlayer.OnNewImage">
-												<crown-edpws-binding property="value"
-													name="CSK_MultiIOLinkSMI/OnNewStatusRegisteredEvent" update-on-resume>
-												</crown-edpws-binding>
-												<crown-binding event="change" name="CSK_MultiIOLinkSMI/setRegisterEvent"
-													path="param/args/event" auto-commit>
-												</crown-binding>
-												</davinci-text-field>
-											</layout-column>
-										</layout-row>
-										<layout-row id="RowLayout9">
-											<layout-column id="Column_PersistentData"
-												class="myCustomFrame_CSK_Module_MultiIOLinkSMI"
-												style="align-items: stretch">
-												<layout-row id="RowLayout4"
-													style="justify-content: space-between; align-items: center">
-												<layout-column id="ColumnLayout5" style="align-items: stretch">
-												<davinci-value-display id="VD_ParameterName" value="Parameter name:"
-													title="Name of the parameters within the CSK_PersistentData module to be uses for this module.">
-												</davinci-value-display>
-												</layout-column>
-												<layout-column id="ColumnLayout6" style="align-items: stretch">
-												<davinci-text-field id="TF_ParameterName" type="text"
-													title="Name of the parameters within the CSK_PersistentData module to be uses for this module.">
-												<crown-edpws-binding property="value"
-													name="CSK_MultiIOLinkSMI/OnNewParameterName" update-on-resume>
-												</crown-edpws-binding>
-												<crown-binding event="change" name="CSK_MultiIOLinkSMI/setParameterName"
-													path="param/args/name" auto-commit>
-												</crown-binding>
-												<crown-edpws-binding property="disabled"
-													name="CSK_MultiIOLinkSMI/OnPersistentDataModuleAvailable"
-													update-on-resume converter="function(value) {return !value;}">
-												</crown-edpws-binding>
-												</davinci-text-field>
-												</layout-column>
-												</layout-row>
-												<layout-row id="RowLayout2"
-													style="justify-content: space-between; align-items: center">
-												<davinci-value-display id="VD_LoadConfig"
-													value="Load config on app start:"
-													title="Load configured parameters from CSK_PersistentData on app start.">
-												</davinci-value-display>
-												<davinci-checkbox id="CB_LoadConfig"
-													title="Load configured parameters from CSK_PersistentData on app start.">
-												<span></span>
-												<crown-edpws-binding property="checked"
-													name="CSK_MultiIOLinkSMI/OnNewStatusLoadParameterOnReboot"
-													update-on-resume>
-												</crown-edpws-binding>
-												<crown-edpws-binding property="disabled"
-													name="CSK_MultiIOLinkSMI/OnPersistentDataModuleAvailable"
-													update-on-resume converter="function(value) {return !value;}">
-												</crown-edpws-binding>
-												<crown-binding event="change" name="CSK_MultiIOLinkSMI/setLoadOnReboot"
-													path="param/args/status" auto-commit>
-												</crown-binding>
-												</davinci-checkbox>
-												</layout-row>
-												<layout-row id="RowLayout3">
-												<layout-column id="ColumnLayout3" style="align-items: stretch">
-												<davinci-button id="B_LoadConfig" type="primary"
-													icon-position="append"
-													title="Load configured parameters from CSK_PersistentData module.">
-												<span>Load Config</span>
-												<crown-binding event="submit" name="CSK_MultiIOLinkSMI/loadParameters"
-													auto-commit>
-												</crown-binding>
-												<crown-edpws-binding property="disabled"
-													name="CSK_MultiIOLinkSMI/OnPersistentDataModuleAvailable"
-													update-on-resume converter="function(value) {return !value;}">
-												</crown-edpws-binding>
-												</davinci-button>
-												</layout-column>
-												<layout-column id="ColumnLayout4" style="align-items: stretch">
-												<davinci-button id="B_SaveConfig" type="primary"
-													icon-position="append"
-													title="Save current configured parameters of this module within CSK_PersistentData module.">
-												<span>Save Config</span>
-												<crown-binding event="submit" name="CSK_MultiIOLinkSMI/sendParameters"
-													auto-commit>
-												</crown-binding>
-												<crown-edpws-binding property="disabled"
-													name="CSK_MultiIOLinkSMI/OnPersistentDataModuleAvailable"
-													update-on-resume converter="function(value) {return !value;}">
-												</crown-edpws-binding>
-												</davinci-button>
-												</layout-column>
-												</layout-row>
-											</layout-column>
-										</layout-row>
-									</layout-column>
-								</layout-row>
-							</davinci-tab>
-							<davinci-tab id="Tab_Instances" label="Instances">
-								<layout-row id="RowLayout7">
-									<layout-column id="ColumnLayout8" style="align-items: stretch">
-										<davinci-button id="Button_AddInstance" type="primary"
-											icon-position="append">
-											<span>Add instance</span>
-											<crown-binding event="submit" name="CSK_MultiIOLinkSMI/addInstance"
-												auto-commit>
-											</crown-binding>
-										</davinci-button>
-										<davinci-button id="Button_ResetInstances" type="primary"
-											icon-position="append"
-											title="Reset insances to single instance. Reload app after reseting.">
-											<span>Reset instances</span>
-											<crown-binding event="submit" name="CSK_MultiIOLinkSMI/resetInstances"
-												auto-commit>
-											</crown-binding>
-										</davinci-button>
-									</layout-column>
-								</layout-row>
-							</davinci-tab>
-						</davinci-tabs>
+	<stacked-view id="SV_ModuleActive">
+		<stacked-pane id="SP_NotActive" value="false">
+			<davinci-callout id="Callout2" type="info">
+				<span>Module is not supported on this device...</span>
+			</davinci-callout>
+		</stacked-pane>
+		<stacked-pane id="SP_Active" value="true">
+			<layout-column id="ColumnLayout12">
+				<layout-row id="RowLayout5" style="align-items: center">
+					<davinci-value-display id="VD_PortStatus" label="Port status">
+						<crown-on property="value"
+							crown-event="CSK_MultiIOLinkSMI/OnNewPortStatus">
+						</crown-on>
+					</davinci-value-display>
+					<layout-column id="ColumnLayout9" style="align-items: center">
+						<davinci-value-display id="Activate_string" value="Activate">
+						</davinci-value-display>
+						<davinci-toggle-switch id="TS_Activate" value="activate">
+							<crown-set event="change"
+								crown-function="CSK_MultiIOLinkSMI/activateInstance"
+								protocol="crownMSGPACK" crown-path="status">
+							</crown-set>
+							<crown-on property="checked"
+								crown-event="CSK_MultiIOLinkSMI/isInstanceActive">
+							</crown-on>
+						</davinci-toggle-switch>
 					</layout-column>
+					<davinci-drop-down id="DD_SensorPort" label="Sensor port">
+						<crown-edpws-binding property="data"
+							name="CSK_MultiIOLinkSMI/OnNewPortDropdown" update-on-resume
+							converter="convertToList">
+						</crown-edpws-binding>
+						<crown-edpws-binding property="value"
+							name="CSK_MultiIOLinkSMI/OnNewPort" update-on-resume>
+						</crown-edpws-binding>
+						<crown-binding event="change" name="CSK_MultiIOLinkSMI/setPort"
+							path="param/args/port" auto-commit>
+						</crown-binding>
+					</davinci-drop-down>
+					<davinci-drop-down id="DD_IOLink_Instance" label="Selected Instance"
+						title="Select the IOLink instance" style="width: 180px">
+						<crown-binding event="change"
+							name="CSK_MultiIOLinkSMI/setSelectedInstance"
+							path="param/args/instance" auto-commit
+							converter="function(value) {return Number(value);}">
+						</crown-binding>
+						<crown-edpws-binding property="value"
+							name="CSK_MultiIOLinkSMI/OnNewSelectedInstance" update-on-resume
+							converter="function(value) {return value.toString();}">
+						</crown-edpws-binding>
+						<crown-edpws-binding property="data"
+							name="CSK_MultiIOLinkSMI/OnNewInstanceList" update-on-resume
+							converter="convertToList">
+						</crown-edpws-binding>
+					</davinci-drop-down>
+					<davinci-button id="B_IOLink_AddInstance" class="marginTop"
+						type="primary" icon-position="append"
+						title="Add new IOLink instance to project" style="width: 180px">
+						<span>Add instance</span>
+						<crown-binding event="submit" name="CSK_MultiIOLinkSMI/addInstance"
+							auto-commit>
+						</crown-binding>
+					</davinci-button>
 				</layout-row>
-			</stacked-pane>
-			<stacked-pane id="SP_LoginNOK" value="false">
-				<layout-row id="RowLayout6">
-					<davinci-callout id="Callout1" type="info">
-						<span>Please log in via UserManagement module.</span>
-					</davinci-callout>
-				</layout-row>
-			</stacked-pane>
-			<crown-edpws-binding property="value"
-				name="CSK_MultiIOLinkSMI/OnUserLevelOperatorActive" update-on-resume
-				converter="function(value) {return value.toString();}">
-			</crown-edpws-binding>
-		</stacked-view>
-		<stacked-view id="SV_PageCalled">
-			<crown-binding property="value" name="CSK_MultiIOLinkSMI/pageCalled"
-				path="result/data/empty" auto-update="0" update-on-resume>
-			</crown-binding>
-		</stacked-view>
-	</layout-column>
-  
+				<davinci-tabs id="Tabs1" type="modern">
+					<davinci-tab id="Tab1" label="Device Info" title="Device Info">
+						<layout-column id="ColumnLayout24">
+							<layout-row id="RowLayout16">
+								<stacked-view id="SV_IsNewDeviceDiscovered">
+									<stacked-pane id="SV_NewDeviceIsNOTDiscovered" value="false">
+									</stacked-pane>
+									<stacked-pane id="StackedPane6" value="true">
+										<layout-column id="ColumnLayout7">
+											<h6 id="H61_FoundNewDeviceIdentification">
+												Found new device identification
+											</h6>
+											<layout-row id="RowLayout7">
+												<davinci-value-display id="ValueDisplay3" label="Vendor name:">
+												</davinci-value-display>
+												<davinci-value-display id="VD_NewDeviceVendorName">
+												<crown-on property="value"
+													crown-event="CSK_MultiIOLinkSMI/OnNewNewDeviceVendorName">
+												</crown-on>
+												</davinci-value-display>
+											</layout-row>
+											<layout-row id="RowLayout8">
+												<davinci-value-display id="ValueDisplay5" label="Vendor ID:">
+												</davinci-value-display>
+												<davinci-value-display id="VD_NewDeviceVendorId">
+												<crown-on property="value"
+													crown-event="CSK_MultiIOLinkSMI/OnNewNewDeviceVendorId">
+												</crown-on>
+												</davinci-value-display>
+											</layout-row>
+											<layout-row id="RowLayout9">
+												<davinci-value-display id="ValueDisplay7" label="Vendor text:">
+												</davinci-value-display>
+												<davinci-value-display id="VD_NewDeviceVendorText">
+												<crown-on property="value"
+													crown-event="CSK_MultiIOLinkSMI/OnNewNewDeviceVendorText">
+												</crown-on>
+												</davinci-value-display>
+											</layout-row>
+											<layout-row id="RowLayout12">
+												<davinci-value-display id="ValueDisplay9" label="Product name:">
+												</davinci-value-display>
+												<davinci-value-display id="VD_NewDeviceProductName">
+												<crown-on property="value"
+													crown-event="CSK_MultiIOLinkSMI/OnNewNewDeviceProductName">
+												</crown-on>
+												</davinci-value-display>
+											</layout-row>
+											<layout-row id="RowLayout13">
+												<davinci-value-display id="ValueDisplay11" label="Product ID:">
+												</davinci-value-display>
+												<davinci-value-display id="VD_NewDeviceProductId">
+												<crown-on property="value"
+													crown-event="CSK_MultiIOLinkSMI/OnNewNewDeviceProductId">
+												</crown-on>
+												</davinci-value-display>
+											</layout-row>
+											<layout-row id="RowLayout14">
+												<davinci-value-display id="ValueDisplay13" label="Product text:">
+												</davinci-value-display>
+												<davinci-value-display id="VD_NewDeviceProductText">
+												<crown-on property="value"
+													crown-event="CSK_MultiIOLinkSMI/OnNewNewDeviceProductText">
+												</crown-on>
+												</davinci-value-display>
+											</layout-row>
+											<layout-row id="RowLayout15">
+												<davinci-value-display id="ValueDisplay15" label="Serial number:">
+												</davinci-value-display>
+												<davinci-value-display id="VD_NewDeviceSerialNumber">
+												<crown-on property="value"
+													crown-event="CSK_MultiIOLinkSMI/OnNewNewDeviceSerialNumber">
+												</crown-on>
+												</davinci-value-display>
+											</layout-row>
+											<layout-row id="RowLayout17">
+												<davinci-value-display id="ValueDisplay17" label="Hardware version:">
+												</davinci-value-display>
+												<davinci-value-display id="VD_NewDeviceHardwareVersion">
+												<crown-on property="value"
+													crown-event="CSK_MultiIOLinkSMI/OnNewNewDeviceHardwareVersion">
+												</crown-on>
+												</davinci-value-display>
+											</layout-row>
+											<layout-row id="RowLayout18">
+												<davinci-value-display id="ValueDisplay19" label="Firmware version:">
+												</davinci-value-display>
+												<davinci-value-display id="VD_NewDeviceFirmwareVersion">
+												<crown-on property="value"
+													crown-event="CSK_MultiIOLinkSMI/OnNewNewDeviceFirmwareVersion">
+												</crown-on>
+												</davinci-value-display>
+											</layout-row>
+											<davinci-button id="B_ApplyNewDevice" type="primary"
+												icon-position="append">
+												<span>Apply new device</span>
+												<crown-set event="submit"
+													crown-function="CSK_MultiIOLinkSMI/applyNewDeviceIdentificationUI"
+													protocol="crownMSGPACK">
+												</crown-set>
+											</davinci-button>
+										</layout-column>
+									</stacked-pane>
+									<crown-on property="value"
+										crown-event="CSK_MultiIOLinkSMI/IsNewDeviceFound"
+										converter="bool2str">
+									</crown-on>
+								</stacked-view>
+								<layout-column id="ColumnLayout91" style="flex-shrink: 0">
+									<h6 id="Heading612">Saved device identification</h6>
+									<layout-row id="RowLayout57">
+										<davinci-value-display id="ValueDisplay24" label="Vendor name:"
+											style="width: 200px">
+										</davinci-value-display>
+										<davinci-value-display id="VD_VendorName" style="width: 150px">
+											<crown-on property="value"
+												crown-event="CSK_MultiIOLinkSMI/OnNewVendorName">
+											</crown-on>
+										</davinci-value-display>
+									</layout-row>
+									<layout-row id="RowLayout58">
+										<davinci-value-display id="ValueDisplay26" label="Vendor ID:"
+											style="width: 200px">
+										</davinci-value-display>
+										<davinci-value-display id="VD_VendorId">
+											<crown-on property="value"
+												crown-event="CSK_MultiIOLinkSMI/OnNewVendorId">
+											</crown-on>
+										</davinci-value-display>
+									</layout-row>
+									<layout-row id="RowLayout59">
+										<davinci-value-display id="ValueDisplay28" label="Vendor text:"
+											style="width: 200px">
+										</davinci-value-display>
+										<davinci-value-display id="VD_VendorText">
+											<crown-on property="value"
+												crown-event="CSK_MultiIOLinkSMI/OnNewVendorText">
+											</crown-on>
+										</davinci-value-display>
+									</layout-row>
+									<layout-row id="RowLayout60">
+										<davinci-value-display id="ValueDisplay30" label="Product name:"
+											style="width: 200px">
+										</davinci-value-display>
+										<davinci-value-display id="VD_ProductName">
+											<crown-on property="value"
+												crown-event="CSK_MultiIOLinkSMI/OnNewProductName">
+											</crown-on>
+										</davinci-value-display>
+									</layout-row>
+									<layout-row id="RowLayout61">
+										<davinci-value-display id="ValueDisplay32" label="Product ID:"
+											style="width: 200px">
+										</davinci-value-display>
+										<davinci-value-display id="VD_ProductId">
+											<crown-on property="value"
+												crown-event="CSK_MultiIOLinkSMI/OnNewProductId">
+											</crown-on>
+										</davinci-value-display>
+									</layout-row>
+									<layout-row id="RowLayout62">
+										<davinci-value-display id="ValueDisplay34" label="Product text:"
+											style="width: 200px">
+										</davinci-value-display>
+										<davinci-value-display id="VD_ProductText">
+											<crown-on property="value"
+												crown-event="CSK_MultiIOLinkSMI/OnNewProductText">
+											</crown-on>
+										</davinci-value-display>
+									</layout-row>
+									<layout-row id="RowLayout63">
+										<davinci-value-display id="ValueDisplay36" label="Serial number:"
+											style="width: 200px">
+										</davinci-value-display>
+										<davinci-value-display id="VD_SerialNumber">
+											<crown-on property="value"
+												crown-event="CSK_MultiIOLinkSMI/OnNewSerialNumber">
+											</crown-on>
+										</davinci-value-display>
+									</layout-row>
+									<layout-row id="RowLayout64">
+										<davinci-value-display id="ValueDisplay38" label="Hardware version:"
+											style="width: 200px">
+										</davinci-value-display>
+										<davinci-value-display id="VD_HardwareVersion">
+											<crown-on property="value"
+												crown-event="CSK_MultiIOLinkSMI/OnNewHardwareVersion">
+											</crown-on>
+										</davinci-value-display>
+									</layout-row>
+									<layout-row id="RowLayout65">
+										<davinci-value-display id="ValueDisplay40" label="Firmware version:"
+											style="width: 200px">
+										</davinci-value-display>
+										<davinci-value-display id="VD_FirmwareVersion">
+											<crown-on property="value"
+												crown-event="CSK_MultiIOLinkSMI/OnNewFirmwareVersion">
+											</crown-on>
+										</davinci-value-display>
+									</layout-row>
+								</layout-column>
+								<stacked-view id="SV_isCskIoddInterpreterAvailable">
+									<stacked-pane id="SP_ModuleIsNOTAvailable" value="false">
+										<davinci-callout id="Callout4" type="warning">
+											<span>
+												No CSK IODD Interpreter module is found in the project. Setting read and write data is not possible.
+											</span>
+										</davinci-callout>
+									</stacked-pane>
+									<stacked-pane id="SP_ModuleISAavailable" value="true">
+										<stacked-view id="SV_isIoddMatchFound">
+											<stacked-pane id="SP_IoddMatchIsNOTFound" value="false">
+												<layout-column id="ColumnLayout14">
+                                                    <davinci-callout id="Callout5" type="warning">
+                                                        <span>
+                                                        Please load IODD file for the device to start setting read and write data.
+                                                        </span>
+                                                    </davinci-callout>
+                                                    <appspace-file-upload-button id="FUB_IoddUpload" button-type="primary"
+                                                        path="public/tempIodd.xml" is-file>
+                                                        <span>Upload IODD XML</span>
+                                                        <crown-binding event="finished"
+                                                            name="CSK_IODDInterpreter/uploadFinished"
+                                                            path="param/args/uploadSuccess" auto-commit>
+                                                        </crown-binding>
+                                                    </appspace-file-upload-button>
+											    </layout-column>
+											</stacked-pane>
+											<stacked-pane id="SP_IoddMatchIsFound" value="true">
+												<stacked-view id="SV_IsProcessDataVariable">
+												<stacked-pane id="SP_ProcessDataisNOTVariable" value="false">
+												</stacked-pane>
+												<stacked-pane id="SP_ProcessDataISVariable" value="true">
+												<layout-column id="ColumnLayout13">
+												<h6 id="Heading613">Process data structure</h6>
+												<davinci-drop-down id="DD_ProcessDataStrictureOptions"
+													label="Process data structure options"
+													title="Select process data structure option. It will be saved and reloaded in case the device is reconnected."
+													style="width: 300px">
+												<crown-on property="data"
+													crown-event="CSK_MultiIOLinkSMI/OnNewListProcessDataCondition"
+													converter="convertToList">
+												</crown-on>
+												<crown-on property="value"
+													crown-event="CSK_MultiIOLinkSMI/OnNewProcessDataCondition">
+												</crown-on>
+												<crown-set event="change"
+													crown-function="CSK_MultiIOLinkSMI/setProcessDataCondition"
+													protocol="crownMSGPACK" crown-path="newCondition">
+												</crown-set>
+												</davinci-drop-down>
+												</layout-column>
+												</stacked-pane>
+												<crown-on property="value"
+													crown-event="CSK_MultiIOLinkSMI/isProcessDataVariable"
+													converter="bool2str">
+												</crown-on>
+												</stacked-view>
+											</stacked-pane>
+											<crown-on property="value"
+												crown-event="CSK_MultiIOLinkSMI/isIoddMatchFound"
+												converter="bool2str">
+											</crown-on>
+										</stacked-view>
+									</stacked-pane>
+									<crown-on property="value"
+										crown-event="CSK_MultiIOLinkSMI/isCskIoddInterpreterAvailable"
+										converter="bool2str">
+									</crown-on>
+								</stacked-view>
+							</layout-row>
+							<davinci-collapse id="Collapse5"
+								collapsed-title="Test sending/receiving IOLink generic data"
+								expanded-title="Test sending/receiving IOLink generic data">
+								<layout-column id="ColumnLayout25">
+									<davinci-callout id="Callout3" type="info">
+										<span>
+											The data is represented as byte array of decimal numbers. The elements of the array are separated by comma. E.g.  1,23,123
+										</span>
+									</davinci-callout>
+									<layout-row id="RowLayout27">
+										<davinci-button id="B_TestReadProcessData" type="primary"
+											icon-position="append" style="width: 200px">
+											<span>Read process data</span>
+											<crown-set event="submit"
+												crown-function="CSK_MultiIOLinkSMI/readProcessDataByteArrayUI"
+												protocol="crownMSGPACK">
+											</crown-set>
+										</davinci-button>
+										<davinci-text-area id="TA_TestReceivedProcessData"
+											label="Received process data">
+											<crown-on property="value"
+												crown-event="CSK_MultiIOLinkSMI/OnNewReadProcessDataByteArray">
+											</crown-on>
+										</davinci-text-area>
+									</layout-row>
+									<layout-row id="RowLayout31">
+										<davinci-button id="B_TestWriteProcessData" type="primary"
+											icon-position="append" style="width: 200px">
+											<span>Write process data</span>
+											<crown-set event="submit"
+												crown-function="CSK_MultiIOLinkSMI/writeProcessDataByteArrayUI"
+												protocol="crownMSGPACK">
+											</crown-set>
+										</davinci-button>
+										<davinci-text-area id="TA_TestProcessDataToWrite"
+											label="Process data to write">
+											<crown-set event="change"
+												crown-function="CSK_MultiIOLinkSMI/setProcessDataByteArrayToWrite"
+												protocol="crownMSGPACK" crown-path="processDataByteArray">
+											</crown-set>
+										</davinci-text-area>
+									</layout-row>
+									<layout-row id="RowLayout32">
+										<davinci-number-input id="NI_TestReadParameterIndex" step="1"
+											label="Index" placeholder="0">
+											<crown-set event="change"
+												crown-function="CSK_MultiIOLinkSMI/setTestReadParameterIndex"
+												protocol="crownMSGPACK" crown-path="index" converter="str2num">
+											</crown-set>
+										</davinci-number-input>
+										<davinci-number-input id="NI_TestReadParameterSubindex" step="1"
+											label="Subindex" placeholder="0">
+											<crown-set event="change"
+												crown-function="CSK_MultiIOLinkSMI/setTestReadParameterSubindex"
+												protocol="crownMSGPACK" crown-path="subindex" converter="str2num">
+											</crown-set>
+										</davinci-number-input>
+										<davinci-button id="B_TestReadParameter" type="primary"
+											icon-position="append" style="width: 200px">
+											<span>Read parameter</span>
+											<crown-set event="submit"
+												crown-function="CSK_MultiIOLinkSMI/readParameterByteArrayUI"
+												protocol="crownMSGPACK">
+											</crown-set>
+										</davinci-button>
+										<davinci-text-area id="TA_TestReceivedParameter"
+											label="Received parameter">
+											<crown-on property="value"
+												crown-event="CSK_MultiIOLinkSMI/OnNewReadParameterByteArray">
+											</crown-on>
+										</davinci-text-area>
+									</layout-row>
+									<layout-row id="RowLayout33">
+										<davinci-number-input id="NI_TestWriteParameterIndex" step="1"
+											label="Index" placeholder="0">
+											<crown-set event="change"
+												crown-function="CSK_MultiIOLinkSMI/setTestWriteParameterIndex"
+												protocol="crownMSGPACK" crown-path="index" converter="str2num">
+											</crown-set>
+										</davinci-number-input>
+										<davinci-number-input id="NI_TestWriteParameterSubindex" step="1"
+											label="Subindex" placeholder="0">
+											<crown-set event="change"
+												crown-function="CSK_MultiIOLinkSMI/setTestWriteParameterSubindex"
+												protocol="crownMSGPACK" crown-path="subindex" converter="str2num">
+											</crown-set>
+										</davinci-number-input>
+										<davinci-button id="B_TestWriteParameter" type="primary"
+											icon-position="append" style="width: 200px">
+											<span>Write parameter</span>
+											<crown-set event="submit"
+												crown-function="CSK_MultiIOLinkSMI/writeParameterByteArrayUI"
+												protocol="crownMSGPACK">
+											</crown-set>
+										</davinci-button>
+										<davinci-text-area id="TA_TestParameterToWrite"
+											label="Parameter to write">
+											<crown-set event="change"
+												crown-function="CSK_MultiIOLinkSMI/setParameterByteArrayToWrite"
+												protocol="crownMSGPACK" crown-path="byteArrayToWrite">
+											</crown-set>
+										</davinci-text-area>
+									</layout-row>
+									<davinci-value-display id="VD_LatestTestCommandStatus"
+										label="Latest test command status" style="width: 300px">
+										<crown-on property="value"
+											crown-event="CSK_MultiIOLinkSMI/OnNewTestCommandState">
+										</crown-on>
+									</davinci-value-display>
+								</layout-column>
+							</davinci-collapse>
+						</layout-column>
+					</davinci-tab>
+					<davinci-tab id="Tab2" label="Read data" title="Read data">
+						<layout-column id="ColumnLayout1">
+							<layout-row id="RowLayout6" style="width: 500px">
+								<davinci-drop-down id="DD_SelectedReadMessage"
+									label="Select message to edit" style="width: 200px">
+									<crown-on property="data"
+										crown-event="CSK_MultiIOLinkSMI/OnNewListIoddReadMessages"
+										converter="convertToList">
+									</crown-on>
+									<crown-on property="value"
+										crown-event="CSK_MultiIOLinkSMI/OnNewSelectedIoddReadMessage">
+									</crown-on>
+									<crown-set event="change"
+										crown-function="CSK_MultiIOLinkSMI/setSelectedIoddReadMessage"
+										protocol="crownMSGPACK" crown-path="newSelectedMessage">
+									</crown-set>
+								</davinci-drop-down>
+								<davinci-button id="B_CreateReadMessage" type="primary"
+									icon-position="append" title="Create new read data message"
+									style="width: 200px">
+									<span>Create new message</span>
+									<crown-set event="submit"
+										crown-function="CSK_MultiIOLinkSMI/createIoddReadMessage"
+										protocol="crownMSGPACK">
+									</crown-set>
+								</davinci-button>
+							</layout-row>
+							<stacked-view id="StackedView2">
+								<crown-on property="value"
+									crown-event="CSK_MultiIOLinkSMI/isIoddReadMessageSelected"
+									converter="bool2str">
+								</crown-on>
+								<stacked-pane id="StackedPane1" value="false"></stacked-pane>
+								<stacked-pane id="StackedPane2" value="true">
+									<layout-row id="RowLayout22">
+										<layout-column id="ColumnLayout15" style="width: 1000px">
+											<layout-row id="RowLayout23">
+												<davinci-text-field id="TF_ReadMessageName" type="text"
+													label="Message title" style="width: 200px">
+												<crown-on property="value"
+													crown-event="CSK_MultiIOLinkSMI/OnNewSelectedIoddReadMessage">
+												</crown-on>
+												<crown-set event="change"
+													crown-function="CSK_MultiIOLinkSMI/setIoddReadMessageName"
+													protocol="crownMSGPACK" crown-path="newName">
+												</crown-set>
+												</davinci-text-field>
+												<davinci-button id="B_DeleteReadMessage" type="primary"
+													icon-position="append" style="width: 200px">
+												<span>Delete message</span>
+												<crown-set event="submit"
+													crown-function="CSK_MultiIOLinkSMI/deleteIoddReadMessage"
+													protocol="crownMSGPACK">
+												</crown-set>
+												</davinci-button>
+											</layout-row>
+											<layout-row id="RowLayout24">
+												<davinci-drop-down id="DD_TriggerType" data="" label="Trigger type"
+													style="width: 150px">
+												<crown-on property="value"
+													crown-event="CSK_MultiIOLinkSMI/OnNewTriggerType">
+												</crown-on>
+												<crown-set event="change"
+													crown-function="CSK_MultiIOLinkSMI/setTriggerType"
+													protocol="crownMSGPACK" crown-path="newTriggerType">
+												</crown-set>
+												<davinci-option id="Periodic" value="Periodic">
+												<span>Periodic</span>
+												</davinci-option>
+												<davinci-option id="On event" value="On event">
+												<span>On event</span>
+												</davinci-option>
+												</davinci-drop-down>
+												<davinci-text-field id="TF_TriggerValue" type="text"
+													label="Trigger value" style="width: 250px">
+												<crown-on property="value"
+													crown-event="CSK_MultiIOLinkSMI/OnNewTriggerValue">
+												</crown-on>
+												<crown-set event="change"
+													crown-function="CSK_MultiIOLinkSMI/setTriggerValue"
+													protocol="crownMSGPACK" crown-path="newTriggerValue">
+												</crown-set>
+												</davinci-text-field>
+											</layout-row>
+											<davinci-value-display id="VD_ReadMessageEventName"
+												label="Event name to be used externally">
+												<crown-on property="value"
+													crown-event="CSK_MultiIOLinkSMI/OnNewReadMessageEventName">
+												</crown-on>
+											</davinci-value-display>
+											<davinci-callout id="Callout6" type="info">
+												<span>
+												The event parameters are: read success (bool); read queue size (int); time taken to read message (int); JSON object with message content (string); optional error message (string)
+												</span>
+											</davinci-callout>
+											<davinci-collapse id="Collapse1"
+												collapsed-title="Select process data to read"
+												expanded-title="Select process data to read">
+												<curie-table id="DT_ProcessDataIn" selectable title="Process data"
+													style="width: 1000px">
+												<curie-table-column id="read_colPD1" header="Subindex">
+												</curie-table-column>
+												<curie-table-column id="read_colPD2" header="Name">
+												</curie-table-column>
+												<curie-table-column id="read_colPD3"
+													header="Data type, Range, Single value description">
+												</curie-table-column>
+												<crown-binding event="row-selected"
+													name="CSK_IODDInterpreter/processDataInRowSelected"
+													path="param/args/jsonSelectedRow" auto-commit>
+												</crown-binding>
+												<crown-on property="data"
+													crown-event="CSK_IODDInterpreter/OnNewProcessDataInTableContent">
+												</crown-on>
+												</curie-table>
+											</davinci-collapse>
+											<davinci-collapse id="Collapse2"
+												collapsed-title="Select parameters to read"
+												expanded-title="Select parameters to read">
+												<curie-table id="DT_ReadParameters" selectable title="Read parameters"
+													style="width: 1000px">
+												<curie-table-column id="read_colSD1" header="Index">
+												</curie-table-column>
+												<curie-table-column id="read_colSD2" header="Subindex">
+												</curie-table-column>
+												<curie-table-column id="read_colSD3" header="ID">
+												</curie-table-column>
+												<curie-table-column id="read_colSD4" header="Name">
+												</curie-table-column>
+												<curie-table-column id="read_colSD5"
+													header="Data type, Range, Single value description">
+												</curie-table-column>
+												<curie-table-column id="read_colSD6" header="Read/Write">
+												</curie-table-column>
+												<curie-table-column id="read_colSD7" header="Description">
+												</curie-table-column>
+												<crown-binding event="row-selected"
+													name="CSK_IODDInterpreter/readParameterRowSelected"
+													path="param/args/jsonSelectedRow" auto-commit>
+												</crown-binding>
+												<crown-on property="data"
+													crown-event="CSK_IODDInterpreter/OnNewReadParametersTableContent">
+												</crown-on>
+												</curie-table>
+											</davinci-collapse>
+										</layout-column>
+										<layout-column id="ColumnLayout22">
+											<davinci-collapse id="Collapse7" collapsed-title="Live payload"
+												expanded-title="Live payload">
+												<layout-column id="ColumnLayout10">
+												<davinci-status-indicator id="SI_ReadSuccess">
+												<span>Success</span>
+												<crown-on property="status"
+													crown-event="CSK_MultiIOLinkSMI/OnNewReadDataSuccess">
+												</crown-on>
+												</davinci-status-indicator>
+												<davinci-text-area id="TA_ReadDataMessageResult"
+													label="Latest received payload" readonly multiline
+													style="width: 500px; height: 500px">
+												<crown-on property="value"
+													crown-event="CSK_MultiIOLinkSMI/OnNewReadDataMessage">
+												</crown-on>
+												</davinci-text-area>
+												<layout-row id="RowLayout11">
+												<davinci-button id="B_RefreshLiveReadData" type="primary"
+													icon-position="append" style="width: 200px">
+												<span>Refresh live payload</span>
+												<crown-set event="submit"
+													crown-function="CSK_MultiIOLinkSMI/refreshReadDataResult"
+													protocol="crownMSGPACK">
+												</crown-set>
+												</davinci-button>
+												<davinci-button id="B_ReadPayload" type="primary"
+													icon-position="append" style="width: 200px">
+												<span>Read payload</span>
+												<crown-set event="submit"
+													crown-function="CSK_MultiIOLinkSMI/readIoddMessageUI"
+													protocol="crownMSGPACK">
+												</crown-set>
+												</davinci-button>
+												</layout-row>
+												</layout-column>
+											</davinci-collapse>
+											<davinci-collapse id="Collapse8" collapsed-title="JSON template"
+												expanded-title="JSON template">
+												<davinci-text-area id="TA_ReadMessageJsonTemplate" readonly multiline
+													label="JSON template" style="width: 500px; height: 500px">
+												<crown-on property="value"
+													crown-event="CSK_MultiIOLinkSMI/OnNewReadJSONTemplate">
+												</crown-on>
+												</davinci-text-area>
+											</davinci-collapse>
+										</layout-column>
+									</layout-row>
+								</stacked-pane>
+							</stacked-view>
+						</layout-column>
+					</davinci-tab>
+					<davinci-tab id="Tab3" label="Write data" title="Write data">
+						<layout-column id="ColumnLayout2">
+							<layout-row id="RowLayout10" style="width: 500px">
+								<davinci-drop-down id="DD_SelecetedWriteMessage"
+									label="Select message to edit" style="width: 200px">
+									<crown-on property="data"
+										crown-event="CSK_MultiIOLinkSMI/OnNewListIoddWriteMessages"
+										converter="convertToList">
+									</crown-on>
+									<crown-on property="value"
+										crown-event="CSK_MultiIOLinkSMI/OnNewSelectedIoddWriteMessage">
+									</crown-on>
+									<crown-set event="change"
+										crown-function="CSK_MultiIOLinkSMI/setSelectedIoddWriteMessage"
+										protocol="crownMSGPACK" crown-path="newSelectedMessage">
+									</crown-set>
+								</davinci-drop-down>
+								<davinci-button id="B_CreateWriteMessage" type="primary"
+									icon-position="append" title="Create new write data message"
+									style="width: 200px">
+									<span>Create new message</span>
+									<crown-set event="submit"
+										crown-function="CSK_MultiIOLinkSMI/createIoddWriteMessage"
+										protocol="crownMSGPACK">
+									</crown-set>
+								</davinci-button>
+							</layout-row>
+							<stacked-view id="SV_isIoddAvailable">
+								<stacked-pane id="SP_IoddIsNOTAvailable" value="false">
+								</stacked-pane>
+								<stacked-pane id="SP_IoddISAvailable" value="true">
+									<layout-row id="RowLayout25">
+										<layout-column id="ColumnLayout19" style="width: 1000px">
+											<layout-row id="RowLayout26">
+												<davinci-text-field id="TF_WriteMessageName" type="text"
+													label="Message title">
+												<crown-on property="value"
+													crown-event="CSK_MultiIOLinkSMI/OnNewSelectedIoddWriteMessage">
+												</crown-on>
+												<crown-set event="change"
+													crown-function="CSK_MultiIOLinkSMI/setIoddWriteMessageName"
+													protocol="crownMSGPACK" crown-path="newName">
+												</crown-set>
+												</davinci-text-field>
+												<davinci-button id="B_DeleteWriteMessage" type="primary"
+													icon-position="append" style="width: 200px">
+												<span>Delete message</span>
+												<crown-set event="submit"
+													crown-function="CSK_MultiIOLinkSMI/deleteIoddWriteMessage"
+													protocol="crownMSGPACK">
+												</crown-set>
+												</davinci-button>
+											</layout-row>
+											<davinci-value-display id="VD_WriteMessageFunctionName"
+												label="Function name to be used externally">
+												<crown-on property="value"
+													crown-event="CSK_MultiIOLinkSMI/OnNewWriteMessageFunctionName">
+												</crown-on>
+											</davinci-value-display>
+											<davinci-callout id="Callout7" type="info">
+												<span>
+												The arguments of the function are:
+JSON object with message content (string). The returned values of the function are:
+write success (bool); write queue size (int); time taken to read message (int); optional error message (string)
+												</span>
+											</davinci-callout>
+											<davinci-collapse id="Collapse3"
+												collapsed-title="Select process data to write"
+												expanded-title="Select process data to write">
+												<curie-table id="DT_ProcessDataOut" selectable
+													title="Structure of Process Data Out" style="width: 1000px">
+												<curie-table-column id="write_colPD1" header="Subindex">
+												</curie-table-column>
+												<curie-table-column id="write_colPD2" header="Name">
+												</curie-table-column>
+												<curie-table-column id="write_colPD3"
+													header="Data type, Range, Single value description">
+												</curie-table-column>
+												<crown-on property="data"
+													crown-event="CSK_IODDInterpreter/OnNewProcessDataOutTableContent">
+												</crown-on>
+												<crown-set event="row-selected"
+													crown-function="CSK_IODDInterpreter/processDataOutRowSelected"
+													protocol="crownMSGPACK" crown-path="jsonSelectedRow">
+												</crown-set>
+												</curie-table>
+											</davinci-collapse>
+											<davinci-collapse id="Collapse4"
+												collapsed-title="Select parameters to write"
+												expanded-title="Select parameters to write">
+												<curie-table id="DT_WriteParameter" selectable
+													title="Write Parameters" style="width: 1000px">
+												<curie-table-column id="write_colSD1" header="Index">
+												</curie-table-column>
+												<curie-table-column id="write_colSD2" header="Subindex">
+												</curie-table-column>
+												<curie-table-column id="write_colSD3" header="ID">
+												</curie-table-column>
+												<curie-table-column id="write_colSD4" header="Name">
+												</curie-table-column>
+												<curie-table-column id="write_colSD5"
+													header="Data type, Range, Single value description">
+												</curie-table-column>
+												<curie-table-column id="write_colSD6" header="Read/Write">
+												</curie-table-column>
+												<curie-table-column id="write_colSD7" header="Description">
+												</curie-table-column>
+												<crown-on property="data"
+													crown-event="CSK_IODDInterpreter/OnNewWriteParametersTableContent">
+												</crown-on>
+												<crown-set event="row-selected"
+													crown-function="CSK_IODDInterpreter/writeParameterRowSelected"
+													protocol="crownMSGPACK" crown-path="jsonSelectedRow">
+												</crown-set>
+												</curie-table>
+											</davinci-collapse>
+										</layout-column>
+										<layout-column id="ColumnLayout23">
+											<davinci-collapse id="Collapse6" collapsed-title="Live payload"
+												expanded-title="Live payload">
+												<layout-column id="ColumnLayout8">
+												<davinci-status-indicator id="SI_WriteSuccess">
+												<span>Success</span>
+												<crown-on property="status"
+													crown-event="CSK_MultiIOLinkSMI/OnNewWriteDataSuccess">
+												</crown-on>
+												</davinci-status-indicator>
+												<davinci-text-area id="TA_WriteDataMessageResult"
+													label="Latest sent payload" readonly multiline
+													style="width: 500px; height: 500px">
+												<crown-on property="value"
+													crown-event="CSK_MultiIOLinkSMI/OnNewWriteDataMessage">
+												</crown-on>
+												</davinci-text-area>
+												<davinci-button id="B_RefreshLiveWriteData" type="primary"
+													icon-position="append" style="width: 200px">
+												<span>Refresh live payload</span>
+												<crown-set event="submit"
+													crown-function="CSK_MultiIOLinkSMI/refreshWriteDataResult"
+													protocol="crownMSGPACK">
+												</crown-set>
+												</davinci-button>
+											</layout-column>
+											</davinci-collapse>
+											<davinci-collapse id="Collapse10" collapsed-title="JSON template"
+												expanded-title="JSON template">
+												<davinci-text-area id="TA_WriteMessageJsonTemplate" readonly multiline
+													label="JSON template" style="width: 500px; height: 500px">
+												<crown-on property="value"
+													crown-event="CSK_MultiIOLinkSMI/OnNewWriteJSONTemplate">
+												</crown-on>
+												</davinci-text-area>
+											</davinci-collapse>
+											<davinci-collapse id="Collapse9"
+												collapsed-title="Test sending payload"
+												expanded-title="Test sending payload">
+												<layout-column id="ColumnLayout11">
+												<davinci-text-area id="TA_MessageToWrite"
+													title="You can copy the JSON template and edit it to send the required paylod to IOLink sensor"
+													label="Send customized payload (copy JSON template)" multiline
+													style="width: 500px; height: 500px">
+												<crown-set event="change"
+													crown-function="CSK_MultiIOLinkSMI/setTestWriteIoddMessage"
+													protocol="crownMSGPACK" crown-path="newTestWriteIoddMessage">
+												</crown-set>
+												<crown-on property="value"
+													crown-event="CSK_MultiIOLinkSMI/OnNewTestWriteIoddMessage">
+												</crown-on>
+												</davinci-text-area>
+												<davinci-button id="B_SendPyaload" type="primary"
+													icon-position="append">
+												<span>Send payload</span>
+												<crown-set event="submit"
+													crown-function="CSK_MultiIOLinkSMI/writeIoddMessageFromUI"
+													protocol="crownMSGPACK">
+												</crown-set>
+												</davinci-button>
+												</layout-column>
+											</davinci-collapse>
+										</layout-column>
+									</layout-row>
+								</stacked-pane>
+								<crown-on property="value"
+									crown-event="CSK_MultiIOLinkSMI/isIoddWriteMessageSelected"
+									converter="bool2str">
+								</crown-on>
+							</stacked-view>
+						</layout-column>
+					</davinci-tab>
+					<crown-set event="tab-change"
+						crown-function="CSK_MultiIOLinkSMI/setSelectedTab"
+						protocol="crownMSGPACK" crown-path="tabNumber">
+					</crown-set>
+					<crown-on property="selected-index"
+						crown-event="CSK_MultiIOLinkSMI/OnNewSelectedTab">
+					</crown-on>
+				</davinci-tabs>
+				<stacked-view id="SV_Login">
+					<stacked-pane id="SP_LoginOK" value="true"></stacked-pane>
+					<stacked-pane id="SP_LoginNOK" value="false">
+						<davinci-callout id="Callout1" type="info">
+							<span>Please log in via UserManagement module.</span>
+						</davinci-callout>
+					</stacked-pane>
+					<crown-edpws-binding property="value"
+						name="CSK_MultiIOLinkSMI/OnUserLevelMaintenanceActive"
+						update-on-resume
+						converter="function(value) {return value.toString();}">
+					</crown-edpws-binding>
+				</stacked-view>
+				<layout-column id="Column_PersistentData"
+					class="myCustomFrame_CSK_Module_MultiIOLinkSMI"
+					style="align-items: stretch; width: 500px">
+					<layout-row id="RowLayout4"
+						style="justify-content: space-between; align-items: center">
+						<layout-column id="ColumnLayout5" style="align-items: stretch">
+							<davinci-value-display id="VD_ParameterName" value="Parameter name:"
+								title="Name of the parameters within the CSK_PersistentData module to be uses for this module.">
+							</davinci-value-display>
+						</layout-column>
+						<layout-column id="ColumnLayout6" style="align-items: stretch">
+							<davinci-text-field id="TF_ParameterName" type="text"
+								title="Name of the parameters within the CSK_PersistentData module to be uses for this module.">
+								<crown-edpws-binding property="value"
+									name="CSK_MultiIOLinkSMI/OnNewParameterName" update-on-resume>
+								</crown-edpws-binding>
+								<crown-binding event="change"
+									name="CSK_MultiIOLinkSMI/setParameterName" path="param/args/name"
+									auto-commit>
+								</crown-binding>
+								<crown-edpws-binding property="disabled"
+									name="CSK_MultiIOLinkSMI/OnPersistentDataModuleAvailable"
+									update-on-resume converter="function(value) {return !value;}">
+								</crown-edpws-binding>
+							</davinci-text-field>
+						</layout-column>
+					</layout-row>
+					<layout-row id="RowLayout2"
+						style="justify-content: space-between; align-items: center">
+						<davinci-value-display id="VD_LoadOnReboot"
+							value="Load config on app start:"
+							title="Load configured parameters from CSK_PersistentData on app start.">
+						</davinci-value-display>
+						<davinci-checkbox id="CB_LoadConfig"
+							title="Load configured parameters from CSK_PersistentData on app start.">
+							<span></span>
+							<crown-edpws-binding property="checked"
+								name="CSK_MultiIOLinkSMI/OnNewStatusLoadParameterOnReboot"
+								update-on-resume>
+							</crown-edpws-binding>
+							<crown-edpws-binding property="disabled"
+								name="CSK_MultiIOLinkSMI/OnPersistentDataModuleAvailable"
+								update-on-resume converter="function(value) {return !value;}">
+							</crown-edpws-binding>
+							<crown-binding event="change"
+								name="CSK_MultiIOLinkSMI/setLoadOnReboot" path="param/args/status"
+								auto-commit>
+							</crown-binding>
+						</davinci-checkbox>
+					</layout-row>
+					<layout-row id="RowLayout3">
+						<layout-column id="ColumnLayout3" style="align-items: stretch">
+							<davinci-button id="B_LoadConfig" type="primary"
+								icon-position="append"
+								title="Load configured parameters from CSK_PersistentData module.">
+								<span>Load Config</span>
+								<crown-binding event="submit" name="CSK_MultiIOLinkSMI/loadParameters"
+									auto-commit>
+								</crown-binding>
+								<crown-edpws-binding property="disabled"
+									name="CSK_MultiIOLinkSMI/OnPersistentDataModuleAvailable"
+									update-on-resume converter="function(value) {return !value;}">
+								</crown-edpws-binding>
+							</davinci-button>
+						</layout-column>
+						<layout-column id="ColumnLayout4" style="align-items: stretch">
+							<davinci-button id="B_SaveConfig" type="primary"
+								icon-position="append"
+								title="Save current configured parameters of this module within CSK_PersistentData module.">
+								<span>Save Config</span>
+								<crown-binding event="submit" name="CSK_MultiIOLinkSMI/sendParameters"
+									auto-commit>
+								</crown-binding>
+								<crown-edpws-binding property="disabled"
+									name="CSK_MultiIOLinkSMI/OnPersistentDataModuleAvailable"
+									update-on-resume converter="function(value) {return !value;}">
+								</crown-edpws-binding>
+							</davinci-button>
+						</layout-column>
+					</layout-row>
+				</layout-column>
+				<stacked-view id="SV_PageCalled">
+					<crown-binding property="value" name="CSK_MultiIOLinkSMI/pageCalled"
+						path="result/data/empty" auto-update="0" update-on-resume>
+					</crown-binding>
+				</stacked-view>
+			</layout-column>
+		</stacked-pane>
+		<crown-edpws-binding property="value"
+			name="CSK_MultiIOLinkSMI/OnNewStatusModuleIsActive"
+			update-on-resume converter="bool2str">
+		</crown-edpws-binding>
+	</stacked-view>
 </layout-row>

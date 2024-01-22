@@ -2,39 +2,87 @@
 <manifest>
     <application name="CSK_Module_MultiIOLinkSMI">
         <crown name="CSK_Module_MultiIOLinkSMI">
-            <desc>This is an automatically generated CROWN (description not necessary).</desc>
+            <desc>Auto generated Crown (not needed)</desc>
+            <serves/>
         </crown>
         <crown name="CSK_MultiIOLinkSMI">
             <trait>released</trait>
-            <desc>Please fill in information regarding: What is the idea of this module and its features? +
-How to use this module in general.... like: +
-{empty} + 
-Typically the features of this module are used like this (check also main script of this module): +
-{empty} + 
-**1) Setup** +
-ToDo +
-{empty} + 
-**2) Something else....** +
-</desc>
+            <desc>This CSK module provides an easy access to IOLink functionality of AppSpace controller. +
+It is highly recommended to use this module along with the following CSK modules: +
+- CSK_1stModule_Logger - for logging data processing issues +
+- CSK_Module_IODDInterpreter - for easy combining of read/write messages to be received/sent from/to IOLink device +
+- CSK_Module_PersistentData - to save configured read/write messages as well as process data structure if it is variable +
+- CSK_Module_PowerManager - to power the necessary IOLink ports +
+--- +
+The main externally useful features are following: +
+**
+1. Generic CSK functionality: +
+**
+Each instance is handled in a separate thread. Useful Instance functions: +
+- "addInstance" - to create a new instance +
+- "setSelectedInstance" - to select instance you are working on +
+**
+2. Port handling +
+**
+- "setPort" - to set port used by the instance +
+- "activateInstance" - to start/stop IOLink functionality for the selected port +
+- event "OnNewPortEvent" - notifies new IOLink port event +
+**
+3. Connected IOLink device identification handling +
+**
+If the device's process data structure is variable, the module makes sure that the saved structure option is applied at the device after reboot/reconnection. +
+- "getDeviceIdentification" - to get identification table of connected device +
+- "applyNewDeviceIdentification" - to start using a newly connected device instead of saved one +
+- event "OnNewDeviceIdentificationApplied" - to notify external apps that new identification is applied +
+**
+4. Read and write messages handling +
+**
+Messages to be read or written from/to device are sets of data combined based on selection in respective dynamic tables in UI. +
+Each message has its own IODD instance at the background. +
+After message configuration, the JSON template is available in UI for reference. +
+The structure of the write message must comply with the generated JSON template. +
+Each read message has its own event to register to exteranlly. +
+The event name is **"CSK_MultiIOLinkSMI.readMessage" .. port .. readMessageName** +
+Each write message has its own function to be called externally. +
+The function name is **"CSK_MultiIOLinkSMI.writeMessage" .. port .. writeMessageName** +
+Use following functions to handle messages: +
+- "createIoddReadMessage" and "createIoddWriteMessage" +
+- "setSelectedIoddReadMessage" and "setSelectedIoddWriteMessage" +
+- "setIoddReadMessageName" and "setIoddWriteMessageName" +
+- "deleteIoddReadMessage" and "deleteIoddWriteMessage" +
+**
+5. Direct data reading/writing +
+**
+The following functions can be used for reading or writing data by selected instance directly: +
+- "readProcessData" and "writeProcessData" - to read/write process data using IODD interpretation at the background +
+- "readParameter" and "writeParameter" - to read/write parameters using IODD interpretation at the background +
+- "readProcessDataByteArray" and "writeProcessDataByteArray" - to read/write row byte arrays of process data (no IODD needed) +
+- "readParameterByteArray" and "writeParameterByteArray" - to read/write row byte arrays of parameter (no IODD needed) +
+- "readIoddMessage" and "writeIoddMessage" - to read/write preconfigured messages +
+--- +
+**
+ToDo: +
+**
+- Data Storage support to save set of all parameters to be applied on controller reboot or device reconnection</desc>
             <serves>
                 <event name="OnNewStatusLoadParameterOnReboot">
-                    <desc>Notify status if parameters should be loaded on app/device boot up.</desc>
-                    <param desc="Status" multiplicity="1" name="status" type="bool"/>
+                    <desc>Notify status if parameters should be loaded on app-/device- boot up.</desc>
+                    <param desc="Status." multiplicity="1" name="status" type="bool"/>
                 </event>
                 <event name="OnPersistentDataModuleAvailable">
-                    <desc>Notify status if features of CSK_PersistentData module are available.</desc>
-                    <param desc="Status" multiplicity="1" name="status" type="bool"/>
+                    <desc>Notify status if features of PersistendData CSK module  are available.</desc>
+                    <param desc="Status." multiplicity="1" name="status" type="bool"/>
                 </event>
                 <event name="OnNewInstanceList">
-                    <desc>Event to provide list of created instances.</desc>
-                    <param desc="List of created instances." multiplicity="1" name="list" type="string"/>
+                    <desc>Event to provide list of created instances</desc>
+                    <param desc="List of created instances" multiplicity="1" name="list" type="string"/>
                 </event>
                 <event name="OnNewProcessingParameter">
                     <desc>Event to share processing parameters to the instances.</desc>
-                    <param desc="Number of the instance to receive the parameter." multiplicity="1" name="objectNo" type="int"/>
-                    <param desc="Name of the parameter." multiplicity="1" name="parameter" type="string"/>
-                    <param desc="Value of the parameter." multiplicity="1" name="value" type="auto"/>
-                    <param desc="If parameter is for specifici internal used object, its number." multiplicity="?" name="internalObjectNo" type="int"/>
+                    <param desc="Number of the instance to receive the parameter" multiplicity="1" name="objectNo" type="int"/>
+                    <param desc="Name of the parameter" multiplicity="1" name="parameter" type="string"/>
+                    <param desc="value of the parameter" multiplicity="1" name="value" type="auto"/>
+                    <param desc="If parameter is for specifici internal used object, its nnumber" multiplicity="?" name="internalObjectNo" type="int"/>
                 </event>
                 <event name="OnNewSelectedInstance">
                     <desc>Notify if new instance is selected.</desc>
@@ -45,64 +93,318 @@ ToDo +
                 </event>
                 <event name="OnNewResultNUM">
                     <desc>Example of dynamically created event to provide result of instance. +
-NUM will be replaced by the number of instance (e.g. "OnNewResult1"). +
+NUM will be replaced by the number of instance (e.g. "OnNewResult1") +
 INFO: Other modules can check via "Script.isServedAsEvent" if event of sepecific instance exists.</desc>
                     <param desc="Result" multiplicity="1" name="result" type="bool"/>
                 </event>
                 <event name="OnNewParameterName">
-                    <desc>Notify name of persistent data parameter.</desc>
+                    <desc>Notify name of persistent data parameter</desc>
                     <param desc="Parameter name" multiplicity="1" name="name" type="string"/>
                 </event>
                 <event name="OnUserLevelOperatorActive">
                     <desc>Status of Operator userlevel. Used internally in combination with the CSK_UserManagement module if available.</desc>
-                    <param desc="Status" multiplicity="1" name="status" type="bool"/>
+                    <param desc="Status of Operator userlevel." multiplicity="1" name="status" type="bool"/>
                 </event>
                 <event name="OnUserLevelMaintenanceActive">
                     <desc>Status of Maintenance userlevel. Used internally in combination with the CSK_UserManagement module if available.</desc>
-                    <param desc="Status" multiplicity="1" name="status" type="bool"/>
+                    <param desc="Status of Maintenance userlevel." multiplicity="1" name="status" type="bool"/>
                 </event>
                 <event name="OnUserLevelServiceActive">
                     <desc>Status of Service userlevel. Used internally in combination with the CSK_UserManagement module if available.</desc>
-                    <param desc="Status" multiplicity="1" name="status" type="bool"/>
+                    <param desc="Status of Service userlevel" multiplicity="1" name="status" type="bool"/>
                 </event>
                 <event name="OnUserLevelAdminActive">
                     <desc>Status of Admin userlevel. Used internally in combination with the CSK_UserManagement module if available.</desc>
-                    <param desc="Status" multiplicity="1" name="status" type="bool"/>
+                    <param desc="Status." multiplicity="1" name="status" type="bool"/>
                 </event>
                 <event name="OnNewValueUpdateNUM">
-                    <desc>Example of dynamically created event to sync paramters between instance threads and Controller part of module. +
-NUM will be replaced by the number of instance (e.g. "OnNewResult1"). +</desc>
+                    <desc>Example of dynamically created event to sync paramters between instance threads and Controller part of app. +
+NUM will be replaced by the number of instance (e.g. "OnNewResult1") +</desc>
                     <param desc="Instance new value is coming from." multiplicity="1" name="instance" type="int"/>
-                    <param desc="Name of the paramter to update/sync." multiplicity="1" name="parameter" type="string"/>
-                    <param desc="Value to update." multiplicity="1" name="value" type="auto"/>
+                    <param desc="Name of the paramter to update/sync" multiplicity="1" name="parameter" type="string"/>
+                    <param desc="Value to update" multiplicity="1" name="value" type="auto"/>
                     <param desc="Optionally if internal parameter should be used for internal objects." multiplicity="?" name="selectedObject" type="int"/>
                 </event>
                 <event name="OnNewValueToForwardNUM">
-                    <desc>Example of dynamically created event to forward data from instance thread to Controller part of module, e.g. to forward values to UI. +
-NUM will be replaced by the number of instance (e.g. "OnNewResult1"). +</desc>
+                    <desc>Example of dynamically created event to forward data from instance thread to Controler app, e.g. to forward values to UI. +
+NUM will be replaced by the number of instance (e.g. "OnNewResult1")+</desc>
                     <param desc="Eventname to use to forward value." multiplicity="1" name="eventname" type="string"/>
                     <param desc="Value to forward." multiplicity="1" name="value" type="auto"/>
                 </event>
-                <event name="OnNewResult">
-                    <desc>Generic event to notify results. E.g. to forward results from single instances.</desc>
-                    <param desc="Result" multiplicity="1" name="result" type="bool"/>
+                <event name="OnNewPort">
+                    <desc>Event to show selected IOLink port in UI.</desc>
+                    <param desc="Port." multiplicity="1" name="Port" type="string"/>
                 </event>
-                <event name="OnNewStatusRegisteredEvent">
-                    <desc>Notify event instance is registered to receive data to process.</desc>
-                    <param desc="Name of event." multiplicity="1" name="eventname" type="string"/>
+                <event name="isInstanceActive">
+                    <desc>Notify if instance is activated.</desc>
+                    <param desc="State of instance." multiplicity="1" name="status" type="bool"/>
+                </event>
+                <event name="OnNewPortDropdown">
+                    <desc>Event to show list of ports in UI.</desc>
+                    <param desc="Verialized list of ports." multiplicity="1" name="PortDropdown" type="string"/>
+                </event>
+                <event name="OnNewReadJSONTemplate">
+                    <desc>Event to show JSON template of configured reading message.</desc>
+                    <param desc="JSON template." multiplicity="?" name="readJSONTemplate" type="string"/>
+                </event>
+                <event name="OnNewWriteJSONTemplate">
+                    <desc>Event to show JSON template of configured write message.</desc>
+                    <param desc="JSON template." multiplicity="?" name="writeJSONTemplate" type="string"/>
+                </event>
+                <event name="OnNewStatusModuleIsActive">
+                    <desc>Notify if module can be used on device.</desc>
+                    <param desc="Status." multiplicity="1" name="status" type="bool"/>
+                </event>
+                <event name="OnNewVendorName">
+                    <trait>released</trait>
+                    <desc>Event to show the vendor name of connected IOLink device.</desc>
+                    <param desc="Vendor name." multiplicity="1" name="vendorName" type="string"/>
+                </event>
+                <event name="OnNewVendorText">
+                    <trait>released</trait>
+                    <desc>Event to show the vendor text of connected IOLink device.</desc>
+                    <param desc="Vendor text." multiplicity="1" name="vendorText" type="string"/>
+                </event>
+                <event name="OnNewVendorId">
+                    <trait>released</trait>
+                    <desc>Event to show the vendor ID of connected IOLink device.</desc>
+                    <param desc="Vendor ID." multiplicity="1" name="vendorId" type="string"/>
+                </event>
+                <event name="OnNewProductName">
+                    <trait>released</trait>
+                    <desc>Event to show the product name of connected IOLink device.</desc>
+                    <param desc="Product name." multiplicity="1" name="productName" type="string"/>
+                </event>
+                <event name="OnNewProductText">
+                    <trait>released</trait>
+                    <desc>Event to show the product text of connected IOLink device.</desc>
+                    <param desc="Product text." multiplicity="1" name="productText" type="string"/>
+                </event>
+                <event name="OnNewProductId">
+                    <trait>released</trait>
+                    <desc>Event to show the product id of connected IOLink device.</desc>
+                    <param desc="Product ID." multiplicity="1" name="productId" type="string"/>
+                </event>
+                <event name="OnNewSerialNumber">
+                    <trait>released</trait>
+                    <desc>Event to show the serial number of connected IOLink device.</desc>
+                    <param desc="Serial number." multiplicity="1" name="serialNumber" type="string"/>
+                </event>
+                <event name="OnNewHardwareVersion">
+                    <trait>released</trait>
+                    <desc>Event to show the hardware version of the device.</desc>
+                    <param desc="Hardware version." multiplicity="1" name="hardwareVersion" type="string"/>
+                </event>
+                <event name="OnNewFirmwareVersion">
+                    <trait>released</trait>
+                    <desc>Event to show the firmware version of the device.</desc>
+                    <param desc="Firmware version." multiplicity="1" name="firmwareVersion" type="string"/>
+                </event>
+                <event name="OnNewPortEvent">
+                    <trait>released</trait>
+                    <desc>Event to show the new status of active IOLink port. Can be used externally.</desc>
+                    <param desc="Port ID." multiplicity="1" name="port" ref="IOLinkMasterPorts" type="enum"/>
+                    <param desc="IOLink event type." multiplicity="1" name="eventType" ref="IOLink.SMI.EventTypes" type="enum"/>
+                    <param desc="Description of IOLink event." multiplicity="1" name="eventDescription" type="string"/>
+                </event>
+                <event name="OnNewNewDeviceFirmwareVersion">
+                    <trait>released</trait>
+                    <desc>Event to show the firmware version of new discovered device.</desc>
+                    <param desc="Firmware version." multiplicity="1" name="firmwareVersion" type="string"/>
+                </event>
+                <event name="OnNewNewDeviceHardwareVersion">
+                    <trait>released</trait>
+                    <desc>Event to show the hardware version of new discovered device.</desc>
+                    <param desc="Hardware version." multiplicity="1" name="hardwareVersion" type="string"/>
+                </event>
+                <event name="OnNewNewDeviceSerialNumber">
+                    <trait>released</trait>
+                    <desc>Event to show the serial number of new discovered device.</desc>
+                    <param desc="Serial number." multiplicity="1" name="serialNumber" type="string"/>
+                </event>
+                <event name="OnNewNewDeviceVendorId">
+                    <trait>released</trait>
+                    <desc>Event to show the vendor ID of new discovered device.</desc>
+                    <param desc="Vendor ID." multiplicity="1" name="vendorId" type="string"/>
+                </event>
+                <event name="OnNewNewDeviceProductId">
+                    <trait>released</trait>
+                    <desc>Event to show the product id of new discovered device.</desc>
+                    <param desc="Product ID." multiplicity="1" name="productId" type="string"/>
+                </event>
+                <event name="OnNewNewDeviceProductName">
+                    <trait>released</trait>
+                    <desc>Event to show the product name of new discovered device.</desc>
+                    <param desc="Product name." multiplicity="1" name="productName" type="string"/>
+                </event>
+                <event name="OnNewNewDeviceProductText">
+                    <trait>released</trait>
+                    <desc>Event to show the product text of new discovered device.</desc>
+                    <param desc="Product text." multiplicity="1" name="productText" type="string"/>
+                </event>
+                <event name="OnNewNewDeviceVendorName">
+                    <trait>released</trait>
+                    <desc>Event to show the vendor name of new discovered device.</desc>
+                    <param desc="Vendor name." multiplicity="1" name="vendorName" type="string"/>
+                </event>
+                <event name="OnNewNewDeviceVendorText">
+                    <trait>released</trait>
+                    <desc>Event to show the vendor text of new discovered device.</desc>
+                    <param desc="Vendor text." multiplicity="1" name="vendorText" type="string"/>
+                </event>
+                <event name="OnNewListProcessDataCondition">
+                    <trait>released</trait>
+                    <desc>Event to provide list of process data structure options.</desc>
+                    <param desc="List of process data structure options." multiplicity="1" name="jsonListProcessDataCondition" type="string"/>
+                </event>
+                <event name="OnNewProcessDataCondition">
+                    <trait>released</trait>
+                    <desc>Event to show selected IOLink procecss data option of connected device in UI.</desc>
+                    <param desc="Selected variant of process data structure." multiplicity="1" name="condition" type="string"/>
+                </event>
+                <event name="isProcessDataVariable">
+                    <trait>released</trait>
+                    <param desc="" multiplicity="1" name="state" type="bool"/>
+                </event>
+                <event name="OnNewPortStatus">
+                    <trait>released</trait>
+                    <desc>Event to show current port status of selected IOLink port in UI.</desc>
+                    <param desc="Status of the port." multiplicity="1" name="postStatus" type="string"/>
+                </event>
+                <event name="IsNewDeviceFound">
+                    <trait>released</trait>
+                    <desc>Event to notify if there is a new device discovered on selected port. Used to show settings in UI.</desc>
+                    <param desc="" multiplicity="1" name="state" type="bool"/>
+                </event>
+                <event name="OnNewSelectedTab">
+                    <trait>released</trait>
+                    <desc>Notify to show selected tab.</desc>
+                    <param desc="Tab ID." multiplicity="1" name="tabNumber" type="int"/>
+                </event>
+                <event name="OnNewSelectedIoddReadMessage">
+                    <trait>released</trait>
+                    <desc>Event to show selected read message.</desc>
+                    <param desc="Name of the read message." multiplicity="1" name="messageName" type="string"/>
+                </event>
+                <event name="OnNewSelectedIoddWriteMessage">
+                    <trait>released</trait>
+                    <desc>Event to show selected write message.</desc>
+                    <param desc="Name of the write message." multiplicity="1" name="messageName" type="string"/>
+                </event>
+                <event name="OnNewListIoddReadMessages">
+                    <trait>released</trait>
+                    <desc>Event to provide list of created read messages.</desc>
+                    <param desc="List of created read messages." multiplicity="1" name="jsonList" type="string"/>
+                </event>
+                <event name="OnNewListIoddWriteMessages">
+                    <trait>released</trait>
+                    <desc>Event to provide list of created write messages.</desc>
+                    <param desc="List of created write messages." multiplicity="1" name="jsonList" type="string"/>
+                </event>
+                <event name="OnNewTriggerType">
+                    <trait>released</trait>
+                    <desc>Event to show the selected trigger type of selected read message.</desc>
+                    <param desc="'Periodic' or 'On event'" multiplicity="1" name="triggerType" type="string"/>
+                </event>
+                <event name="OnNewTriggerValue">
+                    <trait>released</trait>
+                    <desc>Event to show the selected trigger value of selected read message.</desc>
+                    <param desc="Period in [ms] or name of CROWN event." multiplicity="1" name="triggerValue" type="string"/>
+                </event>
+                <event name="OnNewIOLinkPortStatus">
+                    <trait>released</trait>
+                    <desc>Notify new status of the IOLink port.</desc>
+                    <param desc="Instance ID." multiplicity="1" name="instance" type="int"/>
+                    <param desc="Port status." multiplicity="1" name="status" type="string"/>
+                </event>
+                <event name="OnNewReadDataSuccess">
+                    <trait>released</trait>
+                    <desc>Event to show the success of reading message after the refresh button has been pressed in UI.</desc>
+                    <param desc="True if successful." multiplicity="1" name="success" type="bool"/>
+                </event>
+                <event name="OnNewWriteDataSuccess">
+                    <trait>released</trait>
+                    <desc>Event to show the latest success of writing message to IOLink device after refresh button has been pressed. </desc>
+                    <param desc="True if successful." multiplicity="1" name="success" type="bool"/>
+                </event>
+                <event name="OnNewWriteDataMessage">
+                    <trait>released</trait>
+                    <desc>Event to show the latest payload of write message sent to IOLink device after refresh button has been pressed. </desc>
+                    <param desc="JSON message payload." multiplicity="1" name="message" type="string"/>
+                </event>
+                <event name="OnNewReadDataMessage">
+                    <trait>released</trait>
+                    <desc>Event to show the received message after the refresh button has been pressed in UI.</desc>
+                    <param desc="Received message." multiplicity="1" name="message" type="string"/>
+                </event>
+                <event name="OnNewReadProcessDataByteArray">
+                    <trait>released</trait>
+                    <desc>Event to show the received byte array after reading the process data from IOLink device for testing purposes.</desc>
+                    <param desc="Byte array in dec format." multiplicity="1" name="processDataByteArray" type="string"/>
+                </event>
+                <event name="OnNewReadParameterByteArray">
+                    <trait>released</trait>
+                    <desc>Event to show the received byte array after reading the configured parameter from IOLink device for testing purposes.</desc>
+                    <param desc="Byte array in dec format." multiplicity="1" name="receivedByteArray" type="string"/>
+                </event>
+                <event name="OnNewTestCommandState">
+                    <trait>released</trait>
+                    <desc>Event to show latest status of reading or writing raw byte arrays from/to IOLink device for testing purpuses.</desc>
+                    <param desc="Latest status." multiplicity="1" name="state" type="string"/>
+                </event>
+                <event name="OnNewDeviceIdentificationApplied">
+                    <trait>released</trait>
+                    <desc>Notify if device identification of new discovered device is applied instead of the old one.</desc>
+                    <param desc="Instance ID." multiplicity="1" name="instance" type="int"/>
+                    <param desc="JSON object containing all parameters of the instance." multiplicity="1" name="jsonInstanceParameters" type="string"/>
+                </event>
+                <event name="isIoddReadMessageSelected">
+                    <trait>released</trait>
+                    <desc>Event to inform if the read message is selected in UI. Used to show settings in UI.</desc>
+                    <param desc="True if selected." multiplicity="1" name="isSelected" type="bool"/>
+                </event>
+                <event name="isIoddWriteMessageSelected">
+                    <trait>released</trait>
+                    <desc>Event to inform if the write message is selected in UI. Used to show settings in UI.</desc>
+                    <param desc="True if selected." multiplicity="1" name="isSelected" type="bool"/>
+                </event>
+                <event name="OnNewTestWriteIoddMessage">
+                    <trait>released</trait>
+                    <desc>Event to show the edited JSON payload of write message be sent to IOLink device for testing purposes.</desc>
+                    <param desc="JSON payload which must have the same structure as JSON template of configured write message." multiplicity="1" name="testWriteIoddMessage" type="string"/>
+                </event>
+                <event name="isCskIoddInterpreterAvailable">
+                    <trait>released</trait>
+                    <desc>Event to show if there is available CSK IODD interpreter in the project.</desc>
+                    <param desc="True if available." multiplicity="1" name="isAvailable" type="bool"/>
+                </event>
+                <event name="isIoddMatchFound">
+                    <trait>released</trait>
+                    <desc>Event to notify if there is a matching IODD file found by IODD interpreter module.</desc>
+                    <param desc="True if the match is found." multiplicity="1" name="isFound" type="bool"/>
+                </event>
+                <event name="OnNewReadMessageEventName">
+                    <trait>released</trait>
+                    <desc>Event to show the event name that can be used externally.</desc>
+                    <param desc="Name of the event." multiplicity="1" name="eventName" type="string"/>
+                </event>
+                <event name="OnNewWriteMessageFunctionName">
+                    <trait>released</trait>
+                    <desc>Event to notify the name of the write data function that can be used externally.</desc>
+                    <param desc="Name of the function." multiplicity="1" name="functionName" type="string"/>
                 </event>
                 <function name="setParameterName">
-                    <desc>Function to set the name of the parameters if saved/loaded via the CSK_PersistentData module.</desc>
+                    <desc>Function to set the name of the parameters if saved/loaded via the "PersistentData" CSK-module</desc>
                     <param desc="Name of the parameter" multiplicity="1" name="name" type="string"/>
                 </function>
                 <function name="sendParameters">
-                    <desc>Send parameters to CSK_PersistentData module if possible to save them.</desc>
+                    <desc>Send parameters to PersistentData CSK module if possible to save them</desc>
                 </function>
                 <function name="loadParameters">
-                    <desc>Load parameters for this module from the CSK_PersistentData module if possible and use them.</desc>
+                    <desc>Load parameters for this module from the PersistentData CSK-module if possible and use them</desc>
                 </function>
                 <function name="setLoadOnReboot">
-                    <desc>Configure if this module should load its saved parameters at app/ device boot up.</desc>
+                    <desc>Configure if this module should load its saved parameters at app- / device- boot up</desc>
                     <param desc="Set status" multiplicity="1" name="status" type="bool"/>
                 </function>
                 <function name="pageCalled">
@@ -114,38 +416,317 @@ NUM will be replaced by the number of instance (e.g. "OnNewResult1"). +</desc>
                     <param desc="Instance to select." multiplicity="1" name="instance" type="int"/>
                 </function>
                 <function name="getInstancesAmount">
-                    <desc>Get the amount of created instances of this module.</desc>
+                    <desc>Get the amount of created instances of this module</desc>
                     <return desc="Amount of created instances." multiplicity="1" name="amount" type="int"/>
-                </function>
-                <function name="setRegisterEvent">
-                    <desc>Configure event that this module should listen to. If this one is notified, it will be linked to internal processing function. +
-(Will be set to currently active instance, see "setSelectedObject")</desc>
-                    <param desc="(external) Event name to listen to." multiplicity="1" name="event" type="string"/>
-                </function>
-                <function name="processInstanceNUM">
-                    <desc>Example of dynamically served function to process internally coded function. +
-NUM will be replaced by the number of instance (e.g. "processInstance1"). +
-INFO: Other modules can check via "Script.isServedAsFunction" if function of sepecific instance exists. +
-Needs then to be called via "Script.callFunction".</desc>
-                    <param alias="Alias" desc="Transferred object (optional)" multiplicity="?" name="object" type="object"/>
-                    <return desc="Processing result (optional)." multiplicity="?" name="result" type="bool"/>
                 </function>
                 <function name="addInstance">
                     <desc>Function to add an additional instance.</desc>
                 </function>
                 <function name="resetInstances">
-                    <desc>Function to reset instances to one single instance. +
-IMPORTANT: As instances start their own threads, the module needs to be restarted if new instances are needed... (see AppEngine docu for "Script.startScript").</desc>
+                    <desc>Function to reset instances to one single instance.
+IMPORTANT: As instances start their own threads, the module needs to be restarted if new instances are needed... (see AppEngine docu for "Script.startScript")</desc>
+                </function>
+                <function name="activateInstance">
+                    <desc>Activate or deactivate the instance.</desc>
+                    <param desc="True = active" multiplicity="1" name="status" type="bool"/>
+                </function>
+                <function name="setPort">
+                    <desc>Set an IOLink port for selected instance.</desc>
+                    <param desc="IOLink sensor port." multiplicity="1" name="port" type="string"/>
+                </function>
+                <function name="getInstanceParameters">
+                    <desc>Get all parameters of the instance</desc>
+                    <param desc="Number ID of instance" multiplicity="1" name="instanceNo" type="int"/>
+                    <return desc="Parameters in JSON format" multiplicity="1" name="jsonParameters" type="auto"/>
+                </function>
+                <function name="updateInstanceParameters">
+                    <desc>Update all parameters of specified instance. Following is sample structure of JSON table with parameters: +
+``` json
+{
+    "active":false,
+        "periodDuration":1000,
+	"port":"S1",
+	"ReadPD":
+	[
+		{
+			"DataInfo":"DT50_distance",
+			"DataType":"UINT",
+			"StartBit":0,
+			"BitLength":16,
+			"Period":1,
+		},
+	],
+	"WritePD":[],
+	"ReadSD":
+	[
+		{
+			"DataInfo":"DT50_process_data_structure",
+			"DataType":"UINT",
+			"Index":120
+			"Subindex":0,
+			"Period":3,
+		},
+		{
+			"DataInfo":"DT50_sensor_temperature",
+			"DataType":"INT",
+			"Index":153
+			"Subindex":0,
+			"Period":3,
+		}
+	],
+	"WriteSD":
+	[
+		{
+			"DataInfo":"DT50_process_data_structure"
+			"DataType":"UINT",
+			"DataLength":1,
+			"Index":120,
+			"Subindex":0,
+			"Period":0,
+		}
+	]
+}
+```</desc>
+                    <param desc="Parameters in JSON format" multiplicity="1" name="jsonNewParameters" type="auto"/>
+                </function>
+                <function name="handleOnNewPortEvent">
+                    <desc>Internally used function triggered when the new event occurs in IOLink port.</desc>
+                    <param desc="Port where the event occured." multiplicity="1" name="port" ref="IOLinkMasterPorts" type="enum"/>
+                    <param alias="IOLink.SMI.EventTypes" desc="Type of the event." multiplicity="1" name="eventType" type="enum"/>
+                    <param desc="Event code as described within IO-Link Interface specification annex C." multiplicity="1" name="eventCode" type="int"/>
+                </function>
+                <function name="getDeviceIdentification">
+                    <trait>released</trait>
+                    <desc>Get identification of a device connected to a specified port. The identification contains the following parameters:
+*statusInfo - status of the IOLink port
+*deviceId
+*vendorId
+*vendorText
+*productName
+*productText
+*serialNumber
+*hardwareVersion
+*firmwareVersion</desc>
+                    <param desc="IOLink port with connected device." multiplicity="1" name="port" type="string"/>
+                    <return desc="JSON object with device identification." multiplicity="1" name="jsonDeviceIdentification" type="string"/>
+                </function>
+                <function name="applyNewDeviceIdentificationUI">
+                    <trait>released</trait>
+                    <desc>Delete settings for previous device and continue with new discovered device. Triggered by UI button.</desc>
+                </function>
+                <function name="setProcessDataCondition">
+                    <trait>released</trait>
+                    <desc>Set process data structure varient if the structure is variable. The respective value will be sent to the parameter responsible for the structure.</desc>
+                    <param desc="New condition string parced based on IODD file content." multiplicity="1" name="newCondition" type="string"/>
+                </function>
+                <function name="writeParameter">
+                    <trait>released</trait>
+                    <desc>Write parameter to IOLink sensor in case the IODD description of the parameter is available.</desc>
+                    <param desc="Index of the parameter." multiplicity="1" name="index" type="int"/>
+                    <param desc="Subindex of the parameter." multiplicity="1" name="subindex" type="int"/>
+                    <param desc="JSON object with data to write to the IOLink device." multiplicity="1" name="jsonDataToWrite" type="string"/>
+                    <return desc="Success of writing." multiplicity="1" name="writeSuccess" type="bool"/>
+                </function>
+                <function name="readParameter">
+                    <trait>released</trait>
+                    <desc>Read parameter of IOLink sensor in case the IODD description of the parameter is available.</desc>
+                    <param desc="Index of the parameter." multiplicity="1" name="index" type="int"/>
+                    <param desc="Subindex of the parameter." multiplicity="1" name="subindex" type="int"/>
+                    <return desc="Success of reading." multiplicity="1" name="readSuccess" type="bool"/>
+                    <return desc="Received data converted using IODD interpretation." multiplicity="?" name="readResult" type="string"/>
+                </function>
+                <function name="setSelectedTab">
+                    <trait>released</trait>
+                    <desc>Select tab in UI.</desc>
+                    <param desc="ID of the tab." multiplicity="1" name="tabNumber" type="int"/>
+                </function>
+                <function name="createIoddReadMessage">
+                    <trait>released</trait>
+                    <desc>Create a new data set to read from device with the help of IODD interpreter.</desc>
+                </function>
+                <function name="createIoddWriteMessage">
+                    <trait>released</trait>
+                    <desc>Create a new data set to write to device with the help of IODD interpreter.</desc>
+                </function>
+                <function name="deleteIoddReadMessage">
+                    <trait>released</trait>
+                    <desc>Delete created data set.</desc>
+                </function>
+                <function name="deleteIoddWriteMessage">
+                    <trait>released</trait>
+                    <desc>Delete created data set.</desc>
+                </function>
+                <function name="setSelectedIoddReadMessage">
+                    <trait>released</trait>
+                    <desc>Select a read message to edit.</desc>
+                    <param desc="Name of the message." multiplicity="1" name="newSelectedMessage" type="string"/>
+                </function>
+                <function name="setSelectedIoddWriteMessage">
+                    <trait>released</trait>
+                    <desc>Select a write message to edit.</desc>
+                    <param desc="Name of the message." multiplicity="1" name="newSelectedMessage" type="string"/>
+                </function>
+                <function name="setIoddReadMessageName">
+                    <trait>released</trait>
+                    <desc>Set title of the message to read from IOLink device.</desc>
+                    <param desc="New name." multiplicity="1" name="newName" type="string"/>
+                </function>
+                <function name="setIoddWriteMessageName">
+                    <trait>released</trait>
+                    <desc>Set title of the message to write to IOLink device.</desc>
+                    <param desc="New name." multiplicity="1" name="newName" type="string"/>
+                </function>
+                <function name="setTriggerType">
+                    <trait>released</trait>
+                    <desc>Set condition of when to read the selected read message. Possible options:
+*Periodic - the message is periodically requested from the IOLink device. The period can be set by setTriggerValue function.
+*On event- the message is requested from the IOLink device when some event is notified. The event can be set by setTriggerValue function.</desc>
+                    <param desc="'Periodic' or 'On event'" multiplicity="1" name="newTriggerType" type="string"/>
+                </function>
+                <function name="setTriggerValue">
+                    <trait>released</trait>
+                    <desc>Set value depending on the selected trigger type of the selected read message.
+*if type is 'Periodic' - period in [ms].
+*if type is 'On event' - name of served CROWN event.</desc>
+                    <param desc="Period in [ms] or name of served CROWN event." multiplicity="1" name="newTriggerValue" type="string"/>
+                </function>
+                <function name="applyNewDeviceIdentification">
+                    <trait>released</trait>
+                    <desc>Set device identification of a new device.</desc>
+                    <param desc="Json table containing the device identification." multiplicity="1" name="jsonNewDeviceIdentification" type="string"/>
+                </function>
+                <function name="makeDefaultInstance">
+                    <desc>Set all instance parameters to default values.</desc>
+                </function>
+                <function name="refreshWriteDataResult">
+                    <trait>released</trait>
+                    <desc>Function to show the latest write result of the selected message in UI.</desc>
+                </function>
+                <function name="refreshReadDataResult">
+                    <trait>released</trait>
+                    <desc>Function to show the latest read result of the selected message in UI.</desc>
+                </function>
+                <function name="setProcessDataByteArrayToWrite">
+                    <trait>released</trait>
+                    <desc>Set byte array to write to the process data of the device for testing purposes in UI.</desc>
+                    <param desc="Byte array in dec format where bytes are separated by comma. E.g. 1,12,123" multiplicity="1" name="processDataByteArray" type="string"/>
+                </function>
+                <function name="setTestReadParameterIndex">
+                    <trait>released</trait>
+                    <desc>Set index of the parameter to read as byte array in UI.</desc>
+                    <param desc="Index of the parameter." multiplicity="1" name="index" type="int"/>
+                </function>
+                <function name="setTestReadParameterSubindex">
+                    <trait>released</trait>
+                    <desc>Set subindex of the parameter to read as byte array in UI.</desc>
+                    <param desc="Subindex of the parameter." multiplicity="1" name="subindex" type="int"/>
+                </function>
+                <function name="setTestWriteParameterIndex">
+                    <trait>released</trait>
+                    <desc>Set index of the parameter to write as byte array in UI.</desc>
+                    <param desc="Index of the parameter." multiplicity="1" name="index" type="int"/>
+                </function>
+                <function name="setTestWriteParameterSubindex">
+                    <trait>released</trait>
+                    <desc>Set subindex of the parameter to write as byte array in UI.</desc>
+                    <param desc="" multiplicity="1" name="subindex" type="int"/>
+                </function>
+                <function name="setParameterByteArrayToWrite">
+                    <trait>released</trait>
+                    <desc>Set byte array to write to the parameter of the device for testing purposes in UI.</desc>
+                    <param desc="Byte array in dec format where bytes are separated by comma. E.g. 1,12,123" multiplicity="1" name="byteArrayToWrite" type="string"/>
+                </function>
+                <function name="readParameterByteArrayUI">
+                    <trait>released</trait>
+                    <desc>Read parameter of IOLink sensor as a raw byte array to show it in UI.</desc>
+                </function>
+                <function name="readProcessDataByteArray">
+                    <trait>released</trait>
+                    <desc>Read process data of IOLink sensor as a raw byte array. Might be useful for testing. If reading failed, returns nil.</desc>
+                    <return desc="Received byte array in dec format." multiplicity="*" name="resultByteArray" type="int"/>
+                </function>
+                <function name="writeProcessDataByteArray">
+                    <trait>released</trait>
+                    <desc>Write process data to IOLink sensor as a raw byte array. Might be useful for testing.</desc>
+                    <param desc="Byte array in dec format." multiplicity="*" name="byteArrayToWrite" type="int"/>
+                    <return desc="Success of writing." multiplicity="1" name="success" type="bool"/>
+                    <return desc="Optional error description if writing failed." multiplicity="?" name="errorDescription" type="string"/>
+                </function>
+                <function name="writeParameterByteArray">
+                    <trait>released</trait>
+                    <desc>Write parameter to IOLink sensor as a raw byte array. Might be useful for testing.</desc>
+                    <param desc="Index of the parameter." multiplicity="1" name="index" type="int"/>
+                    <param desc="Subndex of the parameter." multiplicity="1" name="subindex" type="int"/>
+                    <param desc="Byte array in dec format." multiplicity="*" name="byteArrayToWrite" type="int"/>
+                    <return desc="Success of writing." multiplicity="1" name="success" type="bool"/>
+                    <return desc="Optional error description if writing failed." multiplicity="?" name="errorDescription" type="string"/>
+                </function>
+                <function name="setTestWriteIoddMessage">
+                    <trait>released</trait>
+                    <desc>Set JSON content of message to write to device. The content must have the same format as JSON template of the selected message (template is generated based on selected paramters/process data).</desc>
+                    <param desc="JSON data to write to the device." multiplicity="1" name="newTestWriteIoddMessage" type="string"/>
+                </function>
+                <function name="writeIoddMessageFromUI">
+                    <trait>released</trait>
+                    <desc>Write configured message to IOLink sensor from UI.</desc>
+                </function>
+                <function name="writeIoddMessage">
+                    <trait>released</trait>
+                    <desc>Write configured message to IOLink sensor.</desc>
+                    <param desc="Name of the configured message." multiplicity="1" name="messageName" type="string"/>
+                    <param desc="Data to write to the IOLink device in JSON format." multiplicity="1" name="jsonDataToWrite" type="string"/>
+                    <return desc="Success of writing the message." multiplicity="1" name="success" type="bool"/>
+                </function>
+                <function name="readIoddMessage">
+                    <trait>released</trait>
+                    <desc>Read configured message from IOLink sensor.</desc>
+                    <param desc="Name of the configured message." multiplicity="1" name="messageName" type="string"/>
+                    <return desc="Success of reading the message." multiplicity="1" name="success" type="bool"/>
+                    <return desc="Received message in JSON format." multiplicity="?" name="jsonReceivedData" type="string"/>
+                </function>
+                <function name="readIoddMessageUI">
+                    <trait>released</trait>
+                    <desc>Read configured message from IOLink sensor from UI.</desc>
+                </function>
+                <function name="readParameterByteArray">
+                    <trait>released</trait>
+                    <desc>Read parameter of IOLink sensor as a raw byte array. Might be useful for testing.  If reading failed, returns nil.</desc>
+                    <param desc="Index of the parameter." multiplicity="1" name="index" type="int"/>
+                    <param desc="Subindex of the parameter." multiplicity="1" name="subindex" type="int"/>
+                    <return desc="Received byte array in dec format." multiplicity="*" name="resultByteArray" type="int"/>
+                </function>
+                <function name="readProcessDataByteArrayUI">
+                    <trait>released</trait>
+                    <desc>Read process data of IOLink sensor as a raw byte array to show it in UI.</desc>
+                </function>
+                <function name="writeParameterByteArrayUI">
+                    <trait>released</trait>
+                    <desc>Write parameter to IOLink device as a raw byte array triggered by button in UI.</desc>
+                </function>
+                <function name="writeProcessDataByteArrayUI">
+                    <trait>released</trait>
+                </function>
+                <function name="readProcessData">
+                    <trait>released</trait>
+                    <desc>Read parameter of IOLink sensor in case the IODD description of the parameter is available.</desc>
+                    <return desc="" multiplicity="1" name="readSuccess" type="bool"/>
+                    <return desc="" multiplicity="?" name="readResult" type="string"/>
+                </function>
+                <function name="writeProcessData">
+                    <trait>released</trait>
+                    <desc>Write process data to IOLink sensor in case the IODD description of the parameter is available.</desc>
+                    <param desc="JSON object with data to write to the IOLink device." multiplicity="1" name="jsonDataToWrite" type="string"/>
+                    <return desc="Success of writing." multiplicity="1" name="writeSuccess" type="bool"/>
                 </function>
             </serves>
         </crown>
         <meta key="author">SICK AG</meta>
-        <meta key="version">0.1.0</meta>
+        <meta key="version">1.0.0</meta>
         <meta key="priority">low</meta>
         <meta key="copy-protected">false</meta>
         <meta key="read-protected">false</meta>
         <meta key="crown2-flow-engine">false</meta>
-        <meta key="LuaLoadAllEngineAPI">true</meta>
+        <meta key="LuaLoadAllEngineAPI">false</meta>
         <entry default="CSK_Module_MultiIOLinkSMI.lua" path="scripts"/>
     </application>
 </manifest>
