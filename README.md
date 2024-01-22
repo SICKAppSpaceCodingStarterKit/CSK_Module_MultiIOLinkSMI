@@ -1,7 +1,7 @@
 # CSK_Module_MultiIOLinkSMI
 This CSK module provides an easy access to IOLink functionality of AppSpace controller.
 
-For further information check out the [documentation](https://raw.githack.com/SICKAppSpaceCodingStarterKit/CSK_Module_MultiIOLinkSMI/blob/main/docu/CSK_Module_MultiIOLinkSMI.html) in the folder "docu".
+For further information check out the [documentation](https://raw.githack.com/SICKAppSpaceCodingStarterKit/CSK_Module_MultiIOLinkSMI/main/docu/CSK_Module_MultiIOLinkSMI.html) in the folder "docu".
 
 ## How to Run
 Before setting up communication with IO-Link sensor, the sensor port must be powered using [CSK_Module_PowerManager](https://github.com/SICKAppSpaceCodingStarterKit/CSK_Module_PowerManager).
