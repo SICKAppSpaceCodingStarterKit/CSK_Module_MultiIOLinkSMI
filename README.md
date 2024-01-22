@@ -1,4 +1,4 @@
-# CSK_Module_[MODULENAME]
+# CSK_Module_MultiIOLinkSMI
 ## INFO: Draft version. Not further developed / tested so far! Check for available GitHub forks of this repository to see latest updates.
 
 Module / Application to provide [...] functionality.
@@ -9,14 +9,13 @@ Module / Application to provide [...] functionality.
 ## How to Run
 
 [***...please fill with informations...***]  
-For further information check out the [documentation](https://raw.githack.com/SICKAppSpaceCodingStarterKit/CSK_Module_[MODULENAME]/main/docu/CSK_Module_[MODULENAME].html) in the folder "docu".
+For further information check out the [documentation](https://raw.githack.com/SICKAppSpaceCodingStarterKit/CSK_Module_MultiIOLinkSMI/main/docu/CSK_Module_MultiIOLinkSMI.html) in the folder "docu".
 
 ## Information
 
 Tested on:
-|Device|Firmware|Module version
-|--|--|--|
-|e.g. SICK AppEngine|V1.5.0|V0.1.0|
+[Device] - [firmware]
+...
 
 [***optionally***]
 Following CSK modules are used for this application via Git subtrees and should NOT be further developed within this repository (see [contribution guideline](https://github.com/SICKAppSpaceCodingStarterKit/.github/blob/main/Contribution_Guideline.md) of this GitHub organization):  
@@ -30,4 +29,4 @@ Please check the [documentation](https://github.com/SICKAppSpaceCodingStarterKit
 
 ## Topics
 
-Coding Starter Kit, CSK, Module, SICK-AppSpace, [key_words]
+Coding Starter Kit, CSK, Module, SICK-AppSpace, IO-Link, IODD

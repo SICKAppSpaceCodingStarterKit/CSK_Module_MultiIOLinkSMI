@@ -1,0 +1,187 @@
+<layout-row id="RowLayout1">
+	<layout-column id="ColumnLayout1" style="align-items:stretch">
+		<davinci-value-display id="VD_Info"
+			label="Place your custom features here...">
+		</davinci-value-display>
+	</layout-column>
+	<layout-column id="ColumnLayout2" style="align-items: stretch">
+		<stacked-view id="SV_UserRole">
+			<stacked-pane id="SP_LoginOK" value="true">
+				<layout-row id="RowLayout5">
+					<layout-column id="ColumnLayout7" style="align-items: stretch">
+						<davinci-tabs id="Tabs_Setup" type="modern">
+							<davinci-tab id="Tab_Settings" label="Setup">
+								<layout-row id="RowLayout8">
+									<layout-column id="ColumnLayout9" style="align-items: stretch">
+										<layout-row id="RowLayout11"
+											style="justify-content: space-between; align-items: center">
+											<layout-column id="ColumnLayout33" style="align-items: stretch">
+												<davinci-value-display id="VD_SelectInstance"
+													value="Selected Instance">
+												</davinci-value-display>
+											</layout-column>
+											<layout-column id="ColumnLayout22" style="align-items: stretch">
+												<davinci-drop-down id="DD_SelectInstance">
+												<crown-binding event="change"
+													name="CSK_MultiIOLinkSMI/setSelectedInstance"
+													path="param/args/instance" auto-commit
+													converter="function(value) {return Number(value);}">
+												</crown-binding>
+												<crown-edpws-binding property="value"
+													name="CSK_MultiIOLinkSMI/OnNewSelectedInstance" update-on-resume
+													converter="function(value) {return value.toString();}">
+												</crown-edpws-binding>
+												<crown-edpws-binding property="data"
+													name="CSK_MultiIOLinkSMI/OnNewInstanceList" update-on-resume
+													converter="convertToList">
+												</crown-edpws-binding>
+												</davinci-drop-down>
+											</layout-column>
+										</layout-row>
+										<layout-row id="RowLayout10" style="align-items: center">
+											<layout-column id="ColumnLayout10" style="align-items: stretch">
+												<davinci-value-display id="VD_RegisteredEvent"
+													value="Registered event:">
+												</davinci-value-display>
+											</layout-column>
+											<layout-column id="ColumnLayout11" style="align-items: stretch">
+												<davinci-text-field id="TF_RegisteredEvent" type="text"
+													placeholder="e.g. CSK_ImagePlayer.OnNewImage">
+												<crown-edpws-binding property="value"
+													name="CSK_MultiIOLinkSMI/OnNewStatusRegisteredEvent" update-on-resume>
+												</crown-edpws-binding>
+												<crown-binding event="change" name="CSK_MultiIOLinkSMI/setRegisterEvent"
+													path="param/args/event" auto-commit>
+												</crown-binding>
+												</davinci-text-field>
+											</layout-column>
+										</layout-row>
+										<layout-row id="RowLayout9">
+											<layout-column id="Column_PersistentData"
+												class="myCustomFrame_CSK_Module_MultiIOLinkSMI"
+												style="align-items: stretch">
+												<layout-row id="RowLayout4"
+													style="justify-content: space-between; align-items: center">
+												<layout-column id="ColumnLayout5" style="align-items: stretch">
+												<davinci-value-display id="VD_ParameterName" value="Parameter name:"
+													title="Name of the parameters within the CSK_PersistentData module to be uses for this module.">
+												</davinci-value-display>
+												</layout-column>
+												<layout-column id="ColumnLayout6" style="align-items: stretch">
+												<davinci-text-field id="TF_ParameterName" type="text"
+													title="Name of the parameters within the CSK_PersistentData module to be uses for this module.">
+												<crown-edpws-binding property="value"
+													name="CSK_MultiIOLinkSMI/OnNewParameterName" update-on-resume>
+												</crown-edpws-binding>
+												<crown-binding event="change" name="CSK_MultiIOLinkSMI/setParameterName"
+													path="param/args/name" auto-commit>
+												</crown-binding>
+												<crown-edpws-binding property="disabled"
+													name="CSK_MultiIOLinkSMI/OnPersistentDataModuleAvailable"
+													update-on-resume converter="function(value) {return !value;}">
+												</crown-edpws-binding>
+												</davinci-text-field>
+												</layout-column>
+												</layout-row>
+												<layout-row id="RowLayout2"
+													style="justify-content: space-between; align-items: center">
+												<davinci-value-display id="VD_LoadConfig"
+													value="Load config on app start:"
+													title="Load configured parameters from CSK_PersistentData on app start.">
+												</davinci-value-display>
+												<davinci-checkbox id="CB_LoadConfig"
+													title="Load configured parameters from CSK_PersistentData on app start.">
+												<span></span>
+												<crown-edpws-binding property="checked"
+													name="CSK_MultiIOLinkSMI/OnNewStatusLoadParameterOnReboot"
+													update-on-resume>
+												</crown-edpws-binding>
+												<crown-edpws-binding property="disabled"
+													name="CSK_MultiIOLinkSMI/OnPersistentDataModuleAvailable"
+													update-on-resume converter="function(value) {return !value;}">
+												</crown-edpws-binding>
+												<crown-binding event="change" name="CSK_MultiIOLinkSMI/setLoadOnReboot"
+													path="param/args/status" auto-commit>
+												</crown-binding>
+												</davinci-checkbox>
+												</layout-row>
+												<layout-row id="RowLayout3">
+												<layout-column id="ColumnLayout3" style="align-items: stretch">
+												<davinci-button id="B_LoadConfig" type="primary"
+													icon-position="append"
+													title="Load configured parameters from CSK_PersistentData module.">
+												<span>Load Config</span>
+												<crown-binding event="submit" name="CSK_MultiIOLinkSMI/loadParameters"
+													auto-commit>
+												</crown-binding>
+												<crown-edpws-binding property="disabled"
+													name="CSK_MultiIOLinkSMI/OnPersistentDataModuleAvailable"
+													update-on-resume converter="function(value) {return !value;}">
+												</crown-edpws-binding>
+												</davinci-button>
+												</layout-column>
+												<layout-column id="ColumnLayout4" style="align-items: stretch">
+												<davinci-button id="B_SaveConfig" type="primary"
+													icon-position="append"
+													title="Save current configured parameters of this module within CSK_PersistentData module.">
+												<span>Save Config</span>
+												<crown-binding event="submit" name="CSK_MultiIOLinkSMI/sendParameters"
+													auto-commit>
+												</crown-binding>
+												<crown-edpws-binding property="disabled"
+													name="CSK_MultiIOLinkSMI/OnPersistentDataModuleAvailable"
+													update-on-resume converter="function(value) {return !value;}">
+												</crown-edpws-binding>
+												</davinci-button>
+												</layout-column>
+												</layout-row>
+											</layout-column>
+										</layout-row>
+									</layout-column>
+								</layout-row>
+							</davinci-tab>
+							<davinci-tab id="Tab_Instances" label="Instances">
+								<layout-row id="RowLayout7">
+									<layout-column id="ColumnLayout8" style="align-items: stretch">
+										<davinci-button id="Button_AddInstance" type="primary"
+											icon-position="append">
+											<span>Add instance</span>
+											<crown-binding event="submit" name="CSK_MultiIOLinkSMI/addInstance"
+												auto-commit>
+											</crown-binding>
+										</davinci-button>
+										<davinci-button id="Button_ResetInstances" type="primary"
+											icon-position="append"
+											title="Reset insances to single instance. Reload app after reseting.">
+											<span>Reset instances</span>
+											<crown-binding event="submit" name="CSK_MultiIOLinkSMI/resetInstances"
+												auto-commit>
+											</crown-binding>
+										</davinci-button>
+									</layout-column>
+								</layout-row>
+							</davinci-tab>
+						</davinci-tabs>
+					</layout-column>
+				</layout-row>
+			</stacked-pane>
+			<stacked-pane id="SP_LoginNOK" value="false">
+				<layout-row id="RowLayout6">
+					<davinci-callout id="Callout1" type="info">
+						<span>Please log in via UserManagement module.</span>
+					</davinci-callout>
+				</layout-row>
+			</stacked-pane>
+			<crown-edpws-binding property="value"
+				name="CSK_MultiIOLinkSMI/OnUserLevelOperatorActive" update-on-resume
+				converter="function(value) {return value.toString();}">
+			</crown-edpws-binding>
+		</stacked-view>
+		<stacked-view id="SV_PageCalled">
+			<crown-binding property="value" name="CSK_MultiIOLinkSMI/pageCalled"
+				path="result/data/empty" auto-update="0" update-on-resume>
+			</crown-binding>
+		</stacked-view>
+	</layout-column>
+  
+</layout-row>
