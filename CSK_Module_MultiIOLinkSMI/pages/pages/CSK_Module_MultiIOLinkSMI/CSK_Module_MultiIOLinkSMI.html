@@ -14,7 +14,7 @@
 						</crown-on>
 					</davinci-value-display>
 					<layout-column id="ColumnLayout9" style="align-items: center">
-						<davinci-value-display id="Activate_string" value="Activate">
+						<davinci-value-display id="VD_Static_Activate" value="Activate">
 						</davinci-value-display>
 						<davinci-toggle-switch id="TS_Activate" value="activate">
 							<crown-set event="change"
@@ -68,15 +68,16 @@
 						<layout-column id="ColumnLayout24">
 							<layout-row id="RowLayout16">
 								<stacked-view id="SV_IsNewDeviceDiscovered">
-									<stacked-pane id="SV_NewDeviceIsNOTDiscovered" value="false">
+									<stacked-pane id="SP_NewDeviceIsNOTDiscovered" value="false">
 									</stacked-pane>
-									<stacked-pane id="StackedPane6" value="true">
+									<stacked-pane id="SP_NewDeviceISDiscovered" value="true">
 										<layout-column id="ColumnLayout7">
 											<h6 id="H61_FoundNewDeviceIdentification">
 												Found new device identification
 											</h6>
 											<layout-row id="RowLayout7">
-												<davinci-value-display id="ValueDisplay3" label="Vendor name:">
+												<davinci-value-display id="VD_Static_NewVendorName"
+													label="Vendor name:">
 												</davinci-value-display>
 												<davinci-value-display id="VD_NewDeviceVendorName">
 												<crown-on property="value"
@@ -85,7 +86,7 @@
 												</davinci-value-display>
 											</layout-row>
 											<layout-row id="RowLayout8">
-												<davinci-value-display id="ValueDisplay5" label="Vendor ID:">
+												<davinci-value-display id="VD_Static_NewVendorID" label="Vendor ID:">
 												</davinci-value-display>
 												<davinci-value-display id="VD_NewDeviceVendorId">
 												<crown-on property="value"
@@ -94,7 +95,8 @@
 												</davinci-value-display>
 											</layout-row>
 											<layout-row id="RowLayout9">
-												<davinci-value-display id="ValueDisplay7" label="Vendor text:">
+												<davinci-value-display id="VD_Static_NewVendorText"
+													label="Vendor text:">
 												</davinci-value-display>
 												<davinci-value-display id="VD_NewDeviceVendorText">
 												<crown-on property="value"
@@ -103,7 +105,8 @@
 												</davinci-value-display>
 											</layout-row>
 											<layout-row id="RowLayout12">
-												<davinci-value-display id="ValueDisplay9" label="Product name:">
+												<davinci-value-display id="VD_Static_NewProductName"
+													label="Product name:">
 												</davinci-value-display>
 												<davinci-value-display id="VD_NewDeviceProductName">
 												<crown-on property="value"
@@ -112,7 +115,8 @@
 												</davinci-value-display>
 											</layout-row>
 											<layout-row id="RowLayout13">
-												<davinci-value-display id="ValueDisplay11" label="Product ID:">
+												<davinci-value-display id="VD_Static_NewProductID"
+													label="Product ID:">
 												</davinci-value-display>
 												<davinci-value-display id="VD_NewDeviceProductId">
 												<crown-on property="value"
@@ -121,7 +125,8 @@
 												</davinci-value-display>
 											</layout-row>
 											<layout-row id="RowLayout14">
-												<davinci-value-display id="ValueDisplay13" label="Product text:">
+												<davinci-value-display id="VD_Static_NewProductText"
+													label="Product text:">
 												</davinci-value-display>
 												<davinci-value-display id="VD_NewDeviceProductText">
 												<crown-on property="value"
@@ -130,7 +135,8 @@
 												</davinci-value-display>
 											</layout-row>
 											<layout-row id="RowLayout15">
-												<davinci-value-display id="ValueDisplay15" label="Serial number:">
+												<davinci-value-display id="VD_Static_NewSerialNumber"
+													label="Serial number:">
 												</davinci-value-display>
 												<davinci-value-display id="VD_NewDeviceSerialNumber">
 												<crown-on property="value"
@@ -139,7 +145,8 @@
 												</davinci-value-display>
 											</layout-row>
 											<layout-row id="RowLayout17">
-												<davinci-value-display id="ValueDisplay17" label="Hardware version:">
+												<davinci-value-display id="VD_Static_NewHWVersion"
+													label="Hardware version:">
 												</davinci-value-display>
 												<davinci-value-display id="VD_NewDeviceHardwareVersion">
 												<crown-on property="value"
@@ -148,7 +155,8 @@
 												</davinci-value-display>
 											</layout-row>
 											<layout-row id="RowLayout18">
-												<davinci-value-display id="ValueDisplay19" label="Firmware version:">
+												<davinci-value-display id="VD_Static_NewFWVersion"
+													label="Firmware version:">
 												</davinci-value-display>
 												<davinci-value-display id="VD_NewDeviceFirmwareVersion">
 												<crown-on property="value"
@@ -172,9 +180,11 @@
 									</crown-on>
 								</stacked-view>
 								<layout-column id="ColumnLayout91" style="flex-shrink: 0">
-									<h6 id="Heading612">Saved device identification</h6>
+									<h6 id="H61_SavedDeviceIdentification">
+										Saved device identification
+									</h6>
 									<layout-row id="RowLayout57">
-										<davinci-value-display id="ValueDisplay24" label="Vendor name:"
+										<davinci-value-display id="VD_Static_VendorName" label="Vendor name:"
 											style="width: 200px">
 										</davinci-value-display>
 										<davinci-value-display id="VD_VendorName" style="width: 150px">
@@ -184,7 +194,7 @@
 										</davinci-value-display>
 									</layout-row>
 									<layout-row id="RowLayout58">
-										<davinci-value-display id="ValueDisplay26" label="Vendor ID:"
+										<davinci-value-display id="VD_Static_VendorID" label="Vendor ID:"
 											style="width: 200px">
 										</davinci-value-display>
 										<davinci-value-display id="VD_VendorId">
@@ -194,7 +204,7 @@
 										</davinci-value-display>
 									</layout-row>
 									<layout-row id="RowLayout59">
-										<davinci-value-display id="ValueDisplay28" label="Vendor text:"
+										<davinci-value-display id="VD_Static_VendorText" label="Vendor text:"
 											style="width: 200px">
 										</davinci-value-display>
 										<davinci-value-display id="VD_VendorText">
@@ -204,8 +214,8 @@
 										</davinci-value-display>
 									</layout-row>
 									<layout-row id="RowLayout60">
-										<davinci-value-display id="ValueDisplay30" label="Product name:"
-											style="width: 200px">
+										<davinci-value-display id="VD_Static_ProductName"
+											label="Product name:" style="width: 200px">
 										</davinci-value-display>
 										<davinci-value-display id="VD_ProductName">
 											<crown-on property="value"
@@ -214,7 +224,7 @@
 										</davinci-value-display>
 									</layout-row>
 									<layout-row id="RowLayout61">
-										<davinci-value-display id="ValueDisplay32" label="Product ID:"
+										<davinci-value-display id="VD_Static_ProductID" label="Product ID:"
 											style="width: 200px">
 										</davinci-value-display>
 										<davinci-value-display id="VD_ProductId">
@@ -224,8 +234,8 @@
 										</davinci-value-display>
 									</layout-row>
 									<layout-row id="RowLayout62">
-										<davinci-value-display id="ValueDisplay34" label="Product text:"
-											style="width: 200px">
+										<davinci-value-display id="VD_Static_ProductText"
+											label="Product text:" style="width: 200px">
 										</davinci-value-display>
 										<davinci-value-display id="VD_ProductText">
 											<crown-on property="value"
@@ -234,8 +244,8 @@
 										</davinci-value-display>
 									</layout-row>
 									<layout-row id="RowLayout63">
-										<davinci-value-display id="ValueDisplay36" label="Serial number:"
-											style="width: 200px">
+										<davinci-value-display id="VD_Static_SerialNumber"
+											label="Serial number:" style="width: 200px">
 										</davinci-value-display>
 										<davinci-value-display id="VD_SerialNumber">
 											<crown-on property="value"
@@ -244,8 +254,8 @@
 										</davinci-value-display>
 									</layout-row>
 									<layout-row id="RowLayout64">
-										<davinci-value-display id="ValueDisplay38" label="Hardware version:"
-											style="width: 200px">
+										<davinci-value-display id="VD_Static_HWVersion"
+											label="Hardware version:" style="width: 200px">
 										</davinci-value-display>
 										<davinci-value-display id="VD_HardwareVersion">
 											<crown-on property="value"
@@ -254,8 +264,8 @@
 										</davinci-value-display>
 									</layout-row>
 									<layout-row id="RowLayout65">
-										<davinci-value-display id="ValueDisplay40" label="Firmware version:"
-											style="width: 200px">
+										<davinci-value-display id="VD_Static_FWVersion"
+											label="Firmware version:" style="width: 200px">
 										</davinci-value-display>
 										<davinci-value-display id="VD_FirmwareVersion">
 											<crown-on property="value"
@@ -266,7 +276,7 @@
 								</layout-column>
 								<stacked-view id="SV_isCSKIODDInterpreterAvailable">
 									<stacked-pane id="SP_ModuleIsNOTAvailable" value="false">
-										<davinci-callout id="Callout4" type="warning">
+										<davinci-callout id="C_NoCSKIODDInterpreter" type="warning">
 											<span>
 												No CSK IODD Interpreter module is found in the project. Setting read and write data is not possible.
 											</span>
@@ -276,11 +286,11 @@
 										<stacked-view id="SV_IODDMatchFound">
 											<stacked-pane id="SP_IODDMatchIsNOTFound" value="false">
 												<layout-column id="ColumnLayout14">
-                                                    <davinci-callout id="Callout5" type="warning">
-                                                        <span>
-                                                        Please load IODD file for the device to start setting read and write data.
-                                                        </span>
-                                                    </davinci-callout>
+												<davinci-callout id="C_LoadIODD" type="warning">
+												<span>
+												Please load IODD file for the device to start setting read and write data.
+												</span>
+												</davinci-callout>
                                                     <appspace-file-upload-button id="FUB_IODDUpload" button-type="primary"
                                                         path="public/tempIODD.xml" is-file>
                                                         <span>Upload IODD XML</span>
@@ -297,7 +307,9 @@
 												</stacked-pane>
 												<stacked-pane id="SP_ProcessDataISVariable" value="true">
 												<layout-column id="ColumnLayout13">
-												<h6 id="Heading613">Process data structure</h6>
+												<h6 id="H61_ProcessDataStructure">
+												Process data structure
+												</h6>
 												<davinci-drop-down id="DD_ProcessDataStrictureOptions"
 													label="Process data structure options"
 													title="Select process data structure option. It will be saved and reloaded in case the device is reconnected."
@@ -338,7 +350,7 @@
 								collapsed-title="Test sending/receiving IOLink generic data"
 								expanded-title="Test sending/receiving IOLink generic data">
 								<layout-column id="ColumnLayout25">
-									<davinci-callout id="Callout3" type="info">
+									<davinci-callout id="C_ByteArrayInfo" type="info">
 										<span>
 											The data is represented as byte array of decimal numbers. The elements of the array are separated by comma. E.g.  1,23,123
 										</span>
@@ -474,13 +486,14 @@
 									</crown-set>
 								</davinci-button>
 							</layout-row>
-							<stacked-view id="StackedView2">
+							<stacked-view id="SV_IsReadDataMessageSelected">
 								<crown-on property="value"
 									crown-event="CSK_MultiIOLinkSMI/OnNewStatusIODDReadMessageSelected"
 									converter="bool2str">
 								</crown-on>
-								<stacked-pane id="StackedPane1" value="false"></stacked-pane>
-								<stacked-pane id="StackedPane2" value="true">
+								<stacked-pane id="SP_ReadDataMessageIsNOTSelected" value="false">
+								</stacked-pane>
+								<stacked-pane id="SP_ReadDataMessageISSelected" value="true">
 									<layout-row id="RowLayout22">
 										<layout-column id="ColumnLayout15" style="width: 1000px">
 											<layout-row id="RowLayout23">
@@ -537,7 +550,7 @@
 													crown-event="CSK_MultiIOLinkSMI/OnNewReadMessageEventName">
 												</crown-on>
 											</davinci-value-display>
-											<davinci-callout id="Callout6" type="info">
+											<davinci-callout id="C_ReadMEssageEventInfo" type="info">
 												<span>
 												The event parameters are: read success (bool); read queue size (int); time taken to read message (int); JSON object with message content (string); optional error message (string)
 												</span>
@@ -672,10 +685,10 @@
 									</crown-set>
 								</davinci-button>
 							</layout-row>
-							<stacked-view id="SV_isIODDAvailable">
-								<stacked-pane id="SP_IODDIsNOTAvailable" value="false">
+							<stacked-view id="SV_IsWriteDataMessageSelected">
+								<stacked-pane id="SP_WriteDataMessageIsNOTSelected" value="false">
 								</stacked-pane>
-								<stacked-pane id="SP_IODDISAvailable" value="true">
+								<stacked-pane id="SP_WriteDataMessageISSelected" value="true">
 									<layout-row id="RowLayout25">
 										<layout-column id="ColumnLayout19" style="width: 1000px">
 											<layout-row id="RowLayout26">
@@ -704,7 +717,7 @@
 													crown-event="CSK_MultiIOLinkSMI/OnNewWriteMessageFunctionName">
 												</crown-on>
 											</davinci-value-display>
-											<davinci-callout id="Callout7" type="info">
+											<davinci-callout id="C_WriteMessageFunctionInfo" type="info">
 												<span>
 												The arguments of the function are:
 JSON object with message content (string). The returned values of the function are:
@@ -787,7 +800,7 @@ write success (bool); write queue size (int); time taken to read message (int); 
 													protocol="crownMSGPACK">
 												</crown-set>
 												</davinci-button>
-											</layout-column>
+												</layout-column>
 											</davinci-collapse>
 											<davinci-collapse id="Collapse10" collapsed-title="JSON template"
 												expanded-title="JSON template">
