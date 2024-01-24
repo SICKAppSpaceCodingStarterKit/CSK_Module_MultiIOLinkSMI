@@ -1,4 +1,4 @@
---luacheck: no max line length
+---@diagnostic disable: undefined-global, redundant-parameter, missing-parameter
 --*****************************************************************
 -- Inside of this script, you will find helper functions
 --*****************************************************************
@@ -66,8 +66,9 @@ local function createDynamicTableContent(tableType, inputTable, selectedID)
 end
 funcs.createDynamicTableContent = createDynamicTableContent
 
--- Function to create a list from table
---@createStringListBySize(size:int):string
+--- Function to create a list with numbers
+---@param size int Size of the list
+---@return string list List of numbers
 local function createStringListBySize(size)
   local list = "["
   if size >= 1 then
@@ -109,7 +110,8 @@ local function checkIfKeyListFormArray(keyList)
 end
 
 -- Function to convert a table into a Container object
---@convertTable2Container(data:table):Container
+---@param data auto[] Lua Table to convert to Container
+---@return Container cont Created Container
 local function convertTable2Container(data)
   local cont = Container.create()
   for key, val in pairs(data) do
@@ -126,8 +128,9 @@ local function convertTable2Container(data)
 end
 funcs.convertTable2Container = convertTable2Container
 
--- Function to convert a Container into a table
---@convertContainer2Table(cont:Container):table
+--- Function to convert a Container into a table
+---@param cont Container Container to convert to Lua table
+---@return auto[] data Created Lua table
 local function convertContainer2Table(cont)
   local arrayInside, keyList = checkIfKeyListFormArray(cont:list())
   local tab = {}

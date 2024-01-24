@@ -7,55 +7,54 @@ local nameOfModule = 'CSK_MultiIOLinkSMI'
 local availableAPIs = require('Communication/MultiIOLinkSMI/helper/checkAPIs') -- can be used to adjust function scope of the module related on available APIs of the device
 -------------------------------------------------------------------------------------
 
+--Logger
 _G.logger = Log.SharedLogger.create('ModuleLogger')
 
 local converter = require('Communication/MultiIOLinkSMI/helper/DataConverter')
 local json = require('Communication/MultiIOLinkSMI/helper/Json')
 local helperFuncs = require "Communication.MultiIOLinkSMI.helper.funcs"
 
-local scriptParams = Script.getStartArgument()
-local multiIOLinkSMIInstanceNumber = scriptParams:get('multiIOLinkSMIInstanceNumber')
-local multiIOLinkSMIInstanceNumberString = tostring(multiIOLinkSMIInstanceNumber)
+local scriptParams = Script.getStartArgument() -- Get parameters from model
 
+local multiIOLinkSMIInstanceNumber = scriptParams:get('multiIOLinkSMIInstanceNumber') -- number of this instance
+local multiIOLinkSMIInstanceNumberString = tostring(multiIOLinkSMIInstanceNumber) -- number of this instance as string
 
-local fwdEventName = "MultiIOLinkSMI_OnNewValueToForward" .. multiIOLinkSMIInstanceNumberString
-
+-- Event to notify result of processing
 Script.serveEvent("CSK_MultiIOLinkSMI.OnNewResult" .. multiIOLinkSMIInstanceNumberString, "MultiIOLinkSMI_OnNewResult" .. multiIOLinkSMIInstanceNumberString, 'bool') -- Edit this accordingly
--- Event to forward content from this thread to Controler to show e.g. on UI
-Script.serveEvent("CSK_MultiIOLinkSMI.OnNewValueToForward".. multiIOLinkSMIInstanceNumberString, fwdEventName, 'string, auto')
-
+-- Event to forward content from this thread to Controller to show e.g. on UI
+Script.serveEvent("CSK_MultiIOLinkSMI.OnNewValueToForward".. multiIOLinkSMIInstanceNumberString, "MultiIOLinkSMI_OnNewValueToForward" .. multiIOLinkSMIInstanceNumberString, 'string, auto')
+-- Event to forward update of e.g. parameter update to keep data in sync between threads
 Script.serveEvent("CSK_MultiIOLinkSMI.OnNewValueUpdate" .. multiIOLinkSMIInstanceNumberString, "MultiIOLinkSMI_OnNewValueUpdate" .. multiIOLinkSMIInstanceNumberString, 'int, string, auto, int:?')
 
 local processingParams = {}
 processingParams.SMIhandle = scriptParams:get('SMIhandle')
-processingParams.registeredEvent = scriptParams:get('registeredEvent')
 processingParams.activeInUi = false
 processingParams.name = scriptParams:get('name')
 processingParams.active = scriptParams:get('active')
 processingParams.port = scriptParams:get('port')
 processingParams.showLiveValue = false
 
+local ioddReadMessages = {} -- table with configured read messages
+local ioddReadMessagesTimers = {} -- table with timers for read messages with periodic type
+local ioddReadMessagesRegistrations = {} --  table with local functions registrations of read messages to be able to deregister the events
 
-local ioddReadMessages = {}
-local ioddReadMessagesTimers = {}
-local ioddReadMessagesRegistrations = {}
+local ioddReadMessagesQueue = Script.Queue.create() -- Queue of read messages requests to control the queue overflow
 
-local ioddReadMessagesQueue = Script.Queue.create()
+local ioddLatestReadMessages = {} -- table with latest read messages
+local ioddReadMessagesResults = {} -- table with latest results of reading messages
 
-local ioddLatestReadMessages = {}
-local ioddReadMessagesResults = {}
+local ioddWriteMessages = {} -- table with configured write messages
+local ioddWriteMessagesQueue = Script.Queue.create() -- Queue of write messages requests to control the queue overflow
 
-local ioddWriteMessages = {}
-local ioddWriteMessagesQueue = Script.Queue.create()
-
-local ioddLatesWriteMessages = {}
-local ioddWriteMessagesResults = {}
+local ioddLatesWriteMessages = {} -- table with latest write messages
+local ioddWriteMessagesResults = {} -- table with latest results of writing messages
 
 -------------------------------------------------------------------------------------
 -- Reading process data -------------------------------------------------------------
 -------------------------------------------------------------------------------------
 
---Read process data and check it's validity
+--- Read process data and check it's validity
+---@return binary Raw received process data
 local function readBinaryProcessData()
   local processData = IOLink.SMI.getPDIn(processingParams.SMIhandle, processingParams.port)
   -- Port qualifier definition
@@ -80,7 +79,9 @@ local function readBinaryProcessData()
   return string.sub(processData, 3)
 end
 
---Read process data with provided info from IODD interpreter (as Lua table) and convert it to a meaningful Lua table
+--- Read process data with provided info from IODD interpreter (as Lua table) and convert it to a meaningful Lua table
+---@param dataPointInfo table Table containing process data info from IODD file
+---@return table? convertedResult Interpted read data
 local function readProcessData(dataPointInfo)
   local rawData = readBinaryProcessData()
   if rawData == nil then
@@ -94,8 +95,10 @@ local function readProcessData(dataPointInfo)
   return convertedResult
 end
 
---Read process data with provided info from IODD interpreter (as JSON table) and convert it to a meaningful JSON table
-local function ReadProcessDataIODD(jsonDataPointInfo)
+--- Read process data with provided info from IODD interpreter (as JSON table) and convert it to a meaningful JSON table.
+---@param jsonDataPointInfo string JSON table containing process data info from IODD file
+---@return string? convertedResult JSON table with interpted read data
+local function readProcessDataIODD(jsonDataPointInfo)
   local dataPointInfo = converter.renameDatatype(json.decode(jsonDataPointInfo))
   local readData = readProcessData(dataPointInfo)
   if readData == nil then
@@ -103,13 +106,14 @@ local function ReadProcessDataIODD(jsonDataPointInfo)
   end
   return json.encode(readData)
 end
-Script.serveFunction('CSK_MultiIOLinkSMI.ReadProcessDataIODD' .. multiIOLinkSMIInstanceNumberString, ReadProcessDataIODD, 'string:1:', 'auto:?:')
+Script.serveFunction('CSK_MultiIOLinkSMI.readProcessDataIODD_' .. multiIOLinkSMIInstanceNumberString, readProcessDataIODD, 'string:1:', 'auto:?:')
 
 --Read process data and return it as byte array in IO-Link JSON standard, for example:
 --{
 --  "value":[232,12,1]
 --}
-local function ReadProcessDataByteArray()
+---@return string? byteArrayData JSON array with decimal values
+local function readProcessDataByteArray()
   local rawData = readBinaryProcessData()
   if rawData == nil then
     return nil
@@ -123,13 +127,16 @@ local function ReadProcessDataByteArray()
   end
   return json.encode(resultTable)
 end
-Script.serveFunction('CSK_MultiIOLinkSMI.ReadProcessDataByteArray' .. multiIOLinkSMIInstanceNumberString, ReadProcessDataByteArray, '', 'auto:?:')
+Script.serveFunction('CSK_MultiIOLinkSMI.readProcessDataByteArray_' .. multiIOLinkSMIInstanceNumberString, readProcessDataByteArray, '', 'auto:?:')
 
 -------------------------------------------------------------------------------------
 -- Writing process data -------------------------------------------------------------
 -------------------------------------------------------------------------------------
 
---Write process data and return success of writing
+--- Write process data and return success of writing
+---@param data binary Process data to be written
+---@return bool success Success of writing
+---@return string? details Detailed error if writing is not successful
 local function writeBinaryProcessData(data)
   -- Byte 1= Process data valid
   -- Byte 2= Byte length of data
@@ -144,7 +151,11 @@ local function writeBinaryProcessData(data)
   end
 end
 
---Write process data with provided info from IODD interpreter and data to write (as Lua tables)
+--- Write process data with provided info from IODD interpreter and data to write (as Lua tables)
+---@param dataPointInfo table Table containing process data info from IODD file
+---@param dataToWrite table Table with process data to be written
+---@return bool success Success of writing
+---@return string? details Detailed error if writing is not successful
 local function writeProcessData(dataPointInfo, dataToWrite)
   local success, rawDataToWrite = pcall(converter.getBinaryDataToWrite, dataPointInfo, dataToWrite)
   if not success then
@@ -155,17 +166,24 @@ local function writeProcessData(dataPointInfo, dataToWrite)
 end
 
 --Write process data with provided info from IODD interpreter and data to write (as JSON tables)
-local function WriteProcessDataIODD(jsonDataPointInfo, jsonData)
+---@param jsonDataPointInfo string JSON table containing process data info from IODD file.
+---@param jsonData string JSON table with process data to be written.
+---@return bool success Success of writing.
+---@return string? details Detailed error if writing is not successful.
+local function writeProcessDataIODD(jsonDataPointInfo, jsonData)
   local dataPointInfo = converter.renameDatatype(json.decode(jsonDataPointInfo))
   return writeProcessData(dataPointInfo, json.decode(jsonData))
 end
-Script.serveFunction('CSK_MultiIOLinkSMI.WriteProcessDataIODD' .. multiIOLinkSMIInstanceNumberString, WriteProcessDataIODD, 'string:1:,string:1:', 'bool:1:,string:?:')
+Script.serveFunction('CSK_MultiIOLinkSMI.writeProcessDataIODD_' .. multiIOLinkSMIInstanceNumberString, writeProcessDataIODD, 'string:1:,string:1:', 'bool:1:,string:?:')
 
 --Write process data as byte array in IO-Link JSON standard, for example:
 --{
 --  "value":[232,12,1]
 --}
-local function WriteProcessDataByteArray(jsonData)
+---@param jsonData string JSON byte array with process data to be written.
+---@return bool success Success of writing.
+---@return string? details Detailed error if writing is not successful.
+local function writeProcessDataByteArray(jsonData)
   local data = json.decode(jsonData)
   local binaryDataToWrite = ''
   for _, byte in ipairs(data.value) do
@@ -173,13 +191,16 @@ local function WriteProcessDataByteArray(jsonData)
   end
   return writeBinaryProcessData(binaryDataToWrite)
 end
-Script.serveFunction('CSK_MultiIOLinkSMI.WriteProcessDataByteArray' .. multiIOLinkSMIInstanceNumberString, WriteProcessDataByteArray, 'string:1:', 'bool:1:,string:?:')
+Script.serveFunction('CSK_MultiIOLinkSMI.writeProcessDataByteArray_' .. multiIOLinkSMIInstanceNumberString, writeProcessDataByteArray, 'string:1:', 'bool:1:,string:?:')
 
 -------------------------------------------------------------------------------------
 -- Reading service data (Parameter) -------------------------------------------------
 -------------------------------------------------------------------------------------
 
--- Read parameter with given index and subindex
+--- Read parameter with given index and subindex
+---@param index int Index of the parameter to read
+---@param subindex int Subindex of the parameter to read
+---@return binary? Raw received parameter value
 local function readBinaryServiceData(index, subindex)
   local iolData, returnCode, errorDetails = IOLink.SMI.deviceRead(
     processingParams.SMIhandle,
@@ -194,7 +215,9 @@ local function readBinaryServiceData(index, subindex)
   return iolData
 end
 
---Read parameter with provided info from IODD interpreter (as Lua table) and convert it to a meaningful Lua table
+--- Read parameter with provided info from IODD interpreter (as Lua table) and convert it to a meaningful Lua table
+---@param dataPointInfo table Table containing parameter info from IODD file
+---@return table? convertedResult Interpted parameter value
 local function readParameter(dataPointInfo)
   local rawData = readBinaryServiceData(tonumber(dataPointInfo.index), tonumber(dataPointInfo.subindex))
   if rawData == nil then
@@ -209,7 +232,11 @@ local function readParameter(dataPointInfo)
 end
 
 --Read parameter with provided info from IODD interpreter (as JSON table) and convert it to a meaningful JSON table
-local function ReadParameterIODD(index, subindex, jsonDataPointInfo)
+---@param index auto Index of the parameter.
+---@param subindex auto Subindex of the parameter.
+---@param jsonDataPointInfo string JSON table containing parameter info from IODD file.
+---@return string? jsonData JSON table with interpted parameter value.
+local function readParameterIODD(index, subindex, jsonDataPointInfo)
   local dataPointInfo = converter.renameDatatype(json.decode(jsonDataPointInfo))
   dataPointInfo.index = index
   dataPointInfo.subindex = subindex
@@ -217,15 +244,18 @@ local function ReadParameterIODD(index, subindex, jsonDataPointInfo)
   if readData == nil then
     return nil
   end
-  return json.encode(convertedResult)
+  return json.encode(readData)
 end
-Script.serveFunction('CSK_MultiIOLinkSMI.ReadParameterIODD' .. multiIOLinkSMIInstanceNumberString, ReadParameterIODD, 'auto:1:,auto:1:,string:1:', 'auto:?:')
+Script.serveFunction('CSK_MultiIOLinkSMI.readParameterIODD_' .. multiIOLinkSMIInstanceNumberString, readParameterIODD, 'auto:1:,auto:1:,string:1:', 'string:?:')
 
 --Read paramerter and return it as byte array in IO-Link JSON standard, for example:
 --{
 --  "value":[232,12,1]
 --}
-local function ReadParameterByteArray(index, subindex)
+---@param index auto Index of the parameter.
+---@param subindex auto Subindex of the parameter.
+---@return string? byteArrayData JSON array with decimal values.
+local function readParameterByteArray(index, subindex)
   local rawData = readBinaryServiceData(tonumber(index), tonumber(subindex))
   if rawData == nil then
     return nil
@@ -239,14 +269,18 @@ local function ReadParameterByteArray(index, subindex)
   end
   return json.encode(resultTable)
 end
-Script.serveFunction('CSK_MultiIOLinkSMI.ReadParameterByteArray' .. multiIOLinkSMIInstanceNumberString, ReadParameterByteArray, 'auto:1:,auto:1:', 'auto:?:')
-
+Script.serveFunction('CSK_MultiIOLinkSMI.readParameterByteArray_' .. multiIOLinkSMIInstanceNumberString, readParameterByteArray, 'auto:1:,auto:1:', 'auto:?:')
 
 -------------------------------------------------------------------------------------
 -- Writing service data (Parameter) -------------------------------------------------
 -------------------------------------------------------------------------------------
 
--- Write parameter with given index and subindex
+--- Write parameter with given index and subindex
+---@param index auto Index of the parameter.
+---@param subindex auto Subindex of the parameter.
+---@param binData binary Parameter value to be written
+---@return bool success Success of writing
+---@return string? details Detailed error if writing is not successful
 local function writeBinaryServiceData(index, subindex, binData)
   local l_returnCode, l_detailedError = IOLink.SMI.deviceWrite(
     processingParams.SMIhandle,
@@ -262,39 +296,53 @@ local function writeBinaryServiceData(index, subindex, binData)
   end
 end
 
---Write parameter with provided info from IODD interpreter and data to write (as Lua tables)
-local function writeParameter(dataPointInfo, data)
-  local success, rawDataToWrite = pcall(converter.getBinaryDataToWrite, dataPointInfo, data)
+--- Write parameter with provided info from IODD interpreter and data to write (as Lua tables)
+---@param dataPointInfo table Table containing parameter info from IODD file
+---@param dataToWrite table Table with parameter value to be written
+---@return bool success Success of writing
+---@return string? details Detailed error if writing is not successful
+local function writeParameter(dataPointInfo, dataToWrite)
+  local success, binDataToWrite = pcall(converter.getBinaryDataToWrite, dataPointInfo, dataToWrite)
   if not success then
-    _G.logger:warning(nameOfModule..': failed to convert parameter for writing on port ' .. tostring(processingParams.port) .. ' instancenumber ' .. multiIOLinkSMIInstanceNumberString ..'; datapoint info: ' .. tostring(json.encode(dataPointInfo)) .. '; data: ' .. tostring(json.encode(data)))
+    _G.logger:warning(nameOfModule..': failed to convert parameter for writing on port ' .. tostring(processingParams.port) .. ' instancenumber ' .. multiIOLinkSMIInstanceNumberString ..'; datapoint info: ' .. tostring(json.encode(dataPointInfo)) .. '; data: ' .. tostring(json.encode(dataToWrite)))
     return false, 'failed to convert data'
   end
-  return writeBinaryServiceData(tonumber(dataPointInfo.index), tonumber(dataPointInfo.subindex), rawDataToWrite)
+  return writeBinaryServiceData(tonumber(dataPointInfo.index), tonumber(dataPointInfo.subindex), binDataToWrite)
 end
 
---Write parameter with provided info from IODD interpreter and data to write (as JSON tables)
-local function WriteParameterIODD(index, subindex, jsonDataPointInfo, jsonData)
+--Write parameter with provided info from IODD interpreter and data to write (as JSON tables).
+---@param index auto Index of the parameter.
+---@param subindex auto Subindex of the parameter.
+---@param jsonDataPointInfo string JSON table containing parameter info from IODD file.
+---@param jsonDataToWrite string JSON table with parameter value to be written.
+---@return bool success Success of writing.
+---@return string? details Detailed error if writing is not successful.
+local function writeParameterIODD(index, subindex, jsonDataPointInfo, jsonDataToWrite)
   local dataPointInfo = converter.renameDatatype(json.decode(jsonDataPointInfo))
   dataPointInfo.index = index
   dataPointInfo.subindex = subindex
-  return writeParameter(dataPointInfo, json.decode(jsonData))
+  return writeParameter(dataPointInfo, json.decode(jsonDataToWrite))
 end
-Script.serveFunction('CSK_MultiIOLinkSMI.WriteParameterIODD' .. multiIOLinkSMIInstanceNumberString, WriteParameterIODD, 'auto:1:,auto:1,string:1:,string:1:', 'bool:1:,string:?:')
+Script.serveFunction('CSK_MultiIOLinkSMI.writeParameterIODD_' .. multiIOLinkSMIInstanceNumberString, writeParameterIODD, 'auto:1:,auto:1,string:1:,string:1:', 'bool:1:,string:?:')
 
 --Write parameter as byte array in IO-Link JSON standard, for example:
 --{
 --  "value":[232,12,1]
 --}
-local function WriteParameterByteArray(index, subIndex, jsonData)
-  local data = json.decode(jsonData)
+---@param index auto Index of the parameter.
+---@param subindex auto Subindex of the parameter.
+---@param jsonDataToWrite string JSON byte array with parameter value to be written.
+---@return bool success Success of writing.
+---@return string? details Detailed error if writing is not successful.
+local function writeParameterByteArray(index, subindex, jsonDataToWrite)
+  local dataToWrite = json.decode(jsonDataToWrite)
   local binaryDataToWrite = ''
-  for _, byte in ipairs(data.value) do
+  for _, byte in ipairs(dataToWrite.value) do
     binaryDataToWrite = binaryDataToWrite .. string.pack('I1', byte)
   end
-  return writeBinaryServiceData(tonumber(index), tonumber(subIndex), binaryDataToWrite)
+  return writeBinaryServiceData(tonumber(index), tonumber(subindex), binaryDataToWrite)
 end
-Script.serveFunction('CSK_MultiIOLinkSMI.WriteParameterByteArray' .. multiIOLinkSMIInstanceNumberString, WriteParameterByteArray, 'auto:1:,auto:1:,string:1:', 'bool:1:,string:?:')
-
+Script.serveFunction('CSK_MultiIOLinkSMI.writeParameterByteArray_' .. multiIOLinkSMIInstanceNumberString, writeParameterByteArray, 'auto:1:,auto:1:,string:1:', 'bool:1:,string:?:')
 
 -------------------------------------------------------------------------------------
 -- Preconfigured IODD Messages scope ------------------------------------------------
@@ -303,7 +351,10 @@ Script.serveFunction('CSK_MultiIOLinkSMI.WriteParameterByteArray' .. multiIOLink
 -------------------------------------------------------------------------------------
 
 -- Read preconfigured message
-local function readIoddMessage(messageName)
+---@param messageName string Name of the message to read.
+---@return bool success Success of reading.
+---@return string? jsonMessageContent JSON table with received message content.
+local function readIODDMessage(messageName)
   local success = true
   local messageContent = {}
   local includeDataMode = (ioddReadMessages[messageName].dataInfo.ProcessData and ioddReadMessages[messageName].dataInfo.Parameters)
@@ -346,10 +397,10 @@ local function readIoddMessage(messageName)
   ioddLatestReadMessages[messageName] = jsonMessageContent
   return success, jsonMessageContent
 end
-Script.serveFunction('CSK_MultiIOLinkSMI.readIoddMessage' .. multiIOLinkSMIInstanceNumberString, readIoddMessage, 'string:1:', 'bool:1:,string:?:')
+Script.serveFunction('CSK_MultiIOLinkSMI.readIODDMessage' .. multiIOLinkSMIInstanceNumberString, readIODDMessage, 'string:1:', 'bool:1:,string:?:')
 
--- Update configuration of read messages
-local function updateIoddReadMessages()
+--- Update configuration of read messages
+local function updateIODDReadMessages()
   ioddReadMessagesResults = {}
   ioddLatestReadMessages = {}
   for messageName, ioddReadMessagesTimer in pairs(ioddReadMessagesTimers) do
@@ -389,7 +440,7 @@ local function updateIoddReadMessages()
         return
       end
       local timestamp1 = DateTime.getTimestamp()
-      local success, jsonMessageContent = readIoddMessage(messageName)
+      local success, jsonMessageContent = readIODDMessage(messageName)
       local errorMessage
       local queueSize = ioddReadMessagesQueue:getSize()
       if queueSize > 10 then
@@ -422,7 +473,10 @@ local function updateIoddReadMessages()
   ioddReadMessagesQueue:setFunction(queueFunctions)
 end
 
--- Get the latest result of readinig message
+-- Get the latest result of readinig message.
+---@param messageName string Name of the message to get the latest data about.
+---@return bool? success Latest success of reading.
+---@return string? jsonMessageContent Latest JSON table with received message content.
 local function getReadDataResult(messageName)
   if not ioddReadMessagesResults[messageName] then
     return nil, nil
@@ -434,9 +488,12 @@ Script.serveFunction('CSK_MultiIOLinkSMI.getReadDataResult'.. multiIOLinkSMIInst
 -------------------------------------------------------------------------------------
 -- Write Messages -------------------------------------------------------------------
 -------------------------------------------------------------------------------------
-
--- Write preconfigured message
-local function writeIoddMessage(messageName, jsonDataToWrite)
+-- Write preconfigured message.
+---@param messageName string Name of the message to read.
+---@param jsonDataToWrite string JSON table with message to be written.
+---@return bool success Success of writing.
+---@return string? details Detailed error if writing is not successful.
+local function writeIODDMessage(messageName, jsonDataToWrite)
   local dataToWrite = json.decode(jsonDataToWrite)
   local errorMessage
   local messageWriteSuccess = true
@@ -467,10 +524,10 @@ local function writeIoddMessage(messageName, jsonDataToWrite)
   ioddWriteMessagesResults[messageName] = messageWriteSuccess
   return messageWriteSuccess, errorMessage
 end
-Script.serveFunction('CSK_MultiIOLinkSMI.writeIoddMessage' .. multiIOLinkSMIInstanceNumberString, writeIoddMessage, 'string:1:,string:1:',  'bool:1:,string:?:')
+Script.serveFunction('CSK_MultiIOLinkSMI.writeIODDMessage' .. multiIOLinkSMIInstanceNumberString, writeIODDMessage, 'string:1:,string:1:',  'bool:1:,string:?:')
 
--- Update configuration of write messages
-local function updateIoddWriteMessages()
+--- Update configuration of write messages
+local function updateIODDWriteMessages()
   ioddWriteMessagesResults = {}
   ioddLatesWriteMessages = {}
   for messageName, messageInfo in pairs(ioddWriteMessages) do
@@ -493,7 +550,7 @@ local function updateIoddWriteMessages()
         return false, ioddWriteMessagesQueue:getSize(), 0
       end
       local timestamp1 = DateTime.getTimestamp()
-      local messageWriteSuccess, errorMessage = writeIoddMessage(messageName, jsonDataToWrite)
+      local messageWriteSuccess, errorMessage = writeIODDMessage(messageName, jsonDataToWrite)
       local queueSize = ioddWriteMessagesQueue:getSize()
       if queueSize > 10 then
         _G.logger:warning(nameOfModule..': writing queue is building up, clearing the queue, port ' .. tostring(processingParams.portNumber) .. ' instancenumber ' .. multiIOLinkSMIInstanceNumberString .. '; current queue: ' .. tostring(queueSize))
@@ -513,6 +570,9 @@ local function updateIoddWriteMessages()
 end
 
 -- Get the latest result of writng message
+---@param messageName string Name of the message to get the latest data about.
+---@return bool? success Latest success of writing.
+---@return string? jsonMessageContent JSON table with latest sent message content.
 local function getWriteDataResult(messageName)
   if not ioddWriteMessagesResults[messageName] then
     return nil, nil
@@ -525,7 +585,7 @@ Script.serveFunction('CSK_MultiIOLinkSMI.getWriteDataResult'.. multiIOLinkSMIIns
 -- End of read write data -----------------------------------------------------------
 -------------------------------------------------------------------------------------
 
--- Activate or deactivate instance
+--- Activate or deactivate instance
 local function activateInstance()
   if processingParams.active and processingParams.port and processingParams.port ~= '' then
     local portConfig = IOLink.SMI.PortConfigList.create()
@@ -539,24 +599,21 @@ local function activateInstance()
   Script.sleep(200)
 end
 
--- Function to handle updates of processing parameters
---@handleOnNewProcessingParameter(multiIOLinkSMINo:int,parameter:string,value:auto,internalObjectNo:int)
+--- Function to handle updates of processing parameters from Controller
+---@param multiIOLinkSMINo int Number of instance to update
+---@param parameter string Parameter to update
+---@param value auto Value of parameter to update
+---@param internalObjectNo int? Number of object
 local function handleOnNewProcessingParameter(multiIOLinkSMINo, parameter, value, internalObjectNo)
+
   if multiIOLinkSMINo == multiIOLinkSMIInstanceNumber then -- set parameter only in selected script
     _G.logger:info(nameOfModule .. ": Update parameter '" .. parameter .. "' of multiIOLinkSMIInstanceNo." .. tostring(multiIOLinkSMINo) .. " to value = " .. tostring(value))
-    if parameter == 'registeredEvent' then
-      _G.logger:info(nameOfModule .. ": Register instance " .. multiIOLinkSMIInstanceNumberString .. " on event " .. value)
-      if processingParams.registeredEvent ~= '' then
-        Script.deregister(processingParams.registeredEvent, handleOnNewProcessing)
-      end
-      processingParams.registeredEvent = value
-      Script.register(value, handleOnNewProcessing)
-    elseif parameter == "readMessages" then
+    if parameter == "readMessages" then
       ioddReadMessages = json.decode(value)
-      updateIoddReadMessages()
+      updateIODDReadMessages()
     elseif parameter == "writeMessages" then
       ioddWriteMessages = json.decode(value)
-      updateIoddWriteMessages()
+      updateIODDWriteMessages()
     elseif parameter == 'active' then
       processingParams.active = value
       activateInstance()

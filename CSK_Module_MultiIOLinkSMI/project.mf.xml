@@ -2,8 +2,7 @@
 <manifest>
     <application name="CSK_Module_MultiIOLinkSMI">
         <crown name="CSK_Module_MultiIOLinkSMI">
-            <desc>Auto generated Crown (not needed)</desc>
-            <serves/>
+            <desc>This is an automatically generated CROWN (description not necessary).</desc>
         </crown>
         <crown name="CSK_MultiIOLinkSMI">
             <trait>released</trait>
@@ -46,10 +45,10 @@ The event name is **"CSK_MultiIOLinkSMI.readMessage" .. port .. readMessageName*
 Each write message has its own function to be called externally. +
 The function name is **"CSK_MultiIOLinkSMI.writeMessage" .. port .. writeMessageName** +
 Use following functions to handle messages: +
-- "createIoddReadMessage" and "createIoddWriteMessage" +
-- "setSelectedIoddReadMessage" and "setSelectedIoddWriteMessage" +
-- "setIoddReadMessageName" and "setIoddWriteMessageName" +
-- "deleteIoddReadMessage" and "deleteIoddWriteMessage" +
+- "createIODDReadMessage" and "createIODDWriteMessage" +
+- "setSelectedIODDReadMessage" and "setSelectedIODDWriteMessage" +
+- "setIODDReadMessageName" and "setIODDWriteMessageName" +
+- "deleteIODDReadMessage" and "deleteIODDWriteMessage" +
 **
 5. Direct data reading/writing +
 **
@@ -58,7 +57,7 @@ The following functions can be used for reading or writing data by selected inst
 - "readParameter" and "writeParameter" - to read/write parameters using IODD interpretation at the background +
 - "readProcessDataByteArray" and "writeProcessDataByteArray" - to read/write row byte arrays of process data (no IODD needed) +
 - "readParameterByteArray" and "writeParameterByteArray" - to read/write row byte arrays of parameter (no IODD needed) +
-- "readIoddMessage" and "writeIoddMessage" - to read/write preconfigured messages +
+- "readIODDMessage" and "writeIODDMessage" - to read/write preconfigured messages +
 --- +
 **
 ToDo: +
@@ -70,8 +69,8 @@ ToDo: +
                     <param desc="Status." multiplicity="1" name="status" type="bool"/>
                 </event>
                 <event name="OnPersistentDataModuleAvailable">
-                    <desc>Notify status if features of PersistendData CSK module  are available.</desc>
-                    <param desc="Status." multiplicity="1" name="status" type="bool"/>
+                    <desc>Notify status if features of CSK_PersistentData module are available.</desc>
+                    <param desc="Status" multiplicity="1" name="status" type="bool"/>
                 </event>
                 <event name="OnNewInstanceList">
                     <desc>Event to provide list of created instances</desc>
@@ -79,10 +78,10 @@ ToDo: +
                 </event>
                 <event name="OnNewProcessingParameter">
                     <desc>Event to share processing parameters to the instances.</desc>
-                    <param desc="Number of the instance to receive the parameter" multiplicity="1" name="objectNo" type="int"/>
-                    <param desc="Name of the parameter" multiplicity="1" name="parameter" type="string"/>
-                    <param desc="value of the parameter" multiplicity="1" name="value" type="auto"/>
-                    <param desc="If parameter is for specifici internal used object, its nnumber" multiplicity="?" name="internalObjectNo" type="int"/>
+                    <param desc="Number of the instance to receive the parameter." multiplicity="1" name="objectNo" type="int"/>
+                    <param desc="Name of the parameter." multiplicity="1" name="parameter" type="string"/>
+                    <param desc="Value of the parameter." multiplicity="1" name="value" type="auto"/>
+                    <param desc="If parameter is for specifici internal used object, its number." multiplicity="?" name="internalObjectNo" type="int"/>
                 </event>
                 <event name="OnNewSelectedInstance">
                     <desc>Notify if new instance is selected.</desc>
@@ -93,41 +92,41 @@ ToDo: +
                 </event>
                 <event name="OnNewResultNUM">
                     <desc>Example of dynamically created event to provide result of instance. +
-NUM will be replaced by the number of instance (e.g. "OnNewResult1") +
+NUM will be replaced by the number of instance (e.g. "OnNewResult1"). +
 INFO: Other modules can check via "Script.isServedAsEvent" if event of sepecific instance exists.</desc>
                     <param desc="Result" multiplicity="1" name="result" type="bool"/>
                 </event>
                 <event name="OnNewParameterName">
-                    <desc>Notify name of persistent data parameter</desc>
+                    <desc>Notify name of persistent data parameter.</desc>
                     <param desc="Parameter name" multiplicity="1" name="name" type="string"/>
                 </event>
                 <event name="OnUserLevelOperatorActive">
                     <desc>Status of Operator userlevel. Used internally in combination with the CSK_UserManagement module if available.</desc>
-                    <param desc="Status of Operator userlevel." multiplicity="1" name="status" type="bool"/>
+                    <param desc="Status" multiplicity="1" name="status" type="bool"/>
                 </event>
                 <event name="OnUserLevelMaintenanceActive">
                     <desc>Status of Maintenance userlevel. Used internally in combination with the CSK_UserManagement module if available.</desc>
-                    <param desc="Status of Maintenance userlevel." multiplicity="1" name="status" type="bool"/>
+                    <param desc="Status" multiplicity="1" name="status" type="bool"/>
                 </event>
                 <event name="OnUserLevelServiceActive">
                     <desc>Status of Service userlevel. Used internally in combination with the CSK_UserManagement module if available.</desc>
-                    <param desc="Status of Service userlevel" multiplicity="1" name="status" type="bool"/>
+                    <param desc="Status" multiplicity="1" name="status" type="bool"/>
                 </event>
                 <event name="OnUserLevelAdminActive">
                     <desc>Status of Admin userlevel. Used internally in combination with the CSK_UserManagement module if available.</desc>
-                    <param desc="Status." multiplicity="1" name="status" type="bool"/>
+                    <param desc="Status" multiplicity="1" name="status" type="bool"/>
                 </event>
                 <event name="OnNewValueUpdateNUM">
-                    <desc>Example of dynamically created event to sync paramters between instance threads and Controller part of app. +
-NUM will be replaced by the number of instance (e.g. "OnNewResult1") +</desc>
+                    <desc>Example of dynamically created event to sync paramters between instance threads and Controller part of module. +
+NUM will be replaced by the number of instance (e.g. "OnNewResult1"). +</desc>
                     <param desc="Instance new value is coming from." multiplicity="1" name="instance" type="int"/>
-                    <param desc="Name of the paramter to update/sync" multiplicity="1" name="parameter" type="string"/>
-                    <param desc="Value to update" multiplicity="1" name="value" type="auto"/>
+                    <param desc="Name of the paramter to update/sync." multiplicity="1" name="parameter" type="string"/>
+                    <param desc="Value to update." multiplicity="1" name="value" type="auto"/>
                     <param desc="Optionally if internal parameter should be used for internal objects." multiplicity="?" name="selectedObject" type="int"/>
                 </event>
                 <event name="OnNewValueToForwardNUM">
-                    <desc>Example of dynamically created event to forward data from instance thread to Controler app, e.g. to forward values to UI. +
-NUM will be replaced by the number of instance (e.g. "OnNewResult1")+</desc>
+                    <desc>Example of dynamically created event to forward data from instance thread to Controller part of module, e.g. to forward values to UI. +
+NUM will be replaced by the number of instance (e.g. "OnNewValueToForward1"). +</desc>
                     <param desc="Eventname to use to forward value." multiplicity="1" name="eventname" type="string"/>
                     <param desc="Value to forward." multiplicity="1" name="value" type="auto"/>
                 </event>
@@ -135,7 +134,7 @@ NUM will be replaced by the number of instance (e.g. "OnNewResult1")+</desc>
                     <desc>Event to show selected IOLink port in UI.</desc>
                     <param desc="Port." multiplicity="1" name="Port" type="string"/>
                 </event>
-                <event name="isInstanceActive">
+                <event name="OnNewStatusInstanceActive">
                     <desc>Notify if instance is activated.</desc>
                     <param desc="State of instance." multiplicity="1" name="status" type="bool"/>
                 </event>
@@ -262,8 +261,9 @@ NUM will be replaced by the number of instance (e.g. "OnNewResult1")+</desc>
                     <desc>Event to show selected IOLink procecss data option of connected device in UI.</desc>
                     <param desc="Selected variant of process data structure." multiplicity="1" name="condition" type="string"/>
                 </event>
-                <event name="isProcessDataVariable">
+                <event name="OnNewStatusProcessDataVariable">
                     <trait>released</trait>
+                    <desc>--TODO</desc>
                     <param desc="" multiplicity="1" name="state" type="bool"/>
                 </event>
                 <event name="OnNewPortStatus">
@@ -271,7 +271,7 @@ NUM will be replaced by the number of instance (e.g. "OnNewResult1")+</desc>
                     <desc>Event to show current port status of selected IOLink port in UI.</desc>
                     <param desc="Status of the port." multiplicity="1" name="postStatus" type="string"/>
                 </event>
-                <event name="IsNewDeviceFound">
+                <event name="OnNewStatusNewDeviceFound">
                     <trait>released</trait>
                     <desc>Event to notify if there is a new device discovered on selected port. Used to show settings in UI.</desc>
                     <param desc="" multiplicity="1" name="state" type="bool"/>
@@ -281,22 +281,22 @@ NUM will be replaced by the number of instance (e.g. "OnNewResult1")+</desc>
                     <desc>Notify to show selected tab.</desc>
                     <param desc="Tab ID." multiplicity="1" name="tabNumber" type="int"/>
                 </event>
-                <event name="OnNewSelectedIoddReadMessage">
+                <event name="OnNewSelectedIODDReadMessage">
                     <trait>released</trait>
                     <desc>Event to show selected read message.</desc>
                     <param desc="Name of the read message." multiplicity="1" name="messageName" type="string"/>
                 </event>
-                <event name="OnNewSelectedIoddWriteMessage">
+                <event name="OnNewSelectedIODDWriteMessage">
                     <trait>released</trait>
                     <desc>Event to show selected write message.</desc>
                     <param desc="Name of the write message." multiplicity="1" name="messageName" type="string"/>
                 </event>
-                <event name="OnNewListIoddReadMessages">
+                <event name="OnNewListIODDReadMessages">
                     <trait>released</trait>
                     <desc>Event to provide list of created read messages.</desc>
                     <param desc="List of created read messages." multiplicity="1" name="jsonList" type="string"/>
                 </event>
-                <event name="OnNewListIoddWriteMessages">
+                <event name="OnNewListIODDWriteMessages">
                     <trait>released</trait>
                     <desc>Event to provide list of created write messages.</desc>
                     <param desc="List of created write messages." multiplicity="1" name="jsonList" type="string"/>
@@ -358,27 +358,27 @@ NUM will be replaced by the number of instance (e.g. "OnNewResult1")+</desc>
                     <param desc="Instance ID." multiplicity="1" name="instance" type="int"/>
                     <param desc="JSON object containing all parameters of the instance." multiplicity="1" name="jsonInstanceParameters" type="string"/>
                 </event>
-                <event name="isIoddReadMessageSelected">
+                <event name="OnNewStatusIODDReadMessageSelected">
                     <trait>released</trait>
                     <desc>Event to inform if the read message is selected in UI. Used to show settings in UI.</desc>
                     <param desc="True if selected." multiplicity="1" name="isSelected" type="bool"/>
                 </event>
-                <event name="isIoddWriteMessageSelected">
+                <event name="OnNewStatusIODDWriteMessageSelected">
                     <trait>released</trait>
                     <desc>Event to inform if the write message is selected in UI. Used to show settings in UI.</desc>
                     <param desc="True if selected." multiplicity="1" name="isSelected" type="bool"/>
                 </event>
-                <event name="OnNewTestWriteIoddMessage">
+                <event name="OnNewTestWriteIODDMessage">
                     <trait>released</trait>
                     <desc>Event to show the edited JSON payload of write message be sent to IOLink device for testing purposes.</desc>
-                    <param desc="JSON payload which must have the same structure as JSON template of configured write message." multiplicity="1" name="testWriteIoddMessage" type="string"/>
+                    <param desc="JSON payload which must have the same structure as JSON template of configured write message." multiplicity="1" name="testWriteIODDMessage" type="string"/>
                 </event>
-                <event name="isCskIoddInterpreterAvailable">
+                <event name="OnNewStatusCSKIODDInterpreterAvailable">
                     <trait>released</trait>
                     <desc>Event to show if there is available CSK IODD interpreter in the project.</desc>
                     <param desc="True if available." multiplicity="1" name="isAvailable" type="bool"/>
                 </event>
-                <event name="isIoddMatchFound">
+                <event name="OnNewStatusIODDMatchFound">
                     <trait>released</trait>
                     <desc>Event to notify if there is a matching IODD file found by IODD interpreter module.</desc>
                     <param desc="True if the match is found." multiplicity="1" name="isFound" type="bool"/>
@@ -394,17 +394,17 @@ NUM will be replaced by the number of instance (e.g. "OnNewResult1")+</desc>
                     <param desc="Name of the function." multiplicity="1" name="functionName" type="string"/>
                 </event>
                 <function name="setParameterName">
-                    <desc>Function to set the name of the parameters if saved/loaded via the "PersistentData" CSK-module</desc>
+                    <desc>Function to set the name of the parameters if saved/loaded via the CSK_PersistentData module.</desc>
                     <param desc="Name of the parameter" multiplicity="1" name="name" type="string"/>
                 </function>
                 <function name="sendParameters">
-                    <desc>Send parameters to PersistentData CSK module if possible to save them</desc>
+                    <desc>Send parameters to CSK_PersistentData module if possible to save them.</desc>
                 </function>
                 <function name="loadParameters">
-                    <desc>Load parameters for this module from the PersistentData CSK-module if possible and use them</desc>
+                    <desc>Load parameters for this module from the CSK_PersistentData module if possible and use them.</desc>
                 </function>
                 <function name="setLoadOnReboot">
-                    <desc>Configure if this module should load its saved parameters at app- / device- boot up</desc>
+                    <desc>Configure if this module should load its saved parameters at app/ device boot up.</desc>
                     <param desc="Set status" multiplicity="1" name="status" type="bool"/>
                 </function>
                 <function name="pageCalled">
@@ -416,15 +416,15 @@ NUM will be replaced by the number of instance (e.g. "OnNewResult1")+</desc>
                     <param desc="Instance to select." multiplicity="1" name="instance" type="int"/>
                 </function>
                 <function name="getInstancesAmount">
-                    <desc>Get the amount of created instances of this module</desc>
+                    <desc>Get the amount of created instances of this module.</desc>
                     <return desc="Amount of created instances." multiplicity="1" name="amount" type="int"/>
                 </function>
                 <function name="addInstance">
                     <desc>Function to add an additional instance.</desc>
                 </function>
                 <function name="resetInstances">
-                    <desc>Function to reset instances to one single instance.
-IMPORTANT: As instances start their own threads, the module needs to be restarted if new instances are needed... (see AppEngine docu for "Script.startScript")</desc>
+                    <desc>Function to reset instances to one single instance. +
+IMPORTANT: As instances start their own threads, the module needs to be restarted if new instances are needed... (see AppEngine docu for "Script.startScript").</desc>
                 </function>
                 <function name="activateInstance">
                     <desc>Activate or deactivate the instance.</desc>
@@ -540,38 +540,38 @@ IMPORTANT: As instances start their own threads, the module needs to be restarte
                     <desc>Select tab in UI.</desc>
                     <param desc="ID of the tab." multiplicity="1" name="tabNumber" type="int"/>
                 </function>
-                <function name="createIoddReadMessage">
+                <function name="createIODDReadMessage">
                     <trait>released</trait>
                     <desc>Create a new data set to read from device with the help of IODD interpreter.</desc>
                 </function>
-                <function name="createIoddWriteMessage">
+                <function name="createIODDWriteMessage">
                     <trait>released</trait>
                     <desc>Create a new data set to write to device with the help of IODD interpreter.</desc>
                 </function>
-                <function name="deleteIoddReadMessage">
+                <function name="deleteIODDReadMessage">
                     <trait>released</trait>
                     <desc>Delete created data set.</desc>
                 </function>
-                <function name="deleteIoddWriteMessage">
+                <function name="deleteIODDWriteMessage">
                     <trait>released</trait>
                     <desc>Delete created data set.</desc>
                 </function>
-                <function name="setSelectedIoddReadMessage">
+                <function name="setSelectedIODDReadMessage">
                     <trait>released</trait>
                     <desc>Select a read message to edit.</desc>
                     <param desc="Name of the message." multiplicity="1" name="newSelectedMessage" type="string"/>
                 </function>
-                <function name="setSelectedIoddWriteMessage">
+                <function name="setSelectedIODDWriteMessage">
                     <trait>released</trait>
                     <desc>Select a write message to edit.</desc>
                     <param desc="Name of the message." multiplicity="1" name="newSelectedMessage" type="string"/>
                 </function>
-                <function name="setIoddReadMessageName">
+                <function name="setIODDReadMessageName">
                     <trait>released</trait>
                     <desc>Set title of the message to read from IOLink device.</desc>
                     <param desc="New name." multiplicity="1" name="newName" type="string"/>
                 </function>
-                <function name="setIoddWriteMessageName">
+                <function name="setIODDWriteMessageName">
                     <trait>released</trait>
                     <desc>Set title of the message to write to IOLink device.</desc>
                     <param desc="New name." multiplicity="1" name="newName" type="string"/>
@@ -661,30 +661,30 @@ IMPORTANT: As instances start their own threads, the module needs to be restarte
                     <return desc="Success of writing." multiplicity="1" name="success" type="bool"/>
                     <return desc="Optional error description if writing failed." multiplicity="?" name="errorDescription" type="string"/>
                 </function>
-                <function name="setTestWriteIoddMessage">
+                <function name="setTestWriteIODDMessage">
                     <trait>released</trait>
                     <desc>Set JSON content of message to write to device. The content must have the same format as JSON template of the selected message (template is generated based on selected paramters/process data).</desc>
-                    <param desc="JSON data to write to the device." multiplicity="1" name="newTestWriteIoddMessage" type="string"/>
+                    <param desc="JSON data to write to the device." multiplicity="1" name="newTestWriteIODDMessage" type="string"/>
                 </function>
-                <function name="writeIoddMessageFromUI">
+                <function name="writeIODDMessageFromUI">
                     <trait>released</trait>
                     <desc>Write configured message to IOLink sensor from UI.</desc>
                 </function>
-                <function name="writeIoddMessage">
+                <function name="writeIODDMessage">
                     <trait>released</trait>
                     <desc>Write configured message to IOLink sensor.</desc>
                     <param desc="Name of the configured message." multiplicity="1" name="messageName" type="string"/>
                     <param desc="Data to write to the IOLink device in JSON format." multiplicity="1" name="jsonDataToWrite" type="string"/>
                     <return desc="Success of writing the message." multiplicity="1" name="success" type="bool"/>
                 </function>
-                <function name="readIoddMessage">
+                <function name="readIODDMessage">
                     <trait>released</trait>
                     <desc>Read configured message from IOLink sensor.</desc>
                     <param desc="Name of the configured message." multiplicity="1" name="messageName" type="string"/>
                     <return desc="Success of reading the message." multiplicity="1" name="success" type="bool"/>
                     <return desc="Received message in JSON format." multiplicity="?" name="jsonReceivedData" type="string"/>
                 </function>
-                <function name="readIoddMessageUI">
+                <function name="readIODDMessageUI">
                     <trait>released</trait>
                     <desc>Read configured message from IOLink sensor from UI.</desc>
                 </function>
@@ -717,6 +717,128 @@ IMPORTANT: As instances start their own threads, the module needs to be restarte
                     <desc>Write process data to IOLink sensor in case the IODD description of the parameter is available.</desc>
                     <param desc="JSON object with data to write to the IOLink device." multiplicity="1" name="jsonDataToWrite" type="string"/>
                     <return desc="Success of writing." multiplicity="1" name="writeSuccess" type="bool"/>
+                </function>
+                <function name="readProcessDataIODD_NUM">
+                    <trait>released</trait>
+                    <desc>Read process data with provided info from IODD interpreter (as JSON table) and convert it to a meaningful JSON table. +
+NUM will be replaced by the number of instance (e.g. "readProcessDataIODD_1").</desc>
+                    <param desc="JSON table containing process data info from IODD file" multiplicity="1" name="jsonDataPointInfo" type="string"/>
+                    <return desc="JSON table with interpted read data" multiplicity="?" name="convertedResult" type="string"/>
+                </function>
+                <function name="readProcessDataByteArray_NUM">
+                    <trait>released</trait>
+                    <desc>Read process data and return it as byte array in IO-Link JSON standard, for example: +
+{ +
+  "value":[232,12,1] +
+} +
+NUM will be replaced by the number of instance (e.g. "readProcessDataByteArray_1").</desc>
+                    <return desc="JSON array with decimal values" multiplicity="?" name="byteArrayData" type="string"/>
+                </function>
+                <function name="writeProcessDataIODD_NUM">
+                    <trait>released</trait>
+                    <desc>Write process data with provided info from IODD interpreter and data to write (as JSON tables). +
+NUM will be replaced by the number of instance (e.g. "writeProcessDataIODD_1").
+</desc>
+                    <param desc="JSON table containing process data info from IODD file." multiplicity="1" name="jsonDataPointInfo" type="string"/>
+                    <param desc="JSON table with process data to be written." multiplicity="1" name="jsonData" type="string"/>
+                    <return desc="Success of writing." multiplicity="1" name="success" type="bool"/>
+                    <return desc="Detailed error if writing is not successful." multiplicity="?" name="details" type="string"/>
+                </function>
+                <function name="writeProcessDataByteArray_NUM">
+                    <trait>released</trait>
+                    <desc>Write process data as byte array in IO-Link JSON standard, for example: +
+{ +
+  "value":[232,12,1] +
+} +
+NUM will be replaced by the number of instance (e.g. "writeProcessDataByteArray_1"). +</desc>
+                    <param desc="JSON byte array with process data to be written." multiplicity="1" name="jsonData" type="string"/>
+                    <return desc="Success of writing." multiplicity="1" name="success" type="bool"/>
+                    <return desc="Detailed error if writing is not successful." multiplicity="?" name="details" type="string"/>
+                </function>
+                <function name="readParameterIODD_NUM">
+                    <trait>released</trait>
+                    <desc>Read parameter with provided info from IODD interpreter (as JSON table) and convert it to a meaningful JSON table. +
+NUM will be replaced by the number of instance (e.g. "readParameterIODD_1"). +
+
+</desc>
+                    <param desc="Index of the parameter." multiplicity="1" name="index" type="auto"/>
+                    <param desc="Subindex of the parameter." multiplicity="1" name="subindex" type="auto"/>
+                    <param desc="JSON table containing parameter info from IODD file." multiplicity="1" name="jsonDataPointInfo" type="string"/>
+                    <return desc="JSON table with interpted parameter value." multiplicity="?" name="jsonData" type="string"/>
+                </function>
+                <function name="readParameterByteArray_NUM">
+                    <trait>released</trait>
+                    <desc>Read paramerter and return it as byte array in IO-Link JSON standard, for example: +
+{ +
+  "value":[232,12,1] +
+} +
+NUM will be replaced by the number of instance (e.g. "readParameterByteArray_1").
+</desc>
+                    <param desc="Index of the parameter." multiplicity="1" name="index" type="auto"/>
+                    <param desc="Subindex of the parameter." multiplicity="1" name="subindex" type="auto"/>
+                    <return desc="JSON array with decimal values." multiplicity="?" name="byteArrayData" type="string"/>
+                </function>
+                <function name="writeParameterIODD_NUM">
+                    <trait>released</trait>
+                    <desc>Write parameter with provided info from IODD interpreter and data to write (as JSON tables). +
+NUM will be replaced by the number of instance (e.g. "writeParameterIODD_1").</desc>
+                    <param desc="Index of the parameter." multiplicity="1" name="index" type="auto"/>
+                    <param desc="Subindex of the parameter." multiplicity="1" name="subindex" type="auto"/>
+                    <param desc="JSON table containing parameter info from IODD file." multiplicity="1" name="jsonDataPointInfo" type="string"/>
+                    <param desc="JSON table with parameter value to be written." multiplicity="1" name="jsonDataToWrite" type="string"/>
+                    <return desc="Success of writing." multiplicity="1" name="success" type="bool"/>
+                    <return desc="Detailed error if writing is not successful" multiplicity="?" name="details" type="string"/>
+                </function>
+                <function name="writeParameterByteArray_NUM">
+                    <trait>released</trait>
+                    <desc>Write parameter as byte array in IO-Link JSON standard, for example: +
+{ +
+  "value":[232,12,1] +
+} +
+NUM will be replaced by the number of instance (e.g. "writeParameterByteArray_1").
+</desc>
+                    <param desc="Index of the parameter." multiplicity="1" name="index" type="auto"/>
+                    <param desc="Subindex of the parameter." multiplicity="1" name="subindex" type="auto"/>
+                    <param desc="JSON byte array with parameter value to be written." multiplicity="1" name="jsonDataToWrite" type="string"/>
+                    <return desc="Success of writing." multiplicity="1" name="success" type="int"/>
+                    <return desc="Detailed error if writing is not successful." multiplicity="?" name="details" type="string"/>
+                </function>
+                <function name="readIODDMessageNUM">
+                    <trait>released</trait>
+                    <desc>Read preconfigured message. +
+NUM will be replaced by the number of instance (e.g. "readIODDMessage1").
+</desc>
+                    <param desc="Name of the message to read." multiplicity="1" name="messageName" type="string"/>
+                    <return desc="Success of reading." multiplicity="1" name="success" type="bool"/>
+                    <return desc="JSON table with received message content." multiplicity="?" name="jsonMessageContent" type="string"/>
+                </function>
+                <function name="getReadDataResultNUM">
+                    <trait>released</trait>
+                    <desc> Get the latest result of readinig message. +
+NUM will be replaced by the number of instance (e.g. "OnNewResult1"). +
+--</desc>
+                    <param desc="Name of the message to get the latest data about." multiplicity="1" name="messageName" type="string"/>
+                    <return desc="Latest success of reading." multiplicity="?" name="latestSuccess" type="bool"/>
+                    <return desc="Latest JSON table with received message content." multiplicity="?" name="jsonMessageContent" type="string"/>
+                </function>
+                <function name="writeIODDMessageNUM">
+                    <trait>released</trait>
+                    <desc>Write preconfigured message. +
+NUM will be replaced by the number of instance (e.g. "OnNewResult1").
+</desc>
+                    <param desc="Name of the message to read." multiplicity="1" name="messageName" type="string"/>
+                    <param desc="JSON table with message to be written." multiplicity="1" name="jsonDataToWrite" type="string"/>
+                    <return desc="Success of writing." multiplicity="1" name="success" type="bool"/>
+                    <return desc="Detailed error if writing is not successful." multiplicity="?" name="details" type="string"/>
+                </function>
+                <function name="getWriteDataResultNUM">
+                    <trait>released</trait>
+                    <desc>Get the latest result of writng message +
+NUM will be replaced by the number of instance (e.g. "OnNewResult1").
+</desc>
+                    <param desc="Name of the message to get the latest data about." multiplicity="1" name="messageName" type="string"/>
+                    <return desc="Latest success of writing." multiplicity="1" name="success" type="bool"/>
+                    <return desc="JSON table with latest sent message content." multiplicity="?" name="jsonMessageContent" type="string"/>
                 </function>
             </serves>
         </crown>

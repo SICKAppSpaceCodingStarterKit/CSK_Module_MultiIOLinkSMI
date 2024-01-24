@@ -22,7 +22,7 @@
 								protocol="crownMSGPACK" crown-path="status">
 							</crown-set>
 							<crown-on property="checked"
-								crown-event="CSK_MultiIOLinkSMI/isInstanceActive">
+								crown-event="CSK_MultiIOLinkSMI/OnNewStatusInstanceActive">
 							</crown-on>
 						</davinci-toggle-switch>
 					</layout-column>
@@ -167,7 +167,7 @@
 										</layout-column>
 									</stacked-pane>
 									<crown-on property="value"
-										crown-event="CSK_MultiIOLinkSMI/IsNewDeviceFound"
+										crown-event="CSK_MultiIOLinkSMI/OnNewStatusNewDeviceFound"
 										converter="bool2str">
 									</crown-on>
 								</stacked-view>
@@ -264,7 +264,7 @@
 										</davinci-value-display>
 									</layout-row>
 								</layout-column>
-								<stacked-view id="SV_isCskIoddInterpreterAvailable">
+								<stacked-view id="SV_isCSKIODDInterpreterAvailable">
 									<stacked-pane id="SP_ModuleIsNOTAvailable" value="false">
 										<davinci-callout id="Callout4" type="warning">
 											<span>
@@ -273,16 +273,16 @@
 										</davinci-callout>
 									</stacked-pane>
 									<stacked-pane id="SP_ModuleISAavailable" value="true">
-										<stacked-view id="SV_isIoddMatchFound">
-											<stacked-pane id="SP_IoddMatchIsNOTFound" value="false">
+										<stacked-view id="SV_IODDMatchFound">
+											<stacked-pane id="SP_IODDMatchIsNOTFound" value="false">
 												<layout-column id="ColumnLayout14">
                                                     <davinci-callout id="Callout5" type="warning">
                                                         <span>
                                                         Please load IODD file for the device to start setting read and write data.
                                                         </span>
                                                     </davinci-callout>
-                                                    <appspace-file-upload-button id="FUB_IoddUpload" button-type="primary"
-                                                        path="public/tempIodd.xml" is-file>
+                                                    <appspace-file-upload-button id="FUB_IODDUpload" button-type="primary"
+                                                        path="public/tempIODD.xml" is-file>
                                                         <span>Upload IODD XML</span>
                                                         <crown-binding event="finished"
                                                             name="CSK_IODDInterpreter/uploadFinished"
@@ -291,7 +291,7 @@
                                                     </appspace-file-upload-button>
 											    </layout-column>
 											</stacked-pane>
-											<stacked-pane id="SP_IoddMatchIsFound" value="true">
+											<stacked-pane id="SP_IODDMatchIsFound" value="true">
 												<stacked-view id="SV_IsProcessDataVariable">
 												<stacked-pane id="SP_ProcessDataisNOTVariable" value="false">
 												</stacked-pane>
@@ -317,19 +317,19 @@
 												</layout-column>
 												</stacked-pane>
 												<crown-on property="value"
-													crown-event="CSK_MultiIOLinkSMI/isProcessDataVariable"
+													crown-event="CSK_MultiIOLinkSMI/OnNewStatusProcessDataVariable"
 													converter="bool2str">
 												</crown-on>
 												</stacked-view>
 											</stacked-pane>
 											<crown-on property="value"
-												crown-event="CSK_MultiIOLinkSMI/isIoddMatchFound"
+												crown-event="CSK_MultiIOLinkSMI/OnNewStatusIODDMatchFound"
 												converter="bool2str">
 											</crown-on>
 										</stacked-view>
 									</stacked-pane>
 									<crown-on property="value"
-										crown-event="CSK_MultiIOLinkSMI/isCskIoddInterpreterAvailable"
+										crown-event="CSK_MultiIOLinkSMI/OnNewStatusCSKIODDInterpreterAvailable"
 										converter="bool2str">
 									</crown-on>
 								</stacked-view>
@@ -453,14 +453,14 @@
 								<davinci-drop-down id="DD_SelectedReadMessage"
 									label="Select message to edit" style="width: 200px">
 									<crown-on property="data"
-										crown-event="CSK_MultiIOLinkSMI/OnNewListIoddReadMessages"
+										crown-event="CSK_MultiIOLinkSMI/OnNewListIODDReadMessages"
 										converter="convertToList">
 									</crown-on>
 									<crown-on property="value"
-										crown-event="CSK_MultiIOLinkSMI/OnNewSelectedIoddReadMessage">
+										crown-event="CSK_MultiIOLinkSMI/OnNewSelectedIODDReadMessage">
 									</crown-on>
 									<crown-set event="change"
-										crown-function="CSK_MultiIOLinkSMI/setSelectedIoddReadMessage"
+										crown-function="CSK_MultiIOLinkSMI/setSelectedIODDReadMessage"
 										protocol="crownMSGPACK" crown-path="newSelectedMessage">
 									</crown-set>
 								</davinci-drop-down>
@@ -469,14 +469,14 @@
 									style="width: 200px">
 									<span>Create new message</span>
 									<crown-set event="submit"
-										crown-function="CSK_MultiIOLinkSMI/createIoddReadMessage"
+										crown-function="CSK_MultiIOLinkSMI/createIODDReadMessage"
 										protocol="crownMSGPACK">
 									</crown-set>
 								</davinci-button>
 							</layout-row>
 							<stacked-view id="StackedView2">
 								<crown-on property="value"
-									crown-event="CSK_MultiIOLinkSMI/isIoddReadMessageSelected"
+									crown-event="CSK_MultiIOLinkSMI/OnNewStatusIODDReadMessageSelected"
 									converter="bool2str">
 								</crown-on>
 								<stacked-pane id="StackedPane1" value="false"></stacked-pane>
@@ -487,10 +487,10 @@
 												<davinci-text-field id="TF_ReadMessageName" type="text"
 													label="Message title" style="width: 200px">
 												<crown-on property="value"
-													crown-event="CSK_MultiIOLinkSMI/OnNewSelectedIoddReadMessage">
+													crown-event="CSK_MultiIOLinkSMI/OnNewSelectedIODDReadMessage">
 												</crown-on>
 												<crown-set event="change"
-													crown-function="CSK_MultiIOLinkSMI/setIoddReadMessageName"
+													crown-function="CSK_MultiIOLinkSMI/setIODDReadMessageName"
 													protocol="crownMSGPACK" crown-path="newName">
 												</crown-set>
 												</davinci-text-field>
@@ -498,7 +498,7 @@
 													icon-position="append" style="width: 200px">
 												<span>Delete message</span>
 												<crown-set event="submit"
-													crown-function="CSK_MultiIOLinkSMI/deleteIoddReadMessage"
+													crown-function="CSK_MultiIOLinkSMI/deleteIODDReadMessage"
 													protocol="crownMSGPACK">
 												</crown-set>
 												</davinci-button>
@@ -623,7 +623,7 @@
 													icon-position="append" style="width: 200px">
 												<span>Read payload</span>
 												<crown-set event="submit"
-													crown-function="CSK_MultiIOLinkSMI/readIoddMessageUI"
+													crown-function="CSK_MultiIOLinkSMI/readIODDMessageUI"
 													protocol="crownMSGPACK">
 												</crown-set>
 												</davinci-button>
@@ -651,14 +651,14 @@
 								<davinci-drop-down id="DD_SelecetedWriteMessage"
 									label="Select message to edit" style="width: 200px">
 									<crown-on property="data"
-										crown-event="CSK_MultiIOLinkSMI/OnNewListIoddWriteMessages"
+										crown-event="CSK_MultiIOLinkSMI/OnNewListIODDWriteMessages"
 										converter="convertToList">
 									</crown-on>
 									<crown-on property="value"
-										crown-event="CSK_MultiIOLinkSMI/OnNewSelectedIoddWriteMessage">
+										crown-event="CSK_MultiIOLinkSMI/OnNewSelectedIODDWriteMessage">
 									</crown-on>
 									<crown-set event="change"
-										crown-function="CSK_MultiIOLinkSMI/setSelectedIoddWriteMessage"
+										crown-function="CSK_MultiIOLinkSMI/setSelectedIODDWriteMessage"
 										protocol="crownMSGPACK" crown-path="newSelectedMessage">
 									</crown-set>
 								</davinci-drop-down>
@@ -667,25 +667,25 @@
 									style="width: 200px">
 									<span>Create new message</span>
 									<crown-set event="submit"
-										crown-function="CSK_MultiIOLinkSMI/createIoddWriteMessage"
+										crown-function="CSK_MultiIOLinkSMI/createIODDWriteMessage"
 										protocol="crownMSGPACK">
 									</crown-set>
 								</davinci-button>
 							</layout-row>
-							<stacked-view id="SV_isIoddAvailable">
-								<stacked-pane id="SP_IoddIsNOTAvailable" value="false">
+							<stacked-view id="SV_isIODDAvailable">
+								<stacked-pane id="SP_IODDIsNOTAvailable" value="false">
 								</stacked-pane>
-								<stacked-pane id="SP_IoddISAvailable" value="true">
+								<stacked-pane id="SP_IODDISAvailable" value="true">
 									<layout-row id="RowLayout25">
 										<layout-column id="ColumnLayout19" style="width: 1000px">
 											<layout-row id="RowLayout26">
 												<davinci-text-field id="TF_WriteMessageName" type="text"
 													label="Message title">
 												<crown-on property="value"
-													crown-event="CSK_MultiIOLinkSMI/OnNewSelectedIoddWriteMessage">
+													crown-event="CSK_MultiIOLinkSMI/OnNewSelectedIODDWriteMessage">
 												</crown-on>
 												<crown-set event="change"
-													crown-function="CSK_MultiIOLinkSMI/setIoddWriteMessageName"
+													crown-function="CSK_MultiIOLinkSMI/setIODDWriteMessageName"
 													protocol="crownMSGPACK" crown-path="newName">
 												</crown-set>
 												</davinci-text-field>
@@ -693,7 +693,7 @@
 													icon-position="append" style="width: 200px">
 												<span>Delete message</span>
 												<crown-set event="submit"
-													crown-function="CSK_MultiIOLinkSMI/deleteIoddWriteMessage"
+													crown-function="CSK_MultiIOLinkSMI/deleteIODDWriteMessage"
 													protocol="crownMSGPACK">
 												</crown-set>
 												</davinci-button>
@@ -807,18 +807,18 @@ write success (bool); write queue size (int); time taken to read message (int); 
 													label="Send customized payload (copy JSON template)" multiline
 													style="width: 500px; height: 500px">
 												<crown-set event="change"
-													crown-function="CSK_MultiIOLinkSMI/setTestWriteIoddMessage"
-													protocol="crownMSGPACK" crown-path="newTestWriteIoddMessage">
+													crown-function="CSK_MultiIOLinkSMI/setTestWriteIODDMessage"
+													protocol="crownMSGPACK" crown-path="newTestWriteIODDMessage">
 												</crown-set>
 												<crown-on property="value"
-													crown-event="CSK_MultiIOLinkSMI/OnNewTestWriteIoddMessage">
+													crown-event="CSK_MultiIOLinkSMI/OnNewTestWriteIODDMessage">
 												</crown-on>
 												</davinci-text-area>
 												<davinci-button id="B_SendPyaload" type="primary"
 													icon-position="append">
 												<span>Send payload</span>
 												<crown-set event="submit"
-													crown-function="CSK_MultiIOLinkSMI/writeIoddMessageFromUI"
+													crown-function="CSK_MultiIOLinkSMI/writeIODDMessageFromUI"
 													protocol="crownMSGPACK">
 												</crown-set>
 												</davinci-button>
@@ -828,7 +828,7 @@ write success (bool); write queue size (int); time taken to read message (int); 
 									</layout-row>
 								</stacked-pane>
 								<crown-on property="value"
-									crown-event="CSK_MultiIOLinkSMI/isIoddWriteMessageSelected"
+									crown-event="CSK_MultiIOLinkSMI/OnNewStatusIODDWriteMessageSelected"
 									converter="bool2str">
 								</crown-on>
 							</stacked-view>
