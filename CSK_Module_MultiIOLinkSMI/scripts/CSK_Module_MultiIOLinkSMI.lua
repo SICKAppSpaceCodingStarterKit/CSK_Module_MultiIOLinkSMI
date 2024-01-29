@@ -63,7 +63,6 @@ end
 --**********************Start Function Scope *******************************
 --**************************************************************************
 
-
 local function main()
 
   if _G.availableAPIs.ioLinkSmi then
@@ -77,8 +76,45 @@ local function main()
   --       (see internal variable _G.deepLearningObjects.parameterLoadOnReboot)
   --       If so, the app will trigger the "OnDataLoadedOnReboot" event if ready after loading parameters
   --
-  ----------------------------------------------------------------------------------------
+  -- Can be used e.g. like this
+  --
+  --[[
+  CSK_MultiIOLinkSMI.setSelectedInstance(1)
+  CSK_MultiIOLinkSMI.setPort('S1')
+  CSK_MultiIOLinkSMI.activateInstance(true)
+  -- Optionally register to 'OnNewPortEvent'-event
 
+  local deviceIdentification = CSK_MultiIOLinkSMI.getDeviceIdentification('S1')
+  CSK_MultiIOLinkSMI.applyNewDeviceIdentification(deviceIdentification)
+  -- Optionally register to 'CSK_MultiIOLinkSMI.OnNewDeviceIdentificationApplied'-event
+
+  -- Read message handling
+  CSK_MultiIOLinkSMI.createIODDReadMessage()
+  CSK_MultiIOLinkSMI.setIODDReadMessageName('readMessageTitle')
+  CSK_MultiIOLinkSMI.setSelectedIODDReadMessage('readMessageTitle')
+  -- Register to "CSK_MultiIOLinkSMI.readMessage[port][readMessageTitle]"-event
+
+  -- Write message handling
+  CSK_MultiIOLinkSMI.createIODDWriteMessage()
+  CSK_MultiIOLinkSMI.setIODDWriteMessageName('writeMessageTitle')
+  CSK_MultiIOLinkSMI.setSelectedIODDWriteMessage('writeMessageTitle')
+  -- Register to "CSK_MultiIOLinkSMI.writeMessage[port][writeMessageName]"-event
+
+  -- Direct data reading
+  local readProcessDataSuccess, readProcessDataResult = CSK_MultiIOLinkSMI.readProcessData()
+  local readParameterSuccess, readParameterResult = CSK_MultiIOLinkSMI.readParameter(index, subindex)
+  local resultProcessByteArray = CSK_MultiIOLinkSMI.readProcessDataByteArray()
+  local resultParameterByteArray = CSK_MultiIOLinkSMI.readParameterByteArray(index, subindex)
+  local success1, jsonReceivedData = CSK_MultiIOLinkSMI.readIODDMessage('messageName') -- after defining a read message in UI or IODD module
+
+  -- Direct data writing
+  local writeSuccess = CSK_MultiIOLinkSMI.writeProcessData(jsonDataToWrite)
+  local success2, errorDescription1 = CSK_MultiIOLinkSMI.writeParameter(index, subindex, byteArrayToWrite)
+  local success3, errorDescription2 = CSK_MultiIOLinkSMI.writeProcessDataByteArray(byteArrayToWrite)
+  local success4, errorDescription3 = CSK_MultiIOLinkSMI.writeParameterByteArray(index, subindey, byteArrayToWrite)
+  local success5 = CSK_MultiIOLinkSMI.writeIODDMessage(messageName, jsonDataToWrite) -- after defining a write message in UI or IODD module
+  ]]
+  ----------------------------------------------------------------------------------------
 
 end
 Script.register("Engine.OnStarted", main)

@@ -471,7 +471,7 @@ local function setProcessDataCondition(newCondition)
 end
 Script.serveFunction('CSK_MultiIOLinkSMI.setProcessDataCondition', setProcessDataCondition)
 
--- Function called when there is a new IODD file loaded or deleted in CSK_Module_IODDInterpreter to check if there are any updates for existing instances.
+--- Function called when there is a new IODD file loaded or deleted in CSK_Module_IODDInterpreter to check if there are any updates for existing instances.
 local function handleOnIODDListChanged()
   for instance, instanceInfo in ipairs(multiIOLinkSMI_Instances) do
     local foundMatchingIODD, _ = CSK_IODDInterpreter.findIODDMatchingVendorIdDeviceIdVersion(
@@ -809,7 +809,7 @@ end
 Script.serveFunction('CSK_MultiIOLinkSMI.setTriggerValue', setTriggerValue)
 
 
--- Function called when new data set selected in read data tables of CSK_Module_IODDInterpreter to update the existing IODD read messages accordingly.
+--- Function called when new data set selected in read data tables of CSK_Module_IODDInterpreter to update the existing IODD read messages accordingly.
 local function handleOnNewReadDataJsonTemplateAndInfo(ioddInstanceId, jsonTemplate, jsonDataInfo)
   for instance, instanceInfo in ipairs(multiIOLinkSMI_Instances) do
     for messageName, messageInfo in pairs(instanceInfo.parameters.ioddReadMessages) do
@@ -902,7 +902,7 @@ local function deleteIODDWriteMessage()
 end
 Script.serveFunction('CSK_MultiIOLinkSMI.deleteIODDWriteMessage', deleteIODDWriteMessage)
 
--- Function called when new data set selected in write data tables of CSK_Module_IODDInterpreter to update the existing IODD write messages accordingly.
+--- Function called when new data set selected in write data tables of CSK_Module_IODDInterpreter to update the existing IODD write messages accordingly.
 local function handleOnNewWriteDataJsonTemplateAndInfo(ioddInstanceId, jsonTemplate, jsonDataInfo)
   for instance, instanceInfo in ipairs(multiIOLinkSMI_Instances) do
     for messageName, messageInfo in pairs(instanceInfo.parameters.ioddWriteMessages) do

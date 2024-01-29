@@ -54,7 +54,7 @@ local ioddWriteMessagesResults = {} -- table with latest results of writing mess
 -------------------------------------------------------------------------------------
 
 --- Read process data and check it's validity
----@return binary Raw received process data
+---@return binary? Raw received process data
 local function readBinaryProcessData()
   local processData = IOLink.SMI.getPDIn(processingParams.SMIhandle, processingParams.port)
   -- Port qualifier definition

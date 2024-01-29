@@ -70,7 +70,7 @@
 								<stacked-view id="SV_IsNewDeviceDiscovered">
 									<stacked-pane id="SP_NewDeviceIsNOTDiscovered" value="false">
 									</stacked-pane>
-									<stacked-pane id="SP_NewDeviceISDiscovered" value="true">
+									<stacked-pane id="SP_NewDeviceIsDiscovered" value="true">
 										<layout-column id="ColumnLayout7">
 											<h6 id="H61_FoundNewDeviceIdentification">
 												Found new device identification
@@ -493,7 +493,7 @@
 								</crown-on>
 								<stacked-pane id="SP_ReadDataMessageIsNOTSelected" value="false">
 								</stacked-pane>
-								<stacked-pane id="SP_ReadDataMessageISSelected" value="true">
+								<stacked-pane id="SP_ReadDataMessageIsSelected" value="true">
 									<layout-row id="RowLayout22">
 										<layout-column id="ColumnLayout15" style="width: 1000px">
 											<layout-row id="RowLayout23">
@@ -550,7 +550,7 @@
 													crown-event="CSK_MultiIOLinkSMI/OnNewReadMessageEventName">
 												</crown-on>
 											</davinci-value-display>
-											<davinci-callout id="C_ReadMEssageEventInfo" type="info">
+											<davinci-callout id="C_ReadMessageEventInfo" type="info">
 												<span>
 												The event parameters are: read success (bool); read queue size (int); time taken to read message (int); JSON object with message content (string); optional error message (string)
 												</span>
@@ -688,7 +688,7 @@
 							<stacked-view id="SV_IsWriteDataMessageSelected">
 								<stacked-pane id="SP_WriteDataMessageIsNOTSelected" value="false">
 								</stacked-pane>
-								<stacked-pane id="SP_WriteDataMessageISSelected" value="true">
+								<stacked-pane id="SP_WriteDataMessageIsSelected" value="true">
 									<layout-row id="RowLayout25">
 										<layout-column id="ColumnLayout19" style="width: 1000px">
 											<layout-row id="RowLayout26">
@@ -800,7 +800,7 @@ write success (bool); write queue size (int); time taken to read message (int); 
 													protocol="crownMSGPACK">
 												</crown-set>
 												</davinci-button>
-												</layout-column>
+											</layout-column>
 											</davinci-collapse>
 											<davinci-collapse id="Collapse10" collapsed-title="JSON template"
 												expanded-title="JSON template">

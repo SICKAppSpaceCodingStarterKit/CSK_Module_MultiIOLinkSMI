@@ -48,6 +48,11 @@ Following CSK modules are mostly necessary to make use of the features of this m
 |CSK_1stModule_Logger|[V4.0.0](https://github.com/SICKAppSpaceCodingStarterKit/CSK_1stModule_Logger/releases/tag/v4.0.0)|To log problems with data interpretation|
 |CSK_Module_PersistentData|[V4.0.0](https://github.com/SICKAppSpaceCodingStarterKit/CSK_Module_PersistentData)|To persist data|
 
+## Known issues
+
+### Open Todo
+- Data Storage support to save set of all parameters to be applied on controller reboot or device reconnection.
+
 ## Information
 
 ### Tested on
@@ -58,7 +63,7 @@ Following CSK modules are mostly necessary to make use of the features of this m
 
 This application / module is part of the SICK AppSpace Coding Starter Kit developing approach.  
 It is programmed in an object-oriented way. Some of the modules use kind of "classes" in Lua to make it possible to reuse code / classes in other projects.  
-In general, it is not neccessary to code this way, but the architecture of this app can serve as a sample to be used especially for bigger projects and to make it easier to share code. 
+In general, it is not neccessary to code this way, but the architecture of this app can serve as a sample to be used especially for bigger projects and to make it easier to share code.  
 Please check the [documentation](https://github.com/SICKAppSpaceCodingStarterKit/.github/blob/main/docu/SICKAppSpaceCodingStarterKit_Documentation.md) of CSK for further information.  
 
 ## Topics
