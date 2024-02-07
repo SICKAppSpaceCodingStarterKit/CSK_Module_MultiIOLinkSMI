@@ -859,6 +859,15 @@ local function readIODDMessageUI()
 end
 Script.serveFunction('CSK_MultiIOLinkSMI.readIODDMessageUI', readIODDMessageUI)
 
+local function getIODDReadMessageJSONTemplate(messageName)
+  if not multiIOLinkSMI_Instances[selectedInstance].parameters.ioddReadMessages[messageName] then
+    return nil
+  end
+  return multiIOLinkSMI_Instances[selectedInstance].parameters.ioddReadMessages[messageName].jsonTemplate
+end
+Script.serveFunction('CSK_MultiIOLinkSMI.getIODDReadMessageJSONTemplate', getIODDReadMessageJSONTemplate)
+
+
 --**************************************************************************
 --**************************Write messages scope****************************
 --**************************************************************************
@@ -956,6 +965,15 @@ local function writeIODDMessageFromUI()
   Script.notifyEvent('MultiIOLinkSMI_OnNewWriteDataSuccess', writeSuccess)
 end
 Script.serveFunction('CSK_MultiIOLinkSMI.writeIODDMessageFromUI', writeIODDMessageFromUI)
+
+local function getIODDWriteMessageJSONTemplate(messageName)
+  if not multiIOLinkSMI_Instances[selectedInstance].parameters.ioddWriteMessages[messageName] then
+    return nil
+  end
+  return multiIOLinkSMI_Instances[selectedInstance].parameters.ioddWriteMessages[messageName].jsonTemplate
+end
+Script.serveFunction('CSK_MultiIOLinkSMI.getIODDWriteMessageJSONTemplate', getIODDWriteMessageJSONTemplate)
+
 
 --**************************************************************************
 --***************Instance handling scope************************************

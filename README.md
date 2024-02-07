@@ -22,8 +22,8 @@ If there is available [IODD interpreter](https://github.com/SICKAppSpaceCodingSt
 1. Create a new Read Message
 2. Rename it if necessary
 3. Select when you want to read data, periodically (period in ms) or on some CROWN event
-4. select process data you want to read from device
-5. select parameters you want to read from device
+4. Select process data you want to read from device
+5. Select parameters you want to read from device
 6. See result of reading the message. You can refresh the latest received payload or initiate reading from UI.
 ![plot](./docu/media/readData.png)
 
@@ -31,10 +31,10 @@ If there is available [IODD interpreter](https://github.com/SICKAppSpaceCodingSt
 
 1. Create a new Write Message
 2. Rename it if necessary
-3. select process data you want to write to device
-4. select parameters you want to write to device
+3. Select process data you want to write to device
+4. Select parameters you want to write to device
 5. See the latest message written to the device
-6. Get the JSON template that can must be used for message to be written
+6. Get the JSON template that must be used for message to be written. When you try to write the message to the device, the message JSON structure must be same as the structure of the template
 7. Test writing message to the device by coping and editing the JSON template
 ![plot](./docu/media/writeData.png)
 

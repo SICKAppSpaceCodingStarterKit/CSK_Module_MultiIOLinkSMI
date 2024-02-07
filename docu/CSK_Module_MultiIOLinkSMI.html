@@ -619,7 +619,7 @@ h1,h2,h3,h4,h5,h6{color:#007cc1}
 <div class="details">
 <span id="author" class="author">SICK AG</span><br>
 <span id="revnumber">version 1.0.0,</span>
-<span id="revdate">2024-01-25</span>
+<span id="revdate">2024-02-07</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -649,6 +649,8 @@ h1,h2,h3,h4,h5,h6{color:#007cc1}
 <li><a href="#API:Function:CSK_MultiIOLinkSMI.getDeviceIdentification"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-function">getDeviceIdentification()</span></a></li>
 <li><a href="#API:Function:CSK_MultiIOLinkSMI.getInstanceParameters"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-function">getInstanceParameters()</span></a></li>
 <li><a href="#API:Function:CSK_MultiIOLinkSMI.getInstancesAmount"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-function">getInstancesAmount()</span></a></li>
+<li><a href="#API:Function:CSK_MultiIOLinkSMI.getIODDReadMessageJSONTemplate"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-function">getIODDReadMessageJSONTemplate()</span></a></li>
+<li><a href="#API:Function:CSK_MultiIOLinkSMI.getIODDWriteMessageJSONTemplate"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-function">getIODDWriteMessageJSONTemplate()</span></a></li>
 <li><a href="#API:Function:CSK_MultiIOLinkSMI.getReadDataResultNUM"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-function">getReadDataResultNUM()</span></a></li>
 <li><a href="#API:Function:CSK_MultiIOLinkSMI.getWriteDataResultNUM"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-function">getWriteDataResultNUM()</span></a></li>
 <li><a href="#API:Function:CSK_MultiIOLinkSMI.handleOnNewPortEvent"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-function">handleOnNewPortEvent()</span></a></li>
@@ -805,7 +807,7 @@ h1,h2,h3,h4,h5,h6{color:#007cc1}
 </tr>
 <tr>
 <th class="tableblock halign-left valign-top"><p class="tableblock">Date</p></th>
-<td class="tableblock halign-left valign-top"><p class="tableblock">2024-01-25</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2024-02-07</p></td>
 </tr>
 <tr>
 <th class="tableblock halign-left valign-top"><p class="tableblock">Author</p></th>
@@ -877,7 +879,7 @@ If the device&#8217;s process data structure is variable, the module makes sure 
 <strong>4. Read and write messages handling</strong><br>
 Messages to be read or written from/to device are sets of data combined based on selection in respective dynamic tables in UI.<br>
 Each message has its own IODD instance at the background.<br>
-After message configuration, the JSON template is available in UI for reference.<br>
+After message configuration, the JSON template is available in UI for the reference.<br>
 The structure of the write message must comply with the generated JSON template.<br>
 <br>
 Each read message has its own event to register to exteranlly.<br>
@@ -887,10 +889,11 @@ Each write message has its own function to be called externally.<br>
 The function name is <strong>"CSK_MultiIOLinkSMI.writeMessage" .. port .. writeMessageName</strong><br>
 <br>
 Use following functions to handle messages:<br>
-- "createIODDReadMessage" and "createIODDWriteMessage"<br>
-- "setIODDReadMessageName" and "setIODDWriteMessageName"<br>
-- "setSelectedIODDReadMessage" and "setSelectedIODDWriteMessage"<br>
-- "deleteIODDReadMessage" and "deleteIODDWriteMessage"<br>
+- "createIODDReadMessage" and "createIODDWriteMessage" - to create the message<br>
+- "setIODDReadMessageName" and "setIODDWriteMessageName" - to rename the message<br>
+- "setSelectedIODDReadMessage" and "setSelectedIODDWriteMessage" - to select the current message<br>
+- "deleteIODDReadMessage" and "deleteIODDWriteMessage" - to delete message<br>
+- "getIODDReadMessageJSONTemplate" and "getIODDWriteMessageJSONTemplate" - to get JSON structure (template) of the message to be received or sent<br>
 <br>
 <strong>5. Direct data reading/writing</strong><br>
 The following functions can be used for reading or writing data by selected instance directly:<br>
@@ -937,6 +940,12 @@ The following functions can be used for reading or writing data by selected inst
 </li>
 <li>
 <p><a href="#API:Function:CSK_MultiIOLinkSMI.getInstancesAmount">getInstancesAmount()</a></p>
+</li>
+<li>
+<p><a href="#API:Function:CSK_MultiIOLinkSMI.getIODDReadMessageJSONTemplate">getIODDReadMessageJSONTemplate()</a></p>
+</li>
+<li>
+<p><a href="#API:Function:CSK_MultiIOLinkSMI.getIODDWriteMessageJSONTemplate">getIODDWriteMessageJSONTemplate()</a></p>
 </li>
 <li>
 <p><a href="#API:Function:CSK_MultiIOLinkSMI.getReadDataResultNUM">getReadDataResultNUM()</a></p>
@@ -1698,16 +1707,158 @@ The following functions can be used for reading or writing data by selected inst
 </div>
 </div>
 <div class="sect4">
-<h5 id="API:Function:CSK_MultiIOLinkSMI.getReadDataResultNUM"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-function">getReadDataResultNUM()</span></h5>
+<h5 id="API:Function:CSK_MultiIOLinkSMI.getIODDReadMessageJSONTemplate"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-function">getIODDReadMessageJSONTemplate()</span></h5>
 <div class="sect5">
 <h6 id="_short_description_14">Short description</h6>
+<div class="paragraph">
+<p>Function to get the JSON template of the message that will be read from IO-Link device.</p>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_parameters_5">Parameters</h6>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 12.5%;">
+<col style="width: 37.5%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Multiplicity</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">messageName</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">STRING</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Name of the message.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect5">
+<h6 id="_return_values_4">Return values</h6>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 12.5%;">
+<col style="width: 37.5%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Multiplicity</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">jsonTemplate</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">STRING</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">?</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Template in JSON format.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect5">
+<h6 id="_sample_auto_generated_12">Sample (auto-generated)</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="lua">jsonTemplate = CSK_MultiIOLinkSMI.getIODDReadMessageJSONTemplate(messageName)</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="API:Function:CSK_MultiIOLinkSMI.getIODDWriteMessageJSONTemplate"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-function">getIODDWriteMessageJSONTemplate()</span></h5>
+<div class="sect5">
+<h6 id="_short_description_15">Short description</h6>
+<div class="paragraph">
+<p>Function to get the JSON template of the message that is expected to be written to IO-Link device.</p>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_parameters_6">Parameters</h6>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 12.5%;">
+<col style="width: 37.5%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Multiplicity</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">messageName</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">STRING</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Name of the message.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect5">
+<h6 id="_return_values_5">Return values</h6>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 12.5%;">
+<col style="width: 37.5%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Multiplicity</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">jsonTemplate</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">STRING</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">?</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Template in JSON format.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect5">
+<h6 id="_sample_auto_generated_13">Sample (auto-generated)</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="lua">jsonTemplate = CSK_MultiIOLinkSMI.getIODDWriteMessageJSONTemplate(messageName)</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="API:Function:CSK_MultiIOLinkSMI.getReadDataResultNUM"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-function">getReadDataResultNUM()</span></h5>
+<div class="sect5">
+<h6 id="_short_description_16">Short description</h6>
 <div class="paragraph">
 <p>Get the latest result of readinig message.<br>
 NUM will be replaced by the number of instance (e.g. "getReadDataResult1").<br></p>
 </div>
 </div>
 <div class="sect5">
-<h6 id="_parameters_5">Parameters</h6>
+<h6 id="_parameters_7">Parameters</h6>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -1734,7 +1885,7 @@ NUM will be replaced by the number of instance (e.g. "getReadDataResult1").<br><
 </table>
 </div>
 <div class="sect5">
-<h6 id="_return_values_4">Return values</h6>
+<h6 id="_return_values_6">Return values</h6>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -1767,7 +1918,7 @@ NUM will be replaced by the number of instance (e.g. "getReadDataResult1").<br><
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_12">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_14">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua">latestSuccess, jsonMessageContent = CSK_MultiIOLinkSMI.getReadDataResultNUM(messageName)</code></pre>
@@ -1778,14 +1929,14 @@ NUM will be replaced by the number of instance (e.g. "getReadDataResult1").<br><
 <div class="sect4">
 <h5 id="API:Function:CSK_MultiIOLinkSMI.getWriteDataResultNUM"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-function">getWriteDataResultNUM()</span></h5>
 <div class="sect5">
-<h6 id="_short_description_15">Short description</h6>
+<h6 id="_short_description_17">Short description</h6>
 <div class="paragraph">
 <p>Get the latest result of writng message.<br>
 NUM will be replaced by the number of instance (e.g. "getWriteDataResult1").</p>
 </div>
 </div>
 <div class="sect5">
-<h6 id="_parameters_6">Parameters</h6>
+<h6 id="_parameters_8">Parameters</h6>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -1812,7 +1963,7 @@ NUM will be replaced by the number of instance (e.g. "getWriteDataResult1").</p>
 </table>
 </div>
 <div class="sect5">
-<h6 id="_return_values_5">Return values</h6>
+<h6 id="_return_values_7">Return values</h6>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -1845,7 +1996,7 @@ NUM will be replaced by the number of instance (e.g. "getWriteDataResult1").</p>
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_13">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_15">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua">success, jsonMessageContent = CSK_MultiIOLinkSMI.getWriteDataResultNUM(messageName)</code></pre>
@@ -1856,13 +2007,13 @@ NUM will be replaced by the number of instance (e.g. "getWriteDataResult1").</p>
 <div class="sect4">
 <h5 id="API:Function:CSK_MultiIOLinkSMI.handleOnNewPortEvent"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-function">handleOnNewPortEvent()</span></h5>
 <div class="sect5">
-<h6 id="_short_description_16">Short description</h6>
+<h6 id="_short_description_18">Short description</h6>
 <div class="paragraph">
 <p>Internally used function triggered when the new event occurs in IO-Link port.</p>
 </div>
 </div>
 <div class="sect5">
-<h6 id="_parameters_7">Parameters</h6>
+<h6 id="_parameters_9">Parameters</h6>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -1903,7 +2054,7 @@ NUM will be replaced by the number of instance (e.g. "getWriteDataResult1").</p>
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_14">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_16">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua">CSK_MultiIOLinkSMI.handleOnNewPortEvent(port, eventType, eventCode)</code></pre>
@@ -1914,13 +2065,13 @@ NUM will be replaced by the number of instance (e.g. "getWriteDataResult1").</p>
 <div class="sect4">
 <h5 id="API:Function:CSK_MultiIOLinkSMI.loadParameters"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-function">loadParameters()</span></h5>
 <div class="sect5">
-<h6 id="_short_description_17">Short description</h6>
+<h6 id="_short_description_19">Short description</h6>
 <div class="paragraph">
 <p>Load parameters for this module from the CSK_PersistentData module if possible and use them.</p>
 </div>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_15">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_17">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua">CSK_MultiIOLinkSMI.loadParameters()</code></pre>
@@ -1931,13 +2082,13 @@ NUM will be replaced by the number of instance (e.g. "getWriteDataResult1").</p>
 <div class="sect4">
 <h5 id="API:Function:CSK_MultiIOLinkSMI.makeDefaultInstance"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-function">makeDefaultInstance()</span></h5>
 <div class="sect5">
-<h6 id="_short_description_18">Short description</h6>
+<h6 id="_short_description_20">Short description</h6>
 <div class="paragraph">
 <p>Set all instance parameters to default values.</p>
 </div>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_16">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_18">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua">CSK_MultiIOLinkSMI.makeDefaultInstance()</code></pre>
@@ -1948,13 +2099,13 @@ NUM will be replaced by the number of instance (e.g. "getWriteDataResult1").</p>
 <div class="sect4">
 <h5 id="API:Function:CSK_MultiIOLinkSMI.pageCalled"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-function">pageCalled()</span></h5>
 <div class="sect5">
-<h6 id="_short_description_19">Short description</h6>
+<h6 id="_short_description_21">Short description</h6>
 <div class="paragraph">
 <p>Function to register "OnResume" of the module UI (only as helper function).</p>
 </div>
 </div>
 <div class="sect5">
-<h6 id="_return_values_6">Return values</h6>
+<h6 id="_return_values_8">Return values</h6>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -1981,7 +2132,7 @@ NUM will be replaced by the number of instance (e.g. "getWriteDataResult1").</p>
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_17">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_19">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua">empty = CSK_MultiIOLinkSMI.pageCalled()</code></pre>
@@ -1992,13 +2143,13 @@ NUM will be replaced by the number of instance (e.g. "getWriteDataResult1").</p>
 <div class="sect4">
 <h5 id="API:Function:CSK_MultiIOLinkSMI.readIODDMessage"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-function">readIODDMessage()</span></h5>
 <div class="sect5">
-<h6 id="_short_description_20">Short description</h6>
+<h6 id="_short_description_22">Short description</h6>
 <div class="paragraph">
 <p>Read configured message from IO-Link sensor.</p>
 </div>
 </div>
 <div class="sect5">
-<h6 id="_parameters_8">Parameters</h6>
+<h6 id="_parameters_10">Parameters</h6>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -2025,7 +2176,7 @@ NUM will be replaced by the number of instance (e.g. "getWriteDataResult1").</p>
 </table>
 </div>
 <div class="sect5">
-<h6 id="_return_values_7">Return values</h6>
+<h6 id="_return_values_9">Return values</h6>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -2058,7 +2209,7 @@ NUM will be replaced by the number of instance (e.g. "getWriteDataResult1").</p>
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_18">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_20">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua">success, jsonReceivedData = CSK_MultiIOLinkSMI.readIODDMessage(messageName)</code></pre>
@@ -2069,14 +2220,14 @@ NUM will be replaced by the number of instance (e.g. "getWriteDataResult1").</p>
 <div class="sect4">
 <h5 id="API:Function:CSK_MultiIOLinkSMI.readIODDMessageNUM"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-function">readIODDMessageNUM()</span></h5>
 <div class="sect5">
-<h6 id="_short_description_21">Short description</h6>
+<h6 id="_short_description_23">Short description</h6>
 <div class="paragraph">
 <p>Read preconfigured message.<br>
 NUM will be replaced by the number of instance (e.g. "readIODDMessage1").</p>
 </div>
 </div>
 <div class="sect5">
-<h6 id="_parameters_9">Parameters</h6>
+<h6 id="_parameters_11">Parameters</h6>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -2103,7 +2254,7 @@ NUM will be replaced by the number of instance (e.g. "readIODDMessage1").</p>
 </table>
 </div>
 <div class="sect5">
-<h6 id="_return_values_8">Return values</h6>
+<h6 id="_return_values_10">Return values</h6>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -2136,7 +2287,7 @@ NUM will be replaced by the number of instance (e.g. "readIODDMessage1").</p>
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_19">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_21">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua">success, jsonMessageContent = CSK_MultiIOLinkSMI.readIODDMessageNUM(messageName)</code></pre>
@@ -2147,13 +2298,13 @@ NUM will be replaced by the number of instance (e.g. "readIODDMessage1").</p>
 <div class="sect4">
 <h5 id="API:Function:CSK_MultiIOLinkSMI.readIODDMessageUI"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-function">readIODDMessageUI()</span></h5>
 <div class="sect5">
-<h6 id="_short_description_22">Short description</h6>
+<h6 id="_short_description_24">Short description</h6>
 <div class="paragraph">
 <p>Read configured message from IO-Link sensor from UI.</p>
 </div>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_20">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_22">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua">CSK_MultiIOLinkSMI.readIODDMessageUI()</code></pre>
@@ -2164,13 +2315,13 @@ NUM will be replaced by the number of instance (e.g. "readIODDMessage1").</p>
 <div class="sect4">
 <h5 id="API:Function:CSK_MultiIOLinkSMI.readParameter"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-function">readParameter()</span></h5>
 <div class="sect5">
-<h6 id="_short_description_23">Short description</h6>
+<h6 id="_short_description_25">Short description</h6>
 <div class="paragraph">
 <p>Read parameter of IO-Link sensor in case the IODD description of the parameter is available.</p>
 </div>
 </div>
 <div class="sect5">
-<h6 id="_parameters_10">Parameters</h6>
+<h6 id="_parameters_12">Parameters</h6>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -2203,7 +2354,7 @@ NUM will be replaced by the number of instance (e.g. "readIODDMessage1").</p>
 </table>
 </div>
 <div class="sect5">
-<h6 id="_return_values_9">Return values</h6>
+<h6 id="_return_values_11">Return values</h6>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -2236,7 +2387,7 @@ NUM will be replaced by the number of instance (e.g. "readIODDMessage1").</p>
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_21">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_23">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua">readSuccess, readResult = CSK_MultiIOLinkSMI.readParameter(index, subindex)</code></pre>
@@ -2247,13 +2398,13 @@ NUM will be replaced by the number of instance (e.g. "readIODDMessage1").</p>
 <div class="sect4">
 <h5 id="API:Function:CSK_MultiIOLinkSMI.readParameterByteArray"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-function">readParameterByteArray()</span></h5>
 <div class="sect5">
-<h6 id="_short_description_24">Short description</h6>
+<h6 id="_short_description_26">Short description</h6>
 <div class="paragraph">
 <p>Read parameter of IO-Link sensor as a raw byte array. Might be useful for testing.  If reading failed, returns nil.</p>
 </div>
 </div>
 <div class="sect5">
-<h6 id="_parameters_11">Parameters</h6>
+<h6 id="_parameters_13">Parameters</h6>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -2286,7 +2437,7 @@ NUM will be replaced by the number of instance (e.g. "readIODDMessage1").</p>
 </table>
 </div>
 <div class="sect5">
-<h6 id="_return_values_10">Return values</h6>
+<h6 id="_return_values_12">Return values</h6>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -2313,7 +2464,7 @@ NUM will be replaced by the number of instance (e.g. "readIODDMessage1").</p>
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_22">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_24">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua">resultByteArray = CSK_MultiIOLinkSMI.readParameterByteArray(index, subindex)</code></pre>
@@ -2324,7 +2475,7 @@ NUM will be replaced by the number of instance (e.g. "readIODDMessage1").</p>
 <div class="sect4">
 <h5 id="API:Function:CSK_MultiIOLinkSMI.readParameterByteArray_NUM"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-function">readParameterByteArray_NUM()</span></h5>
 <div class="sect5">
-<h6 id="_short_description_25">Short description</h6>
+<h6 id="_short_description_27">Short description</h6>
 <div class="paragraph">
 <p>Read paramerter and return it as byte array in IO-Link JSON standard, for example:<br>
 {<br>
@@ -2334,7 +2485,7 @@ NUM will be replaced by the number of instance (e.g. "readParameterByteArray_1")
 </div>
 </div>
 <div class="sect5">
-<h6 id="_parameters_12">Parameters</h6>
+<h6 id="_parameters_14">Parameters</h6>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -2367,7 +2518,7 @@ NUM will be replaced by the number of instance (e.g. "readParameterByteArray_1")
 </table>
 </div>
 <div class="sect5">
-<h6 id="_return_values_11">Return values</h6>
+<h6 id="_return_values_13">Return values</h6>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -2394,7 +2545,7 @@ NUM will be replaced by the number of instance (e.g. "readParameterByteArray_1")
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_23">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_25">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua">byteArrayData = CSK_MultiIOLinkSMI.readParameterByteArray_NUM(index, subindex)</code></pre>
@@ -2405,13 +2556,13 @@ NUM will be replaced by the number of instance (e.g. "readParameterByteArray_1")
 <div class="sect4">
 <h5 id="API:Function:CSK_MultiIOLinkSMI.readParameterByteArrayUI"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-function">readParameterByteArrayUI()</span></h5>
 <div class="sect5">
-<h6 id="_short_description_26">Short description</h6>
+<h6 id="_short_description_28">Short description</h6>
 <div class="paragraph">
 <p>Read parameter of IO-Link sensor as a raw byte array to show it in UI.</p>
 </div>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_24">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_26">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua">CSK_MultiIOLinkSMI.readParameterByteArrayUI()</code></pre>
@@ -2422,14 +2573,14 @@ NUM will be replaced by the number of instance (e.g. "readParameterByteArray_1")
 <div class="sect4">
 <h5 id="API:Function:CSK_MultiIOLinkSMI.readParameterIODD_NUM"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-function">readParameterIODD_NUM()</span></h5>
 <div class="sect5">
-<h6 id="_short_description_27">Short description</h6>
+<h6 id="_short_description_29">Short description</h6>
 <div class="paragraph">
 <p>Read parameter with provided info from IODD interpreter (as JSON table) and convert it to a meaningful JSON table.<br>
 NUM will be replaced by the number of instance (e.g. "readParameterIODD_1").<br></p>
 </div>
 </div>
 <div class="sect5">
-<h6 id="_parameters_13">Parameters</h6>
+<h6 id="_parameters_15">Parameters</h6>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -2468,7 +2619,7 @@ NUM will be replaced by the number of instance (e.g. "readParameterIODD_1").<br>
 </table>
 </div>
 <div class="sect5">
-<h6 id="_return_values_12">Return values</h6>
+<h6 id="_return_values_14">Return values</h6>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -2495,7 +2646,7 @@ NUM will be replaced by the number of instance (e.g. "readParameterIODD_1").<br>
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_25">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_27">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua">jsonData = CSK_MultiIOLinkSMI.readParameterIODD_NUM(index, subindex, jsonDataPointInfo)</code></pre>
@@ -2506,13 +2657,13 @@ NUM will be replaced by the number of instance (e.g. "readParameterIODD_1").<br>
 <div class="sect4">
 <h5 id="API:Function:CSK_MultiIOLinkSMI.readProcessData"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-function">readProcessData()</span></h5>
 <div class="sect5">
-<h6 id="_short_description_28">Short description</h6>
+<h6 id="_short_description_30">Short description</h6>
 <div class="paragraph">
 <p>Read parameter of IO-Link sensor in case the IODD description of the parameter is available.</p>
 </div>
 </div>
 <div class="sect5">
-<h6 id="_return_values_13">Return values</h6>
+<h6 id="_return_values_15">Return values</h6>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -2533,19 +2684,19 @@ NUM will be replaced by the number of instance (e.g. "readParameterIODD_1").<br>
 <td class="tableblock halign-left valign-top"><p class="tableblock">readSuccess</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">BOOL</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">TODO please</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Success of reading.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">readResult</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">STRING</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">?</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">TODO please</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">JSON object with received data if reading is successful.</p></td>
 </tr>
 </tbody>
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_26">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_28">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua">readSuccess, readResult = CSK_MultiIOLinkSMI.readProcessData()</code></pre>
@@ -2556,13 +2707,13 @@ NUM will be replaced by the number of instance (e.g. "readParameterIODD_1").<br>
 <div class="sect4">
 <h5 id="API:Function:CSK_MultiIOLinkSMI.readProcessDataByteArray"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-function">readProcessDataByteArray()</span></h5>
 <div class="sect5">
-<h6 id="_short_description_29">Short description</h6>
+<h6 id="_short_description_31">Short description</h6>
 <div class="paragraph">
 <p>Read process data of IO-Link sensor as a raw byte array. Might be useful for testing. If reading failed, returns nil.</p>
 </div>
 </div>
 <div class="sect5">
-<h6 id="_return_values_14">Return values</h6>
+<h6 id="_return_values_16">Return values</h6>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -2589,7 +2740,7 @@ NUM will be replaced by the number of instance (e.g. "readParameterIODD_1").<br>
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_27">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_29">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua">resultByteArray = CSK_MultiIOLinkSMI.readProcessDataByteArray()</code></pre>
@@ -2600,7 +2751,7 @@ NUM will be replaced by the number of instance (e.g. "readParameterIODD_1").<br>
 <div class="sect4">
 <h5 id="API:Function:CSK_MultiIOLinkSMI.readProcessDataByteArray_NUM"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-function">readProcessDataByteArray_NUM()</span></h5>
 <div class="sect5">
-<h6 id="_short_description_30">Short description</h6>
+<h6 id="_short_description_32">Short description</h6>
 <div class="paragraph">
 <p>Read process data and return it as byte array in IO-Link JSON standard, for example:<br>
 {<br>
@@ -2610,7 +2761,7 @@ NUM will be replaced by the number of instance (e.g. "readProcessDataByteArray_1
 </div>
 </div>
 <div class="sect5">
-<h6 id="_return_values_15">Return values</h6>
+<h6 id="_return_values_17">Return values</h6>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -2637,7 +2788,7 @@ NUM will be replaced by the number of instance (e.g. "readProcessDataByteArray_1
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_28">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_30">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua">byteArrayData = CSK_MultiIOLinkSMI.readProcessDataByteArray_NUM()</code></pre>
@@ -2648,13 +2799,13 @@ NUM will be replaced by the number of instance (e.g. "readProcessDataByteArray_1
 <div class="sect4">
 <h5 id="API:Function:CSK_MultiIOLinkSMI.readProcessDataByteArrayUI"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-function">readProcessDataByteArrayUI()</span></h5>
 <div class="sect5">
-<h6 id="_short_description_31">Short description</h6>
+<h6 id="_short_description_33">Short description</h6>
 <div class="paragraph">
 <p>Read process data of IO-Link sensor as a raw byte array to show it in UI.</p>
 </div>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_29">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_31">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua">CSK_MultiIOLinkSMI.readProcessDataByteArrayUI()</code></pre>
@@ -2665,14 +2816,14 @@ NUM will be replaced by the number of instance (e.g. "readProcessDataByteArray_1
 <div class="sect4">
 <h5 id="API:Function:CSK_MultiIOLinkSMI.readProcessDataIODD_NUM"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-function">readProcessDataIODD_NUM()</span></h5>
 <div class="sect5">
-<h6 id="_short_description_32">Short description</h6>
+<h6 id="_short_description_34">Short description</h6>
 <div class="paragraph">
 <p>Read process data with provided info from IODD interpreter (as JSON table) and convert it to a meaningful JSON table.<br>
 NUM will be replaced by the number of instance (e.g. "readProcessDataIODD_1").</p>
 </div>
 </div>
 <div class="sect5">
-<h6 id="_parameters_14">Parameters</h6>
+<h6 id="_parameters_16">Parameters</h6>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -2699,7 +2850,7 @@ NUM will be replaced by the number of instance (e.g. "readProcessDataIODD_1").</
 </table>
 </div>
 <div class="sect5">
-<h6 id="_return_values_16">Return values</h6>
+<h6 id="_return_values_18">Return values</h6>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -2726,7 +2877,7 @@ NUM will be replaced by the number of instance (e.g. "readProcessDataIODD_1").</
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_30">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_32">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua">convertedResult = CSK_MultiIOLinkSMI.readProcessDataIODD_NUM(jsonDataPointInfo)</code></pre>
@@ -2737,13 +2888,13 @@ NUM will be replaced by the number of instance (e.g. "readProcessDataIODD_1").</
 <div class="sect4">
 <h5 id="API:Function:CSK_MultiIOLinkSMI.refreshReadDataResult"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-function">refreshReadDataResult()</span></h5>
 <div class="sect5">
-<h6 id="_short_description_33">Short description</h6>
+<h6 id="_short_description_35">Short description</h6>
 <div class="paragraph">
 <p>Function to show the latest read result of the selected message in UI.</p>
 </div>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_31">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_33">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua">CSK_MultiIOLinkSMI.refreshReadDataResult()</code></pre>
@@ -2754,13 +2905,13 @@ NUM will be replaced by the number of instance (e.g. "readProcessDataIODD_1").</
 <div class="sect4">
 <h5 id="API:Function:CSK_MultiIOLinkSMI.refreshWriteDataResult"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-function">refreshWriteDataResult()</span></h5>
 <div class="sect5">
-<h6 id="_short_description_34">Short description</h6>
+<h6 id="_short_description_36">Short description</h6>
 <div class="paragraph">
 <p>Function to show the latest write result of the selected message in UI.</p>
 </div>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_32">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_34">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua">CSK_MultiIOLinkSMI.refreshWriteDataResult()</code></pre>
@@ -2771,14 +2922,14 @@ NUM will be replaced by the number of instance (e.g. "readProcessDataIODD_1").</
 <div class="sect4">
 <h5 id="API:Function:CSK_MultiIOLinkSMI.resetInstances"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-function">resetInstances()</span></h5>
 <div class="sect5">
-<h6 id="_short_description_35">Short description</h6>
+<h6 id="_short_description_37">Short description</h6>
 <div class="paragraph">
 <p>Function to reset instances to one single instance.<br>
 IMPORTANT: As instances start their own threads, the module needs to be restarted if new instances are needed&#8230;&#8203; (see AppEngine docu for "Script.startScript").</p>
 </div>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_33">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_35">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua">CSK_MultiIOLinkSMI.resetInstances()</code></pre>
@@ -2789,13 +2940,13 @@ IMPORTANT: As instances start their own threads, the module needs to be restarte
 <div class="sect4">
 <h5 id="API:Function:CSK_MultiIOLinkSMI.sendParameters"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-function">sendParameters()</span></h5>
 <div class="sect5">
-<h6 id="_short_description_36">Short description</h6>
+<h6 id="_short_description_38">Short description</h6>
 <div class="paragraph">
 <p>Send parameters to CSK_PersistentData module if possible to save them.</p>
 </div>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_34">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_36">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua">CSK_MultiIOLinkSMI.sendParameters()</code></pre>
@@ -2806,13 +2957,13 @@ IMPORTANT: As instances start their own threads, the module needs to be restarte
 <div class="sect4">
 <h5 id="API:Function:CSK_MultiIOLinkSMI.setIODDReadMessageName"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-function">setIODDReadMessageName()</span></h5>
 <div class="sect5">
-<h6 id="_short_description_37">Short description</h6>
+<h6 id="_short_description_39">Short description</h6>
 <div class="paragraph">
 <p>Set title of the message to read from IO-Link device.</p>
 </div>
 </div>
 <div class="sect5">
-<h6 id="_parameters_15">Parameters</h6>
+<h6 id="_parameters_17">Parameters</h6>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -2839,7 +2990,7 @@ IMPORTANT: As instances start their own threads, the module needs to be restarte
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_35">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_37">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua">CSK_MultiIOLinkSMI.setIODDReadMessageName(newName)</code></pre>
@@ -2850,13 +3001,13 @@ IMPORTANT: As instances start their own threads, the module needs to be restarte
 <div class="sect4">
 <h5 id="API:Function:CSK_MultiIOLinkSMI.setIODDWriteMessageName"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-function">setIODDWriteMessageName()</span></h5>
 <div class="sect5">
-<h6 id="_short_description_38">Short description</h6>
+<h6 id="_short_description_40">Short description</h6>
 <div class="paragraph">
 <p>Set title of the message to write to IO-Link device.</p>
 </div>
 </div>
 <div class="sect5">
-<h6 id="_parameters_16">Parameters</h6>
+<h6 id="_parameters_18">Parameters</h6>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -2883,7 +3034,7 @@ IMPORTANT: As instances start their own threads, the module needs to be restarte
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_36">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_38">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua">CSK_MultiIOLinkSMI.setIODDWriteMessageName(newName)</code></pre>
@@ -2894,13 +3045,13 @@ IMPORTANT: As instances start their own threads, the module needs to be restarte
 <div class="sect4">
 <h5 id="API:Function:CSK_MultiIOLinkSMI.setLoadOnReboot"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-function">setLoadOnReboot()</span></h5>
 <div class="sect5">
-<h6 id="_short_description_39">Short description</h6>
+<h6 id="_short_description_41">Short description</h6>
 <div class="paragraph">
 <p>Configure if this module should load its saved parameters at app/ device boot up.</p>
 </div>
 </div>
 <div class="sect5">
-<h6 id="_parameters_17">Parameters</h6>
+<h6 id="_parameters_19">Parameters</h6>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -2927,7 +3078,7 @@ IMPORTANT: As instances start their own threads, the module needs to be restarte
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_37">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_39">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua">CSK_MultiIOLinkSMI.setLoadOnReboot(status)</code></pre>
@@ -2938,13 +3089,13 @@ IMPORTANT: As instances start their own threads, the module needs to be restarte
 <div class="sect4">
 <h5 id="API:Function:CSK_MultiIOLinkSMI.setParameterByteArrayToWrite"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-function">setParameterByteArrayToWrite()</span></h5>
 <div class="sect5">
-<h6 id="_short_description_40">Short description</h6>
+<h6 id="_short_description_42">Short description</h6>
 <div class="paragraph">
 <p>Set byte array to write to the parameter of the device for testing purposes in UI.</p>
 </div>
 </div>
 <div class="sect5">
-<h6 id="_parameters_18">Parameters</h6>
+<h6 id="_parameters_20">Parameters</h6>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -2971,7 +3122,7 @@ IMPORTANT: As instances start their own threads, the module needs to be restarte
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_38">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_40">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua">CSK_MultiIOLinkSMI.setParameterByteArrayToWrite(byteArrayToWrite)</code></pre>
@@ -2982,13 +3133,13 @@ IMPORTANT: As instances start their own threads, the module needs to be restarte
 <div class="sect4">
 <h5 id="API:Function:CSK_MultiIOLinkSMI.setParameterName"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-function">setParameterName()</span></h5>
 <div class="sect5">
-<h6 id="_short_description_41">Short description</h6>
+<h6 id="_short_description_43">Short description</h6>
 <div class="paragraph">
 <p>Function to set the name of the parameters if saved/loaded via the CSK_PersistentData module.</p>
 </div>
 </div>
 <div class="sect5">
-<h6 id="_parameters_19">Parameters</h6>
+<h6 id="_parameters_21">Parameters</h6>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -3015,7 +3166,7 @@ IMPORTANT: As instances start their own threads, the module needs to be restarte
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_39">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_41">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua">CSK_MultiIOLinkSMI.setParameterName(name)</code></pre>
@@ -3026,13 +3177,13 @@ IMPORTANT: As instances start their own threads, the module needs to be restarte
 <div class="sect4">
 <h5 id="API:Function:CSK_MultiIOLinkSMI.setPort"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-function">setPort()</span></h5>
 <div class="sect5">
-<h6 id="_short_description_42">Short description</h6>
+<h6 id="_short_description_44">Short description</h6>
 <div class="paragraph">
 <p>Set an IO-Link port for selected instance.</p>
 </div>
 </div>
 <div class="sect5">
-<h6 id="_parameters_20">Parameters</h6>
+<h6 id="_parameters_22">Parameters</h6>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -3059,7 +3210,7 @@ IMPORTANT: As instances start their own threads, the module needs to be restarte
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_40">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_42">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua">CSK_MultiIOLinkSMI.setPort(port)</code></pre>
@@ -3070,13 +3221,13 @@ IMPORTANT: As instances start their own threads, the module needs to be restarte
 <div class="sect4">
 <h5 id="API:Function:CSK_MultiIOLinkSMI.setProcessDataByteArrayToWrite"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-function">setProcessDataByteArrayToWrite()</span></h5>
 <div class="sect5">
-<h6 id="_short_description_43">Short description</h6>
+<h6 id="_short_description_45">Short description</h6>
 <div class="paragraph">
 <p>Set byte array to write to the process data of the device for testing purposes in UI.</p>
 </div>
 </div>
 <div class="sect5">
-<h6 id="_parameters_21">Parameters</h6>
+<h6 id="_parameters_23">Parameters</h6>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -3103,7 +3254,7 @@ IMPORTANT: As instances start their own threads, the module needs to be restarte
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_41">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_43">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua">CSK_MultiIOLinkSMI.setProcessDataByteArrayToWrite(processDataByteArray)</code></pre>
@@ -3114,13 +3265,13 @@ IMPORTANT: As instances start their own threads, the module needs to be restarte
 <div class="sect4">
 <h5 id="API:Function:CSK_MultiIOLinkSMI.setProcessDataCondition"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-function">setProcessDataCondition()</span></h5>
 <div class="sect5">
-<h6 id="_short_description_44">Short description</h6>
+<h6 id="_short_description_46">Short description</h6>
 <div class="paragraph">
 <p>Set process data structure varient if the structure is variable. The respective value will be sent to the parameter responsible for the structure.</p>
 </div>
 </div>
 <div class="sect5">
-<h6 id="_parameters_22">Parameters</h6>
+<h6 id="_parameters_24">Parameters</h6>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -3147,7 +3298,7 @@ IMPORTANT: As instances start their own threads, the module needs to be restarte
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_42">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_44">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua">CSK_MultiIOLinkSMI.setProcessDataCondition(newCondition)</code></pre>
@@ -3158,13 +3309,13 @@ IMPORTANT: As instances start their own threads, the module needs to be restarte
 <div class="sect4">
 <h5 id="API:Function:CSK_MultiIOLinkSMI.setSelectedInstance"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-function">setSelectedInstance()</span></h5>
 <div class="sect5">
-<h6 id="_short_description_45">Short description</h6>
+<h6 id="_short_description_47">Short description</h6>
 <div class="paragraph">
 <p>Select one of the multiple instances.</p>
 </div>
 </div>
 <div class="sect5">
-<h6 id="_parameters_23">Parameters</h6>
+<h6 id="_parameters_25">Parameters</h6>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -3191,7 +3342,7 @@ IMPORTANT: As instances start their own threads, the module needs to be restarte
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_43">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_45">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua">CSK_MultiIOLinkSMI.setSelectedInstance(instance)</code></pre>
@@ -3202,13 +3353,13 @@ IMPORTANT: As instances start their own threads, the module needs to be restarte
 <div class="sect4">
 <h5 id="API:Function:CSK_MultiIOLinkSMI.setSelectedIODDReadMessage"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-function">setSelectedIODDReadMessage()</span></h5>
 <div class="sect5">
-<h6 id="_short_description_46">Short description</h6>
+<h6 id="_short_description_48">Short description</h6>
 <div class="paragraph">
 <p>Select a read message to edit.</p>
 </div>
 </div>
 <div class="sect5">
-<h6 id="_parameters_24">Parameters</h6>
+<h6 id="_parameters_26">Parameters</h6>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -3235,7 +3386,7 @@ IMPORTANT: As instances start their own threads, the module needs to be restarte
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_44">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_46">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua">CSK_MultiIOLinkSMI.setSelectedIODDReadMessage(newSelectedMessage)</code></pre>
@@ -3246,13 +3397,13 @@ IMPORTANT: As instances start their own threads, the module needs to be restarte
 <div class="sect4">
 <h5 id="API:Function:CSK_MultiIOLinkSMI.setSelectedIODDWriteMessage"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-function">setSelectedIODDWriteMessage()</span></h5>
 <div class="sect5">
-<h6 id="_short_description_47">Short description</h6>
+<h6 id="_short_description_49">Short description</h6>
 <div class="paragraph">
 <p>Select a write message to edit.</p>
 </div>
 </div>
 <div class="sect5">
-<h6 id="_parameters_25">Parameters</h6>
+<h6 id="_parameters_27">Parameters</h6>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -3279,7 +3430,7 @@ IMPORTANT: As instances start their own threads, the module needs to be restarte
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_45">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_47">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua">CSK_MultiIOLinkSMI.setSelectedIODDWriteMessage(newSelectedMessage)</code></pre>
@@ -3290,13 +3441,13 @@ IMPORTANT: As instances start their own threads, the module needs to be restarte
 <div class="sect4">
 <h5 id="API:Function:CSK_MultiIOLinkSMI.setSelectedTab"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-function">setSelectedTab()</span></h5>
 <div class="sect5">
-<h6 id="_short_description_48">Short description</h6>
+<h6 id="_short_description_50">Short description</h6>
 <div class="paragraph">
 <p>Select tab in UI.</p>
 </div>
 </div>
 <div class="sect5">
-<h6 id="_parameters_26">Parameters</h6>
+<h6 id="_parameters_28">Parameters</h6>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -3323,7 +3474,7 @@ IMPORTANT: As instances start their own threads, the module needs to be restarte
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_46">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_48">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua">CSK_MultiIOLinkSMI.setSelectedTab(tabNumber)</code></pre>
@@ -3334,13 +3485,13 @@ IMPORTANT: As instances start their own threads, the module needs to be restarte
 <div class="sect4">
 <h5 id="API:Function:CSK_MultiIOLinkSMI.setTestReadParameterIndex"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-function">setTestReadParameterIndex()</span></h5>
 <div class="sect5">
-<h6 id="_short_description_49">Short description</h6>
+<h6 id="_short_description_51">Short description</h6>
 <div class="paragraph">
 <p>Set index of the parameter to read as byte array in UI.</p>
 </div>
 </div>
 <div class="sect5">
-<h6 id="_parameters_27">Parameters</h6>
+<h6 id="_parameters_29">Parameters</h6>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -3367,7 +3518,7 @@ IMPORTANT: As instances start their own threads, the module needs to be restarte
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_47">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_49">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua">CSK_MultiIOLinkSMI.setTestReadParameterIndex(index)</code></pre>
@@ -3378,13 +3529,13 @@ IMPORTANT: As instances start their own threads, the module needs to be restarte
 <div class="sect4">
 <h5 id="API:Function:CSK_MultiIOLinkSMI.setTestReadParameterSubindex"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-function">setTestReadParameterSubindex()</span></h5>
 <div class="sect5">
-<h6 id="_short_description_50">Short description</h6>
+<h6 id="_short_description_52">Short description</h6>
 <div class="paragraph">
 <p>Set subindex of the parameter to read as byte array in UI.</p>
 </div>
 </div>
 <div class="sect5">
-<h6 id="_parameters_28">Parameters</h6>
+<h6 id="_parameters_30">Parameters</h6>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -3411,7 +3562,7 @@ IMPORTANT: As instances start their own threads, the module needs to be restarte
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_48">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_50">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua">CSK_MultiIOLinkSMI.setTestReadParameterSubindex(subindex)</code></pre>
@@ -3422,13 +3573,13 @@ IMPORTANT: As instances start their own threads, the module needs to be restarte
 <div class="sect4">
 <h5 id="API:Function:CSK_MultiIOLinkSMI.setTestWriteIODDMessage"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-function">setTestWriteIODDMessage()</span></h5>
 <div class="sect5">
-<h6 id="_short_description_51">Short description</h6>
+<h6 id="_short_description_53">Short description</h6>
 <div class="paragraph">
 <p>Set JSON content of message to write to device. The content must have the same format as JSON template of the selected message (template is generated based on selected paramters/process data).</p>
 </div>
 </div>
 <div class="sect5">
-<h6 id="_parameters_29">Parameters</h6>
+<h6 id="_parameters_31">Parameters</h6>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -3455,7 +3606,7 @@ IMPORTANT: As instances start their own threads, the module needs to be restarte
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_49">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_51">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua">CSK_MultiIOLinkSMI.setTestWriteIODDMessage(newTestWriteIODDMessage)</code></pre>
@@ -3466,13 +3617,13 @@ IMPORTANT: As instances start their own threads, the module needs to be restarte
 <div class="sect4">
 <h5 id="API:Function:CSK_MultiIOLinkSMI.setTestWriteParameterIndex"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-function">setTestWriteParameterIndex()</span></h5>
 <div class="sect5">
-<h6 id="_short_description_52">Short description</h6>
+<h6 id="_short_description_54">Short description</h6>
 <div class="paragraph">
 <p>Set index of the parameter to write as byte array in UI.</p>
 </div>
 </div>
 <div class="sect5">
-<h6 id="_parameters_30">Parameters</h6>
+<h6 id="_parameters_32">Parameters</h6>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -3499,7 +3650,7 @@ IMPORTANT: As instances start their own threads, the module needs to be restarte
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_50">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_52">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua">CSK_MultiIOLinkSMI.setTestWriteParameterIndex(index)</code></pre>
@@ -3510,13 +3661,13 @@ IMPORTANT: As instances start their own threads, the module needs to be restarte
 <div class="sect4">
 <h5 id="API:Function:CSK_MultiIOLinkSMI.setTestWriteParameterSubindex"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-function">setTestWriteParameterSubindex()</span></h5>
 <div class="sect5">
-<h6 id="_short_description_53">Short description</h6>
+<h6 id="_short_description_55">Short description</h6>
 <div class="paragraph">
 <p>Set subindex of the parameter to write as byte array in UI.</p>
 </div>
 </div>
 <div class="sect5">
-<h6 id="_parameters_31">Parameters</h6>
+<h6 id="_parameters_33">Parameters</h6>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -3543,7 +3694,7 @@ IMPORTANT: As instances start their own threads, the module needs to be restarte
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_51">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_53">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua">CSK_MultiIOLinkSMI.setTestWriteParameterSubindex(subindex)</code></pre>
@@ -3554,7 +3705,7 @@ IMPORTANT: As instances start their own threads, the module needs to be restarte
 <div class="sect4">
 <h5 id="API:Function:CSK_MultiIOLinkSMI.setTriggerType"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-function">setTriggerType()</span></h5>
 <div class="sect5">
-<h6 id="_short_description_54">Short description</h6>
+<h6 id="_short_description_56">Short description</h6>
 <div class="paragraph">
 <p>Set condition of when to read the selected read message. Possible options:<br>
 *Periodic - the message is periodically requested from the IO-Link device. The period can be set by setTriggerValue function.<br>
@@ -3562,7 +3713,7 @@ IMPORTANT: As instances start their own threads, the module needs to be restarte
 </div>
 </div>
 <div class="sect5">
-<h6 id="_parameters_32">Parameters</h6>
+<h6 id="_parameters_34">Parameters</h6>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -3589,7 +3740,7 @@ IMPORTANT: As instances start their own threads, the module needs to be restarte
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_52">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_54">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua">CSK_MultiIOLinkSMI.setTriggerType(newTriggerType)</code></pre>
@@ -3600,7 +3751,7 @@ IMPORTANT: As instances start their own threads, the module needs to be restarte
 <div class="sect4">
 <h5 id="API:Function:CSK_MultiIOLinkSMI.setTriggerValue"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-function">setTriggerValue()</span></h5>
 <div class="sect5">
-<h6 id="_short_description_55">Short description</h6>
+<h6 id="_short_description_57">Short description</h6>
 <div class="paragraph">
 <p>Set value depending on the selected trigger type of the selected read message.<br>
 *if type is 'Periodic' - period in [ms].<br>
@@ -3608,7 +3759,7 @@ IMPORTANT: As instances start their own threads, the module needs to be restarte
 </div>
 </div>
 <div class="sect5">
-<h6 id="_parameters_33">Parameters</h6>
+<h6 id="_parameters_35">Parameters</h6>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -3635,7 +3786,7 @@ IMPORTANT: As instances start their own threads, the module needs to be restarte
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_53">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_55">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua">CSK_MultiIOLinkSMI.setTriggerValue(newTriggerValue)</code></pre>
@@ -3646,7 +3797,7 @@ IMPORTANT: As instances start their own threads, the module needs to be restarte
 <div class="sect4">
 <h5 id="API:Function:CSK_MultiIOLinkSMI.updateInstanceParameters"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-function">updateInstanceParameters()</span></h5>
 <div class="sect5">
-<h6 id="_short_description_56">Short description</h6>
+<h6 id="_short_description_58">Short description</h6>
 <div class="paragraph">
 <p>Update all parameters of specified instance. Following is sample structure of JSON table with parameters:<br></p>
 </div>
@@ -3700,7 +3851,7 @@ IMPORTANT: As instances start their own threads, the module needs to be restarte
 </div>
 </div>
 <div class="sect5">
-<h6 id="_parameters_34">Parameters</h6>
+<h6 id="_parameters_36">Parameters</h6>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -3727,7 +3878,7 @@ IMPORTANT: As instances start their own threads, the module needs to be restarte
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_54">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_56">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua">CSK_MultiIOLinkSMI.updateInstanceParameters(jsonNewParameters)</code></pre>
@@ -3738,13 +3889,13 @@ IMPORTANT: As instances start their own threads, the module needs to be restarte
 <div class="sect4">
 <h5 id="API:Function:CSK_MultiIOLinkSMI.writeIODDMessage"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-function">writeIODDMessage()</span></h5>
 <div class="sect5">
-<h6 id="_short_description_57">Short description</h6>
+<h6 id="_short_description_59">Short description</h6>
 <div class="paragraph">
 <p>Write configured message to IO-Link sensor.</p>
 </div>
 </div>
 <div class="sect5">
-<h6 id="_parameters_35">Parameters</h6>
+<h6 id="_parameters_37">Parameters</h6>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -3777,7 +3928,7 @@ IMPORTANT: As instances start their own threads, the module needs to be restarte
 </table>
 </div>
 <div class="sect5">
-<h6 id="_return_values_17">Return values</h6>
+<h6 id="_return_values_19">Return values</h6>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -3804,7 +3955,7 @@ IMPORTANT: As instances start their own threads, the module needs to be restarte
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_55">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_57">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua">success = CSK_MultiIOLinkSMI.writeIODDMessage(messageName, jsonDataToWrite)</code></pre>
@@ -3815,13 +3966,13 @@ IMPORTANT: As instances start their own threads, the module needs to be restarte
 <div class="sect4">
 <h5 id="API:Function:CSK_MultiIOLinkSMI.writeIODDMessageFromUI"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-function">writeIODDMessageFromUI()</span></h5>
 <div class="sect5">
-<h6 id="_short_description_58">Short description</h6>
+<h6 id="_short_description_60">Short description</h6>
 <div class="paragraph">
 <p>Write configured message to IO-Link sensor from UI.</p>
 </div>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_56">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_58">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua">CSK_MultiIOLinkSMI.writeIODDMessageFromUI()</code></pre>
@@ -3832,14 +3983,14 @@ IMPORTANT: As instances start their own threads, the module needs to be restarte
 <div class="sect4">
 <h5 id="API:Function:CSK_MultiIOLinkSMI.writeIODDMessageNUM"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-function">writeIODDMessageNUM()</span></h5>
 <div class="sect5">
-<h6 id="_short_description_59">Short description</h6>
+<h6 id="_short_description_61">Short description</h6>
 <div class="paragraph">
 <p>Write preconfigured message.<br>
 NUM will be replaced by the number of instance (e.g. "writeIODDMessage1").</p>
 </div>
 </div>
 <div class="sect5">
-<h6 id="_parameters_36">Parameters</h6>
+<h6 id="_parameters_38">Parameters</h6>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -3872,7 +4023,7 @@ NUM will be replaced by the number of instance (e.g. "writeIODDMessage1").</p>
 </table>
 </div>
 <div class="sect5">
-<h6 id="_return_values_18">Return values</h6>
+<h6 id="_return_values_20">Return values</h6>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -3905,7 +4056,7 @@ NUM will be replaced by the number of instance (e.g. "writeIODDMessage1").</p>
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_57">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_59">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua">success, details = CSK_MultiIOLinkSMI.writeIODDMessageNUM(messageName, jsonDataToWrite)</code></pre>
@@ -3916,13 +4067,13 @@ NUM will be replaced by the number of instance (e.g. "writeIODDMessage1").</p>
 <div class="sect4">
 <h5 id="API:Function:CSK_MultiIOLinkSMI.writeParameter"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-function">writeParameter()</span></h5>
 <div class="sect5">
-<h6 id="_short_description_60">Short description</h6>
+<h6 id="_short_description_62">Short description</h6>
 <div class="paragraph">
 <p>Write parameter to IO-Link sensor in case the IODD description of the parameter is available.</p>
 </div>
 </div>
 <div class="sect5">
-<h6 id="_parameters_37">Parameters</h6>
+<h6 id="_parameters_39">Parameters</h6>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -3961,7 +4112,7 @@ NUM will be replaced by the number of instance (e.g. "writeIODDMessage1").</p>
 </table>
 </div>
 <div class="sect5">
-<h6 id="_return_values_19">Return values</h6>
+<h6 id="_return_values_21">Return values</h6>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -3988,7 +4139,7 @@ NUM will be replaced by the number of instance (e.g. "writeIODDMessage1").</p>
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_58">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_60">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua">writeSuccess = CSK_MultiIOLinkSMI.writeParameter(index, subindex, jsonDataToWrite)</code></pre>
@@ -3999,13 +4150,13 @@ NUM will be replaced by the number of instance (e.g. "writeIODDMessage1").</p>
 <div class="sect4">
 <h5 id="API:Function:CSK_MultiIOLinkSMI.writeParameterByteArray"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-function">writeParameterByteArray()</span></h5>
 <div class="sect5">
-<h6 id="_short_description_61">Short description</h6>
+<h6 id="_short_description_63">Short description</h6>
 <div class="paragraph">
 <p>Write parameter to IO-Link sensor as a raw byte array. Might be useful for testing.</p>
 </div>
 </div>
 <div class="sect5">
-<h6 id="_parameters_38">Parameters</h6>
+<h6 id="_parameters_40">Parameters</h6>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -4044,7 +4195,7 @@ NUM will be replaced by the number of instance (e.g. "writeIODDMessage1").</p>
 </table>
 </div>
 <div class="sect5">
-<h6 id="_return_values_20">Return values</h6>
+<h6 id="_return_values_22">Return values</h6>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -4077,7 +4228,7 @@ NUM will be replaced by the number of instance (e.g. "writeIODDMessage1").</p>
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_59">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_61">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua">success, errorDescription = CSK_MultiIOLinkSMI.writeParameterByteArray(index, subindex, byteArrayToWrite)</code></pre>
@@ -4088,7 +4239,7 @@ NUM will be replaced by the number of instance (e.g. "writeIODDMessage1").</p>
 <div class="sect4">
 <h5 id="API:Function:CSK_MultiIOLinkSMI.writeParameterByteArray_NUM"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-function">writeParameterByteArray_NUM()</span></h5>
 <div class="sect5">
-<h6 id="_short_description_62">Short description</h6>
+<h6 id="_short_description_64">Short description</h6>
 <div class="paragraph">
 <p>Write parameter as byte array in IO-Link JSON standard, for example:<br>
 {<br>
@@ -4098,7 +4249,7 @@ NUM will be replaced by the number of instance (e.g. "writeParameterByteArray_1"
 </div>
 </div>
 <div class="sect5">
-<h6 id="_parameters_39">Parameters</h6>
+<h6 id="_parameters_41">Parameters</h6>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -4137,7 +4288,7 @@ NUM will be replaced by the number of instance (e.g. "writeParameterByteArray_1"
 </table>
 </div>
 <div class="sect5">
-<h6 id="_return_values_21">Return values</h6>
+<h6 id="_return_values_23">Return values</h6>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -4170,7 +4321,7 @@ NUM will be replaced by the number of instance (e.g. "writeParameterByteArray_1"
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_60">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_62">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua">success, details = CSK_MultiIOLinkSMI.writeParameterByteArray_NUM(index, subindex, jsonDataToWrite)</code></pre>
@@ -4181,13 +4332,13 @@ NUM will be replaced by the number of instance (e.g. "writeParameterByteArray_1"
 <div class="sect4">
 <h5 id="API:Function:CSK_MultiIOLinkSMI.writeParameterByteArrayUI"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-function">writeParameterByteArrayUI()</span></h5>
 <div class="sect5">
-<h6 id="_short_description_63">Short description</h6>
+<h6 id="_short_description_65">Short description</h6>
 <div class="paragraph">
 <p>Write parameter to IO-Link device as a raw byte array triggered by button in UI.</p>
 </div>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_61">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_63">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua">CSK_MultiIOLinkSMI.writeParameterByteArrayUI()</code></pre>
@@ -4198,14 +4349,14 @@ NUM will be replaced by the number of instance (e.g. "writeParameterByteArray_1"
 <div class="sect4">
 <h5 id="API:Function:CSK_MultiIOLinkSMI.writeParameterIODD_NUM"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-function">writeParameterIODD_NUM()</span></h5>
 <div class="sect5">
-<h6 id="_short_description_64">Short description</h6>
+<h6 id="_short_description_66">Short description</h6>
 <div class="paragraph">
 <p>Write parameter with provided info from IODD interpreter and data to write (as JSON tables).<br>
 NUM will be replaced by the number of instance (e.g. "writeParameterIODD_1").</p>
 </div>
 </div>
 <div class="sect5">
-<h6 id="_parameters_40">Parameters</h6>
+<h6 id="_parameters_42">Parameters</h6>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -4250,7 +4401,7 @@ NUM will be replaced by the number of instance (e.g. "writeParameterIODD_1").</p
 </table>
 </div>
 <div class="sect5">
-<h6 id="_return_values_22">Return values</h6>
+<h6 id="_return_values_24">Return values</h6>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -4283,7 +4434,7 @@ NUM will be replaced by the number of instance (e.g. "writeParameterIODD_1").</p
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_62">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_64">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua">success, details = CSK_MultiIOLinkSMI.writeParameterIODD_NUM(index, subindex, jsonDataPointInfo, jsonDataToWrite)</code></pre>
@@ -4294,13 +4445,13 @@ NUM will be replaced by the number of instance (e.g. "writeParameterIODD_1").</p
 <div class="sect4">
 <h5 id="API:Function:CSK_MultiIOLinkSMI.writeProcessData"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-function">writeProcessData()</span></h5>
 <div class="sect5">
-<h6 id="_short_description_65">Short description</h6>
+<h6 id="_short_description_67">Short description</h6>
 <div class="paragraph">
 <p>Write process data to IO-Link sensor in case the IODD description of the parameter is available.</p>
 </div>
 </div>
 <div class="sect5">
-<h6 id="_parameters_41">Parameters</h6>
+<h6 id="_parameters_43">Parameters</h6>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -4327,7 +4478,7 @@ NUM will be replaced by the number of instance (e.g. "writeParameterIODD_1").</p
 </table>
 </div>
 <div class="sect5">
-<h6 id="_return_values_23">Return values</h6>
+<h6 id="_return_values_25">Return values</h6>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -4354,7 +4505,7 @@ NUM will be replaced by the number of instance (e.g. "writeParameterIODD_1").</p
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_63">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_65">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua">writeSuccess = CSK_MultiIOLinkSMI.writeProcessData(jsonDataToWrite)</code></pre>
@@ -4365,13 +4516,13 @@ NUM will be replaced by the number of instance (e.g. "writeParameterIODD_1").</p
 <div class="sect4">
 <h5 id="API:Function:CSK_MultiIOLinkSMI.writeProcessDataByteArray"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-function">writeProcessDataByteArray()</span></h5>
 <div class="sect5">
-<h6 id="_short_description_66">Short description</h6>
+<h6 id="_short_description_68">Short description</h6>
 <div class="paragraph">
 <p>Write process data to IO-Link sensor as a raw byte array. Might be useful for testing.</p>
 </div>
 </div>
 <div class="sect5">
-<h6 id="_parameters_42">Parameters</h6>
+<h6 id="_parameters_44">Parameters</h6>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -4398,7 +4549,7 @@ NUM will be replaced by the number of instance (e.g. "writeParameterIODD_1").</p
 </table>
 </div>
 <div class="sect5">
-<h6 id="_return_values_24">Return values</h6>
+<h6 id="_return_values_26">Return values</h6>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -4431,7 +4582,7 @@ NUM will be replaced by the number of instance (e.g. "writeParameterIODD_1").</p
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_64">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_66">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua">success, errorDescription = CSK_MultiIOLinkSMI.writeProcessDataByteArray(byteArrayToWrite)</code></pre>
@@ -4442,7 +4593,7 @@ NUM will be replaced by the number of instance (e.g. "writeParameterIODD_1").</p
 <div class="sect4">
 <h5 id="API:Function:CSK_MultiIOLinkSMI.writeProcessDataByteArray_NUM"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-function">writeProcessDataByteArray_NUM()</span></h5>
 <div class="sect5">
-<h6 id="_short_description_67">Short description</h6>
+<h6 id="_short_description_69">Short description</h6>
 <div class="paragraph">
 <p>Write process data as byte array in IO-Link JSON standard, for example:<br>
 {<br>
@@ -4452,7 +4603,7 @@ NUM will be replaced by the number of instance (e.g. "writeProcessDataByteArray_
 </div>
 </div>
 <div class="sect5">
-<h6 id="_parameters_43">Parameters</h6>
+<h6 id="_parameters_45">Parameters</h6>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -4479,102 +4630,7 @@ NUM will be replaced by the number of instance (e.g. "writeProcessDataByteArray_
 </table>
 </div>
 <div class="sect5">
-<h6 id="_return_values_25">Return values</h6>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 25%;">
-<col style="width: 25%;">
-<col style="width: 12.5%;">
-<col style="width: 37.5%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Name</th>
-<th class="tableblock halign-left valign-top">Type</th>
-<th class="tableblock halign-left valign-top">Multiplicity</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">success</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">BOOL</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Success of writing.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">details</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">STRING</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">?</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Detailed error if writing is not successful.</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect5">
-<h6 id="_sample_auto_generated_65">Sample (auto-generated)</h6>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="lua">success, details = CSK_MultiIOLinkSMI.writeProcessDataByteArray_NUM(jsonData)</code></pre>
-</div>
-</div>
-</div>
-</div>
-<div class="sect4">
-<h5 id="API:Function:CSK_MultiIOLinkSMI.writeProcessDataByteArrayUI"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-function">writeProcessDataByteArrayUI()</span></h5>
-<div class="sect5">
-<h6 id="_sample_auto_generated_66">Sample (auto-generated)</h6>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="lua">CSK_MultiIOLinkSMI.writeProcessDataByteArrayUI()</code></pre>
-</div>
-</div>
-</div>
-</div>
-<div class="sect4">
-<h5 id="API:Function:CSK_MultiIOLinkSMI.writeProcessDataIODD_NUM"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-function">writeProcessDataIODD_NUM()</span></h5>
-<div class="sect5">
-<h6 id="_short_description_68">Short description</h6>
-<div class="paragraph">
-<p>Write process data with provided info from IODD interpreter and data to write (as JSON tables).<br>
-NUM will be replaced by the number of instance (e.g. "writeProcessDataIODD_1").</p>
-</div>
-</div>
-<div class="sect5">
-<h6 id="_parameters_44">Parameters</h6>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 25%;">
-<col style="width: 25%;">
-<col style="width: 12.5%;">
-<col style="width: 37.5%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Name</th>
-<th class="tableblock halign-left valign-top">Type</th>
-<th class="tableblock halign-left valign-top">Multiplicity</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">jsonDataPointInfo</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">STRING</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">JSON table containing process data info from IODD file.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">jsonData</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">STRING</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">JSON table with process data to be written.</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect5">
-<h6 id="_return_values_26">Return values</h6>
+<h6 id="_return_values_27">Return values</h6>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -4610,6 +4666,101 @@ NUM will be replaced by the number of instance (e.g. "writeProcessDataIODD_1").<
 <h6 id="_sample_auto_generated_67">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
+<pre class="CodeRay highlight"><code data-lang="lua">success, details = CSK_MultiIOLinkSMI.writeProcessDataByteArray_NUM(jsonData)</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="API:Function:CSK_MultiIOLinkSMI.writeProcessDataByteArrayUI"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-function">writeProcessDataByteArrayUI()</span></h5>
+<div class="sect5">
+<h6 id="_sample_auto_generated_68">Sample (auto-generated)</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="lua">CSK_MultiIOLinkSMI.writeProcessDataByteArrayUI()</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="API:Function:CSK_MultiIOLinkSMI.writeProcessDataIODD_NUM"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-function">writeProcessDataIODD_NUM()</span></h5>
+<div class="sect5">
+<h6 id="_short_description_70">Short description</h6>
+<div class="paragraph">
+<p>Write process data with provided info from IODD interpreter and data to write (as JSON tables).<br>
+NUM will be replaced by the number of instance (e.g. "writeProcessDataIODD_1").</p>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_parameters_46">Parameters</h6>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 12.5%;">
+<col style="width: 37.5%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Multiplicity</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">jsonDataPointInfo</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">STRING</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">JSON table containing process data info from IODD file.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">jsonData</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">STRING</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">JSON table with process data to be written.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect5">
+<h6 id="_return_values_28">Return values</h6>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 12.5%;">
+<col style="width: 37.5%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Multiplicity</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">success</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">BOOL</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Success of writing.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">details</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">STRING</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">?</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Detailed error if writing is not successful.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect5">
+<h6 id="_sample_auto_generated_69">Sample (auto-generated)</h6>
+<div class="listingblock">
+<div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua">success, details = CSK_MultiIOLinkSMI.writeProcessDataIODD_NUM(jsonDataPointInfo, jsonData)</code></pre>
 </div>
 </div>
@@ -4621,13 +4772,13 @@ NUM will be replaced by the number of instance (e.g. "writeProcessDataIODD_1").<
 <div class="sect4">
 <h5 id="API:Event:CSK_MultiIOLinkSMI.OnDataLoadedOnReboot"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-event">OnDataLoadedOnReboot</span></h5>
 <div class="sect5">
-<h6 id="_short_description_69">Short description</h6>
+<h6 id="_short_description_71">Short description</h6>
 <div class="paragraph">
 <p>Event to call if module tried to load parameters and should be ready.</p>
 </div>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_68">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_70">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnDataLoadedOnReboot</span>()
@@ -4642,7 +4793,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_MultiIOLinkSMI.OnNewDeviceIdentificationApplied"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-event">OnNewDeviceIdentificationApplied</span></h5>
 <div class="sect5">
-<h6 id="_short_description_70">Short description</h6>
+<h6 id="_short_description_72">Short description</h6>
 <div class="paragraph">
 <p>Notify if device identification of new discovered device is applied instead of the old one.</p>
 </div>
@@ -4681,7 +4832,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_69">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_71">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnNewDeviceIdentificationApplied</span>(instance, jsonInstanceParameters)
@@ -4696,7 +4847,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_MultiIOLinkSMI.OnNewFirmwareVersion"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-event">OnNewFirmwareVersion</span></h5>
 <div class="sect5">
-<h6 id="_short_description_71">Short description</h6>
+<h6 id="_short_description_73">Short description</h6>
 <div class="paragraph">
 <p>Event to show the firmware version of the device.</p>
 </div>
@@ -4729,7 +4880,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_70">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_72">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnNewFirmwareVersion</span>(firmwareVersion)
@@ -4744,7 +4895,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_MultiIOLinkSMI.OnNewHardwareVersion"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-event">OnNewHardwareVersion</span></h5>
 <div class="sect5">
-<h6 id="_short_description_72">Short description</h6>
+<h6 id="_short_description_74">Short description</h6>
 <div class="paragraph">
 <p>Event to show the hardware version of the device.</p>
 </div>
@@ -4777,7 +4928,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_71">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_73">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnNewHardwareVersion</span>(hardwareVersion)
@@ -4792,7 +4943,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_MultiIOLinkSMI.OnNewInstanceList"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-event">OnNewInstanceList</span></h5>
 <div class="sect5">
-<h6 id="_short_description_73">Short description</h6>
+<h6 id="_short_description_75">Short description</h6>
 <div class="paragraph">
 <p>Event to provide list of created instances</p>
 </div>
@@ -4825,7 +4976,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_72">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_74">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnNewInstanceList</span>(list)
@@ -4840,7 +4991,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_MultiIOLinkSMI.OnNewIOLinkPortStatus"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-event">OnNewIOLinkPortStatus</span></h5>
 <div class="sect5">
-<h6 id="_short_description_74">Short description</h6>
+<h6 id="_short_description_76">Short description</h6>
 <div class="paragraph">
 <p>Notify new status of the IO-Link port.</p>
 </div>
@@ -4879,7 +5030,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_73">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_75">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnNewIOLinkPortStatus</span>(instance, status)
@@ -4894,7 +5045,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_MultiIOLinkSMI.OnNewListIODDReadMessages"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-event">OnNewListIODDReadMessages</span></h5>
 <div class="sect5">
-<h6 id="_short_description_75">Short description</h6>
+<h6 id="_short_description_77">Short description</h6>
 <div class="paragraph">
 <p>Event to provide list of created read messages.</p>
 </div>
@@ -4927,7 +5078,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_74">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_76">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnNewListIODDReadMessages</span>(jsonList)
@@ -4942,7 +5093,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_MultiIOLinkSMI.OnNewListIODDWriteMessages"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-event">OnNewListIODDWriteMessages</span></h5>
 <div class="sect5">
-<h6 id="_short_description_76">Short description</h6>
+<h6 id="_short_description_78">Short description</h6>
 <div class="paragraph">
 <p>Event to provide list of created write messages.</p>
 </div>
@@ -4975,7 +5126,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_75">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_77">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnNewListIODDWriteMessages</span>(jsonList)
@@ -4990,7 +5141,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_MultiIOLinkSMI.OnNewListProcessDataCondition"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-event">OnNewListProcessDataCondition</span></h5>
 <div class="sect5">
-<h6 id="_short_description_77">Short description</h6>
+<h6 id="_short_description_79">Short description</h6>
 <div class="paragraph">
 <p>Event to provide list of process data structure options.</p>
 </div>
@@ -5023,7 +5174,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_76">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_78">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnNewListProcessDataCondition</span>(jsonListProcessDataCondition)
@@ -5038,7 +5189,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_MultiIOLinkSMI.OnNewNewDeviceFirmwareVersion"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-event">OnNewNewDeviceFirmwareVersion</span></h5>
 <div class="sect5">
-<h6 id="_short_description_78">Short description</h6>
+<h6 id="_short_description_80">Short description</h6>
 <div class="paragraph">
 <p>Event to show the firmware version of new discovered device.</p>
 </div>
@@ -5071,7 +5222,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_77">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_79">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnNewNewDeviceFirmwareVersion</span>(firmwareVersion)
@@ -5086,7 +5237,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_MultiIOLinkSMI.OnNewNewDeviceHardwareVersion"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-event">OnNewNewDeviceHardwareVersion</span></h5>
 <div class="sect5">
-<h6 id="_short_description_79">Short description</h6>
+<h6 id="_short_description_81">Short description</h6>
 <div class="paragraph">
 <p>Event to show the hardware version of new discovered device.</p>
 </div>
@@ -5119,7 +5270,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_78">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_80">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnNewNewDeviceHardwareVersion</span>(hardwareVersion)
@@ -5134,7 +5285,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_MultiIOLinkSMI.OnNewNewDeviceProductId"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-event">OnNewNewDeviceProductId</span></h5>
 <div class="sect5">
-<h6 id="_short_description_80">Short description</h6>
+<h6 id="_short_description_82">Short description</h6>
 <div class="paragraph">
 <p>Event to show the product id of new discovered device.</p>
 </div>
@@ -5167,7 +5318,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_79">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_81">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnNewNewDeviceProductId</span>(productId)
@@ -5182,7 +5333,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_MultiIOLinkSMI.OnNewNewDeviceProductName"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-event">OnNewNewDeviceProductName</span></h5>
 <div class="sect5">
-<h6 id="_short_description_81">Short description</h6>
+<h6 id="_short_description_83">Short description</h6>
 <div class="paragraph">
 <p>Event to show the product name of new discovered device.</p>
 </div>
@@ -5215,7 +5366,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_80">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_82">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnNewNewDeviceProductName</span>(productName)
@@ -5230,7 +5381,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_MultiIOLinkSMI.OnNewNewDeviceProductText"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-event">OnNewNewDeviceProductText</span></h5>
 <div class="sect5">
-<h6 id="_short_description_82">Short description</h6>
+<h6 id="_short_description_84">Short description</h6>
 <div class="paragraph">
 <p>Event to show the product text of new discovered device.</p>
 </div>
@@ -5263,7 +5414,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_81">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_83">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnNewNewDeviceProductText</span>(productText)
@@ -5278,7 +5429,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_MultiIOLinkSMI.OnNewNewDeviceSerialNumber"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-event">OnNewNewDeviceSerialNumber</span></h5>
 <div class="sect5">
-<h6 id="_short_description_83">Short description</h6>
+<h6 id="_short_description_85">Short description</h6>
 <div class="paragraph">
 <p>Event to show the serial number of new discovered device.</p>
 </div>
@@ -5311,7 +5462,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_82">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_84">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnNewNewDeviceSerialNumber</span>(serialNumber)
@@ -5326,7 +5477,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_MultiIOLinkSMI.OnNewNewDeviceVendorId"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-event">OnNewNewDeviceVendorId</span></h5>
 <div class="sect5">
-<h6 id="_short_description_84">Short description</h6>
+<h6 id="_short_description_86">Short description</h6>
 <div class="paragraph">
 <p>Event to show the vendor ID of new discovered device.</p>
 </div>
@@ -5359,7 +5510,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_83">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_85">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnNewNewDeviceVendorId</span>(vendorId)
@@ -5374,7 +5525,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_MultiIOLinkSMI.OnNewNewDeviceVendorName"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-event">OnNewNewDeviceVendorName</span></h5>
 <div class="sect5">
-<h6 id="_short_description_85">Short description</h6>
+<h6 id="_short_description_87">Short description</h6>
 <div class="paragraph">
 <p>Event to show the vendor name of new discovered device.</p>
 </div>
@@ -5407,7 +5558,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_84">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_86">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnNewNewDeviceVendorName</span>(vendorName)
@@ -5422,7 +5573,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_MultiIOLinkSMI.OnNewNewDeviceVendorText"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-event">OnNewNewDeviceVendorText</span></h5>
 <div class="sect5">
-<h6 id="_short_description_86">Short description</h6>
+<h6 id="_short_description_88">Short description</h6>
 <div class="paragraph">
 <p>Event to show the vendor text of new discovered device.</p>
 </div>
@@ -5455,7 +5606,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_85">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_87">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnNewNewDeviceVendorText</span>(vendorText)
@@ -5470,7 +5621,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_MultiIOLinkSMI.OnNewParameterName"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-event">OnNewParameterName</span></h5>
 <div class="sect5">
-<h6 id="_short_description_87">Short description</h6>
+<h6 id="_short_description_89">Short description</h6>
 <div class="paragraph">
 <p>Notify name of persistent data parameter.</p>
 </div>
@@ -5503,7 +5654,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_86">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_88">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnNewParameterName</span>(name)
@@ -5518,7 +5669,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_MultiIOLinkSMI.OnNewPort"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-event">OnNewPort</span></h5>
 <div class="sect5">
-<h6 id="_short_description_88">Short description</h6>
+<h6 id="_short_description_90">Short description</h6>
 <div class="paragraph">
 <p>Event to show selected IO-Link port in UI.</p>
 </div>
@@ -5551,7 +5702,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_87">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_89">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnNewPort</span>(Port)
@@ -5566,7 +5717,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_MultiIOLinkSMI.OnNewPortDropdown"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-event">OnNewPortDropdown</span></h5>
 <div class="sect5">
-<h6 id="_short_description_89">Short description</h6>
+<h6 id="_short_description_91">Short description</h6>
 <div class="paragraph">
 <p>Event to show list of ports in UI.</p>
 </div>
@@ -5599,7 +5750,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_88">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_90">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnNewPortDropdown</span>(PortDropdown)
@@ -5614,7 +5765,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_MultiIOLinkSMI.OnNewPortEvent"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-event">OnNewPortEvent</span></h5>
 <div class="sect5">
-<h6 id="_short_description_90">Short description</h6>
+<h6 id="_short_description_92">Short description</h6>
 <div class="paragraph">
 <p>Event to show the new status of active IO-Link port. Can be used externally.</p>
 </div>
@@ -5661,7 +5812,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_89">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_91">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnNewPortEvent</span>(port, eventType, eventDescription)
@@ -5676,7 +5827,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_MultiIOLinkSMI.OnNewPortStatus"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-event">OnNewPortStatus</span></h5>
 <div class="sect5">
-<h6 id="_short_description_91">Short description</h6>
+<h6 id="_short_description_93">Short description</h6>
 <div class="paragraph">
 <p>Event to show current port status of selected IO-Link port in UI.</p>
 </div>
@@ -5709,7 +5860,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_90">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_92">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnNewPortStatus</span>(postStatus)
@@ -5724,7 +5875,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_MultiIOLinkSMI.OnNewProcessDataCondition"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-event">OnNewProcessDataCondition</span></h5>
 <div class="sect5">
-<h6 id="_short_description_92">Short description</h6>
+<h6 id="_short_description_94">Short description</h6>
 <div class="paragraph">
 <p>Event to show selected IO-Link procecss data option of connected device in UI.</p>
 </div>
@@ -5757,7 +5908,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_91">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_93">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnNewProcessDataCondition</span>(condition)
@@ -5772,7 +5923,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_MultiIOLinkSMI.OnNewProcessingParameter"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-event">OnNewProcessingParameter</span></h5>
 <div class="sect5">
-<h6 id="_short_description_93">Short description</h6>
+<h6 id="_short_description_95">Short description</h6>
 <div class="paragraph">
 <p>Event to share processing parameters to the instances.</p>
 </div>
@@ -5823,7 +5974,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_92">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_94">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnNewProcessingParameter</span>(objectNo, parameter, value, internalObjectNo)
@@ -5838,7 +5989,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_MultiIOLinkSMI.OnNewProductId"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-event">OnNewProductId</span></h5>
 <div class="sect5">
-<h6 id="_short_description_94">Short description</h6>
+<h6 id="_short_description_96">Short description</h6>
 <div class="paragraph">
 <p>Event to show the product id of connected IO-Link device.</p>
 </div>
@@ -5871,7 +6022,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_93">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_95">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnNewProductId</span>(productId)
@@ -5886,7 +6037,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_MultiIOLinkSMI.OnNewProductName"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-event">OnNewProductName</span></h5>
 <div class="sect5">
-<h6 id="_short_description_95">Short description</h6>
+<h6 id="_short_description_97">Short description</h6>
 <div class="paragraph">
 <p>Event to show the product name of connected IO-Link device.</p>
 </div>
@@ -5919,7 +6070,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_94">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_96">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnNewProductName</span>(productName)
@@ -5934,7 +6085,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_MultiIOLinkSMI.OnNewProductText"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-event">OnNewProductText</span></h5>
 <div class="sect5">
-<h6 id="_short_description_96">Short description</h6>
+<h6 id="_short_description_98">Short description</h6>
 <div class="paragraph">
 <p>Event to show the product text of connected IO-Link device.</p>
 </div>
@@ -5967,7 +6118,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_95">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_97">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnNewProductText</span>(productText)
@@ -5982,7 +6133,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_MultiIOLinkSMI.OnNewReadDataMessage"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-event">OnNewReadDataMessage</span></h5>
 <div class="sect5">
-<h6 id="_short_description_97">Short description</h6>
+<h6 id="_short_description_99">Short description</h6>
 <div class="paragraph">
 <p>Event to show the received message after the refresh button has been pressed in UI.</p>
 </div>
@@ -6015,7 +6166,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_96">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_98">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnNewReadDataMessage</span>(message)
@@ -6030,7 +6181,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_MultiIOLinkSMI.OnNewReadDataSuccess"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-event">OnNewReadDataSuccess</span></h5>
 <div class="sect5">
-<h6 id="_short_description_98">Short description</h6>
+<h6 id="_short_description_100">Short description</h6>
 <div class="paragraph">
 <p>Event to show the success of reading message after the refresh button has been pressed in UI.</p>
 </div>
@@ -6063,7 +6214,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_97">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_99">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnNewReadDataSuccess</span>(success)
@@ -6078,7 +6229,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_MultiIOLinkSMI.OnNewReadJSONTemplate"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-event">OnNewReadJSONTemplate</span></h5>
 <div class="sect5">
-<h6 id="_short_description_99">Short description</h6>
+<h6 id="_short_description_101">Short description</h6>
 <div class="paragraph">
 <p>Event to show JSON template of configured reading message.</p>
 </div>
@@ -6111,7 +6262,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_98">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_100">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnNewReadJSONTemplate</span>(readJSONTemplate)
@@ -6126,7 +6277,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_MultiIOLinkSMI.OnNewReadMessageEventName"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-event">OnNewReadMessageEventName</span></h5>
 <div class="sect5">
-<h6 id="_short_description_100">Short description</h6>
+<h6 id="_short_description_102">Short description</h6>
 <div class="paragraph">
 <p>Event to show the event name that can be used externally.</p>
 </div>
@@ -6159,7 +6310,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_99">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_101">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnNewReadMessageEventName</span>(eventName)
@@ -6174,7 +6325,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_MultiIOLinkSMI.OnNewReadParameterByteArray"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-event">OnNewReadParameterByteArray</span></h5>
 <div class="sect5">
-<h6 id="_short_description_101">Short description</h6>
+<h6 id="_short_description_103">Short description</h6>
 <div class="paragraph">
 <p>Event to show the received byte array after reading the configured parameter from IO-Link device for testing purposes.</p>
 </div>
@@ -6207,7 +6358,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_100">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_102">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnNewReadParameterByteArray</span>(receivedByteArray)
@@ -6222,7 +6373,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_MultiIOLinkSMI.OnNewReadProcessDataByteArray"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-event">OnNewReadProcessDataByteArray</span></h5>
 <div class="sect5">
-<h6 id="_short_description_102">Short description</h6>
+<h6 id="_short_description_104">Short description</h6>
 <div class="paragraph">
 <p>Event to show the received byte array after reading the process data from IO-Link device for testing purposes.</p>
 </div>
@@ -6255,7 +6406,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_101">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_103">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnNewReadProcessDataByteArray</span>(processDataByteArray)
@@ -6270,7 +6421,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_MultiIOLinkSMI.OnNewResultNUM"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-event">OnNewResultNUM</span></h5>
 <div class="sect5">
-<h6 id="_short_description_103">Short description</h6>
+<h6 id="_short_description_105">Short description</h6>
 <div class="paragraph">
 <p>Example of dynamically created event to provide result of instance.<br>
 NUM will be replaced by the number of instance (e.g. "OnNewResult1").<br>
@@ -6305,7 +6456,7 @@ INFO: Other modules can check via "Script.isServedAsEvent" if event of sepecific
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_102">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_104">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnNewResultNUM</span>(result)
@@ -6320,7 +6471,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_MultiIOLinkSMI.OnNewSelectedInstance"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-event">OnNewSelectedInstance</span></h5>
 <div class="sect5">
-<h6 id="_short_description_104">Short description</h6>
+<h6 id="_short_description_106">Short description</h6>
 <div class="paragraph">
 <p>Notify if new instance is selected.</p>
 </div>
@@ -6353,7 +6504,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_103">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_105">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnNewSelectedInstance</span>(selectedObject)
@@ -6368,7 +6519,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_MultiIOLinkSMI.OnNewSelectedIODDReadMessage"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-event">OnNewSelectedIODDReadMessage</span></h5>
 <div class="sect5">
-<h6 id="_short_description_105">Short description</h6>
+<h6 id="_short_description_107">Short description</h6>
 <div class="paragraph">
 <p>Event to show selected read message.</p>
 </div>
@@ -6401,7 +6552,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_104">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_106">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnNewSelectedIODDReadMessage</span>(messageName)
@@ -6416,7 +6567,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_MultiIOLinkSMI.OnNewSelectedIODDWriteMessage"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-event">OnNewSelectedIODDWriteMessage</span></h5>
 <div class="sect5">
-<h6 id="_short_description_106">Short description</h6>
+<h6 id="_short_description_108">Short description</h6>
 <div class="paragraph">
 <p>Event to show selected write message.</p>
 </div>
@@ -6449,7 +6600,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_105">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_107">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnNewSelectedIODDWriteMessage</span>(messageName)
@@ -6464,7 +6615,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_MultiIOLinkSMI.OnNewSelectedTab"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-event">OnNewSelectedTab</span></h5>
 <div class="sect5">
-<h6 id="_short_description_107">Short description</h6>
+<h6 id="_short_description_109">Short description</h6>
 <div class="paragraph">
 <p>Notify to show selected tab.</p>
 </div>
@@ -6497,7 +6648,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_106">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_108">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnNewSelectedTab</span>(tabNumber)
@@ -6512,7 +6663,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_MultiIOLinkSMI.OnNewSerialNumber"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-event">OnNewSerialNumber</span></h5>
 <div class="sect5">
-<h6 id="_short_description_108">Short description</h6>
+<h6 id="_short_description_110">Short description</h6>
 <div class="paragraph">
 <p>Event to show the serial number of connected IO-Link device.</p>
 </div>
@@ -6545,7 +6696,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_107">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_109">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnNewSerialNumber</span>(serialNumber)
@@ -6560,7 +6711,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_MultiIOLinkSMI.OnNewStatusCSKIODDInterpreterAvailable"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-event">OnNewStatusCSKIODDInterpreterAvailable</span></h5>
 <div class="sect5">
-<h6 id="_short_description_109">Short description</h6>
+<h6 id="_short_description_111">Short description</h6>
 <div class="paragraph">
 <p>Event to show if there is available CSK IODD interpreter in the project.</p>
 </div>
@@ -6593,7 +6744,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_108">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_110">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnNewStatusCSKIODDInterpreterAvailable</span>(isAvailable)
@@ -6608,7 +6759,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_MultiIOLinkSMI.OnNewStatusInstanceActive"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-event">OnNewStatusInstanceActive</span></h5>
 <div class="sect5">
-<h6 id="_short_description_110">Short description</h6>
+<h6 id="_short_description_112">Short description</h6>
 <div class="paragraph">
 <p>Notify if instance is activated.</p>
 </div>
@@ -6641,7 +6792,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_109">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_111">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnNewStatusInstanceActive</span>(status)
@@ -6656,7 +6807,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_MultiIOLinkSMI.OnNewStatusIODDMatchFound"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-event">OnNewStatusIODDMatchFound</span></h5>
 <div class="sect5">
-<h6 id="_short_description_111">Short description</h6>
+<h6 id="_short_description_113">Short description</h6>
 <div class="paragraph">
 <p>Event to notify if there is a matching IODD file found by IODD interpreter module.</p>
 </div>
@@ -6689,7 +6840,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_110">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_112">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnNewStatusIODDMatchFound</span>(isFound)
@@ -6704,7 +6855,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_MultiIOLinkSMI.OnNewStatusIODDReadMessageSelected"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-event">OnNewStatusIODDReadMessageSelected</span></h5>
 <div class="sect5">
-<h6 id="_short_description_112">Short description</h6>
+<h6 id="_short_description_114">Short description</h6>
 <div class="paragraph">
 <p>Event to inform if the read message is selected in UI. Used to show settings in UI.</p>
 </div>
@@ -6737,7 +6888,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_111">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_113">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnNewStatusIODDReadMessageSelected</span>(isSelected)
@@ -6752,7 +6903,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_MultiIOLinkSMI.OnNewStatusIODDWriteMessageSelected"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-event">OnNewStatusIODDWriteMessageSelected</span></h5>
 <div class="sect5">
-<h6 id="_short_description_113">Short description</h6>
+<h6 id="_short_description_115">Short description</h6>
 <div class="paragraph">
 <p>Event to inform if the write message is selected in UI. Used to show settings in UI.</p>
 </div>
@@ -6785,7 +6936,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_112">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_114">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnNewStatusIODDWriteMessageSelected</span>(isSelected)
@@ -6800,7 +6951,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_MultiIOLinkSMI.OnNewStatusLoadParameterOnReboot"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-event">OnNewStatusLoadParameterOnReboot</span></h5>
 <div class="sect5">
-<h6 id="_short_description_114">Short description</h6>
+<h6 id="_short_description_116">Short description</h6>
 <div class="paragraph">
 <p>Notify status if parameters should be loaded on app-/device- boot up.</p>
 </div>
@@ -6833,7 +6984,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_113">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_115">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnNewStatusLoadParameterOnReboot</span>(status)
@@ -6848,7 +6999,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_MultiIOLinkSMI.OnNewStatusModuleIsActive"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-event">OnNewStatusModuleIsActive</span></h5>
 <div class="sect5">
-<h6 id="_short_description_115">Short description</h6>
+<h6 id="_short_description_117">Short description</h6>
 <div class="paragraph">
 <p>Notify if module can be used on device.</p>
 </div>
@@ -6881,7 +7032,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_114">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_116">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnNewStatusModuleIsActive</span>(status)
@@ -6896,7 +7047,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_MultiIOLinkSMI.OnNewStatusNewDeviceFound"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-event">OnNewStatusNewDeviceFound</span></h5>
 <div class="sect5">
-<h6 id="_short_description_116">Short description</h6>
+<h6 id="_short_description_118">Short description</h6>
 <div class="paragraph">
 <p>Event to notify if there is a new device discovered on selected port. Used to show settings in UI.</p>
 </div>
@@ -6929,7 +7080,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_115">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_117">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnNewStatusNewDeviceFound</span>(state)
@@ -6944,9 +7095,9 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_MultiIOLinkSMI.OnNewStatusProcessDataVariable"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-event">OnNewStatusProcessDataVariable</span></h5>
 <div class="sect5">
-<h6 id="_short_description_117">Short description</h6>
+<h6 id="_short_description_119">Short description</h6>
 <div class="paragraph">
-<p>--OPEN TODO</p>
+<p>Event to show additional settings if process data of the IO-Link device has a variable structure.</p>
 </div>
 </div>
 <div class="sect5">
@@ -6977,7 +7128,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_116">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_118">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnNewStatusProcessDataVariable</span>(state)
@@ -6992,7 +7143,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_MultiIOLinkSMI.OnNewTestCommandState"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-event">OnNewTestCommandState</span></h5>
 <div class="sect5">
-<h6 id="_short_description_118">Short description</h6>
+<h6 id="_short_description_120">Short description</h6>
 <div class="paragraph">
 <p>Event to show latest status of reading or writing raw byte arrays from/to IO-Link device for testing purpuses.</p>
 </div>
@@ -7025,7 +7176,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_117">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_119">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnNewTestCommandState</span>(state)
@@ -7040,7 +7191,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_MultiIOLinkSMI.OnNewTestWriteIODDMessage"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-event">OnNewTestWriteIODDMessage</span></h5>
 <div class="sect5">
-<h6 id="_short_description_119">Short description</h6>
+<h6 id="_short_description_121">Short description</h6>
 <div class="paragraph">
 <p>Event to show the edited JSON payload of write message be sent to IO-Link device for testing purposes.</p>
 </div>
@@ -7073,7 +7224,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_118">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_120">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnNewTestWriteIODDMessage</span>(testWriteIODDMessage)
@@ -7088,7 +7239,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_MultiIOLinkSMI.OnNewTriggerType"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-event">OnNewTriggerType</span></h5>
 <div class="sect5">
-<h6 id="_short_description_120">Short description</h6>
+<h6 id="_short_description_122">Short description</h6>
 <div class="paragraph">
 <p>Event to show the selected trigger type of selected read message.</p>
 </div>
@@ -7121,7 +7272,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_119">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_121">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnNewTriggerType</span>(triggerType)
@@ -7136,7 +7287,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_MultiIOLinkSMI.OnNewTriggerValue"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-event">OnNewTriggerValue</span></h5>
 <div class="sect5">
-<h6 id="_short_description_121">Short description</h6>
+<h6 id="_short_description_123">Short description</h6>
 <div class="paragraph">
 <p>Event to show the selected trigger value of selected read message.</p>
 </div>
@@ -7169,7 +7320,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_120">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_122">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnNewTriggerValue</span>(triggerValue)
@@ -7184,7 +7335,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_MultiIOLinkSMI.OnNewValueToForwardNUM"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-event">OnNewValueToForwardNUM</span></h5>
 <div class="sect5">
-<h6 id="_short_description_122">Short description</h6>
+<h6 id="_short_description_124">Short description</h6>
 <div class="paragraph">
 <p>Example of dynamically created event to forward data from instance thread to Controller part of module, e.g. to forward values to UI.<br>
 NUM will be replaced by the number of instance (e.g. "OnNewValueToForward1").<br></p>
@@ -7224,7 +7375,7 @@ NUM will be replaced by the number of instance (e.g. "OnNewValueToForward1").<br
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_121">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_123">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnNewValueToForwardNUM</span>(eventname, value)
@@ -7239,7 +7390,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_MultiIOLinkSMI.OnNewValueUpdateNUM"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-event">OnNewValueUpdateNUM</span></h5>
 <div class="sect5">
-<h6 id="_short_description_123">Short description</h6>
+<h6 id="_short_description_125">Short description</h6>
 <div class="paragraph">
 <p>Example of dynamically created event to sync paramters between instance threads and Controller part of module.<br>
 NUM will be replaced by the number of instance (e.g. "OnNewResult1").<br></p>
@@ -7291,7 +7442,7 @@ NUM will be replaced by the number of instance (e.g. "OnNewResult1").<br></p>
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_122">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_124">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnNewValueUpdateNUM</span>(instance, parameter, value, selectedObject)
@@ -7306,7 +7457,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_MultiIOLinkSMI.OnNewVendorId"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-event">OnNewVendorId</span></h5>
 <div class="sect5">
-<h6 id="_short_description_124">Short description</h6>
+<h6 id="_short_description_126">Short description</h6>
 <div class="paragraph">
 <p>Event to show the vendor ID of connected IO-Link device.</p>
 </div>
@@ -7339,7 +7490,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_123">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_125">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnNewVendorId</span>(vendorId)
@@ -7354,7 +7505,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_MultiIOLinkSMI.OnNewVendorName"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-event">OnNewVendorName</span></h5>
 <div class="sect5">
-<h6 id="_short_description_125">Short description</h6>
+<h6 id="_short_description_127">Short description</h6>
 <div class="paragraph">
 <p>Event to show the vendor name of connected IO-Link device.</p>
 </div>
@@ -7387,7 +7538,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_124">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_126">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnNewVendorName</span>(vendorName)
@@ -7402,7 +7553,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_MultiIOLinkSMI.OnNewVendorText"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-event">OnNewVendorText</span></h5>
 <div class="sect5">
-<h6 id="_short_description_126">Short description</h6>
+<h6 id="_short_description_128">Short description</h6>
 <div class="paragraph">
 <p>Event to show the vendor text of connected IO-Link device.</p>
 </div>
@@ -7435,7 +7586,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_125">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_127">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnNewVendorText</span>(vendorText)
@@ -7450,7 +7601,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_MultiIOLinkSMI.OnNewWriteDataMessage"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-event">OnNewWriteDataMessage</span></h5>
 <div class="sect5">
-<h6 id="_short_description_127">Short description</h6>
+<h6 id="_short_description_129">Short description</h6>
 <div class="paragraph">
 <p>Event to show the latest payload of write message sent to IO-Link device after refresh button has been pressed.</p>
 </div>
@@ -7483,7 +7634,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_126">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_128">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnNewWriteDataMessage</span>(message)
@@ -7498,7 +7649,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_MultiIOLinkSMI.OnNewWriteDataSuccess"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-event">OnNewWriteDataSuccess</span></h5>
 <div class="sect5">
-<h6 id="_short_description_128">Short description</h6>
+<h6 id="_short_description_130">Short description</h6>
 <div class="paragraph">
 <p>Event to show the latest success of writing message to IO-Link device after refresh button has been pressed.</p>
 </div>
@@ -7531,7 +7682,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_127">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_129">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnNewWriteDataSuccess</span>(success)
@@ -7546,7 +7697,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_MultiIOLinkSMI.OnNewWriteJSONTemplate"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-event">OnNewWriteJSONTemplate</span></h5>
 <div class="sect5">
-<h6 id="_short_description_129">Short description</h6>
+<h6 id="_short_description_131">Short description</h6>
 <div class="paragraph">
 <p>Event to show JSON template of configured write message.</p>
 </div>
@@ -7579,7 +7730,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_128">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_130">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnNewWriteJSONTemplate</span>(writeJSONTemplate)
@@ -7594,7 +7745,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_MultiIOLinkSMI.OnNewWriteMessageFunctionName"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-event">OnNewWriteMessageFunctionName</span></h5>
 <div class="sect5">
-<h6 id="_short_description_130">Short description</h6>
+<h6 id="_short_description_132">Short description</h6>
 <div class="paragraph">
 <p>Event to notify the name of the write data function that can be used externally.</p>
 </div>
@@ -7627,7 +7778,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_129">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_131">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnNewWriteMessageFunctionName</span>(functionName)
@@ -7642,7 +7793,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_MultiIOLinkSMI.OnPersistentDataModuleAvailable"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-event">OnPersistentDataModuleAvailable</span></h5>
 <div class="sect5">
-<h6 id="_short_description_131">Short description</h6>
+<h6 id="_short_description_133">Short description</h6>
 <div class="paragraph">
 <p>Notify status if features of CSK_PersistentData module are available.</p>
 </div>
@@ -7675,7 +7826,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_130">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_132">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnPersistentDataModuleAvailable</span>(status)
@@ -7690,7 +7841,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_MultiIOLinkSMI.OnUserLevelAdminActive"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-event">OnUserLevelAdminActive</span></h5>
 <div class="sect5">
-<h6 id="_short_description_132">Short description</h6>
+<h6 id="_short_description_134">Short description</h6>
 <div class="paragraph">
 <p>Status of Admin userlevel. Used internally in combination with the CSK_UserManagement module if available.</p>
 </div>
@@ -7723,7 +7874,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_131">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_133">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnUserLevelAdminActive</span>(status)
@@ -7738,7 +7889,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_MultiIOLinkSMI.OnUserLevelMaintenanceActive"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-event">OnUserLevelMaintenanceActive</span></h5>
 <div class="sect5">
-<h6 id="_short_description_133">Short description</h6>
+<h6 id="_short_description_135">Short description</h6>
 <div class="paragraph">
 <p>Status of Maintenance userlevel. Used internally in combination with the CSK_UserManagement module if available.</p>
 </div>
@@ -7771,7 +7922,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_132">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_134">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnUserLevelMaintenanceActive</span>(status)
@@ -7786,7 +7937,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_MultiIOLinkSMI.OnUserLevelOperatorActive"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-event">OnUserLevelOperatorActive</span></h5>
 <div class="sect5">
-<h6 id="_short_description_134">Short description</h6>
+<h6 id="_short_description_136">Short description</h6>
 <div class="paragraph">
 <p>Status of Operator userlevel. Used internally in combination with the CSK_UserManagement module if available.</p>
 </div>
@@ -7819,7 +7970,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_133">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_135">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnUserLevelOperatorActive</span>(status)
@@ -7834,7 +7985,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_MultiIOLinkSMI.OnUserLevelServiceActive"><span class="breadcrumb">CSK_MultiIOLinkSMI.</span><span class="api-event">OnUserLevelServiceActive</span></h5>
 <div class="sect5">
-<h6 id="_short_description_135">Short description</h6>
+<h6 id="_short_description_137">Short description</h6>
 <div class="paragraph">
 <p>Status of Service userlevel. Used internally in combination with the CSK_UserManagement module if available.</p>
 </div>
@@ -7867,7 +8018,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_134">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_136">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnUserLevelServiceActive</span>(status)
@@ -7887,7 +8038,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div id="footer">
 <div id="footer-text">
 Version 1.0.0<br>
-Last updated 2024-01-25 09:32:22 +0100
+Last updated 2024-02-07 16:01:26 +0100
 </div>
 </div>
 <script type="text/javascript">
