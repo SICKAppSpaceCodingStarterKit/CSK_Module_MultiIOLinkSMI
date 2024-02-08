@@ -34,7 +34,7 @@ If the device's process data structure is variable, the module makes sure that t
 **4. Read and write messages handling** +
 Messages to be read or written from/to device are sets of data combined based on selection in respective dynamic tables in UI. +
 Each message has its own IODD instance at the background. +
-After message configuration, the JSON template is available in UI for reference. +
+After message configuration, the JSON template is available in UI for the reference. +
 The structure of the write message must comply with the generated JSON template. +
 {empty} +
 Each read message has its own event to register to exteranlly. +
@@ -44,10 +44,11 @@ Each write message has its own function to be called externally. +
 The function name is **"CSK_MultiIOLinkSMI.writeMessage" .. port .. writeMessageName** +
 {empty} +
 Use following functions to handle messages: +
-- "createIODDReadMessage" and "createIODDWriteMessage" +
-- "setIODDReadMessageName" and "setIODDWriteMessageName" +
-- "setSelectedIODDReadMessage" and "setSelectedIODDWriteMessage" +
-- "deleteIODDReadMessage" and "deleteIODDWriteMessage" +
+- "createIODDReadMessage" and "createIODDWriteMessage" - to create the message +
+- "setIODDReadMessageName" and "setIODDWriteMessageName" - to rename the message +
+- "setSelectedIODDReadMessage" and "setSelectedIODDWriteMessage" - to select the current message +
+- "deleteIODDReadMessage" and "deleteIODDWriteMessage" - to delete message +
+- "getIODDReadMessageJSONTemplate" and "getIODDWriteMessageJSONTemplate" - to get JSON structure (template) of the message to be received or sent +
 {empty} +
 **5. Direct data reading/writing** +
 The following functions can be used for reading or writing data by selected instance directly: +
@@ -831,6 +832,18 @@ NUM will be replaced by the number of instance (e.g. "getWriteDataResult1").
                     <param desc="Name of the message to get the latest data about." multiplicity="1" name="messageName" type="string"/>
                     <return desc="Latest success of writing." multiplicity="1" name="success" type="bool"/>
                     <return desc="JSON table with latest sent message content." multiplicity="?" name="jsonMessageContent" type="string"/>
+                </function>
+                <function name="getIODDReadMessageJSONTemplate">
+                    <trait>released</trait>
+                    <desc>Function to get the JSON template of the message that will be read from IO-Link device.</desc>
+                    <param desc="Name of the message." multiplicity="1" name="messageName" type="string"/>
+                    <return desc="Template in JSON format." multiplicity="?" name="jsonTemplate" type="string"/>
+                </function>
+                <function name="getIODDWriteMessageJSONTemplate">
+                    <trait>released</trait>
+                    <desc>Function to get the JSON template of the message that is expected to be written to IO-Link device.</desc>
+                    <param desc="Name of the message." multiplicity="1" name="messageName" type="string"/>
+                    <return desc="Template in JSON format." multiplicity="?" name="jsonTemplate" type="string"/>
                 </function>
             </serves>
         </crown>
