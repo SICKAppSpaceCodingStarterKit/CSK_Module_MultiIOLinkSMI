@@ -61,6 +61,8 @@ Following CSK modules are mostly necessary to make use of the features of this m
 |--|--|--|
 |SIM1012|V2.3.0|v1.0.0|
 
+NOTE! Writing process data to IO-Link device works after firmware version 2.3.0
+
 This application / module is part of the SICK AppSpace Coding Starter Kit developing approach.  
 It is programmed in an object-oriented way. Some of the modules use kind of "classes" in Lua to make it possible to reuse code / classes in other projects.  
 In general, it is not neccessary to code this way, but the architecture of this app can serve as a sample to be used especially for bigger projects and to make it easier to share code.  

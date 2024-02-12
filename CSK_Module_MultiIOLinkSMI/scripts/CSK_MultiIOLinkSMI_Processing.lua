@@ -71,11 +71,11 @@ local function readBinaryProcessData()
   if portQualifier == nil then
     return nil
   end
-  local dataValid = ((portQualifier & 0x80) or (portQualifier & 0xA0)) > 0
-  if not dataValid then
-    _G.logger:warning(nameOfModule..': failed to read process data on port ' .. tostring(processingParams.port) .. ' instancenumber ' .. multiIOLinkSMIInstanceNumberString)
-    return nil
-  end
+  --local dataValid = ((portQualifier & 0x80) or (portQualifier & 0xA0)) > 0
+  --if not dataValid then
+  --  _G.logger:warning(nameOfModule..': failed to read process data on port ' .. tostring(processingParams.port) .. ' instancenumber ' .. multiIOLinkSMIInstanceNumberString)
+  --  return nil
+  --end
   return string.sub(processData, 3)
 end
 
@@ -514,7 +514,7 @@ local function writeIODDMessage(messageName, jsonDataToWrite)
       if errorCode then
         if not errorMessage then
           errorMessage = 'Error codes:'
-        end 
+        end
         errorMessage = errorMessage.. '; ' .. errorCode
       end
       messageWriteSuccess = messageWriteSuccess and success

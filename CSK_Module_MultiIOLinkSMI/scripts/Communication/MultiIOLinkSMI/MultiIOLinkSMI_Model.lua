@@ -299,8 +299,6 @@ function multiIOLinkSMI:createIODDWriteMessage()
     messageName = 'output_data' .. tostring(index)
   end
   self.parameters.ioddWriteMessages[messageName] = {
-    triggerType = 'Periodic',
-    triggerValue = 1000,
     ioddInstanceId = self.parameters.ioddInfo.ioddInstanceId .. '_WriteMessage_' .. messageName
   }
   CSK_IODDInterpreter.addInstance()

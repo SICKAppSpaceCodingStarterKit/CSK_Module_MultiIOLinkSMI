@@ -273,17 +273,10 @@ local function updateAvailablePortList()
   end
 end
 
-local bugFixCntr = 0
 
 -- Function to send all relevant values to UI on resume
 --@handleOnExpiredTmrMultiIOLinkSMI()
 local function handleOnExpiredTmrMultiIOLinkSMI()
-  if bugFixCntr == 1 then
-    bugFixCntr = 2
-  elseif bugFixCntr == 2 then
-    bugFixCntr = 0
-    return
-  end
   if not _G.availableAPIs.ioLinkSmi then
     Script.notifyEvent('MultiIOLinkSMI_OnNewStatusModuleIsActive', false)
     return
@@ -320,6 +313,16 @@ local function handleOnExpiredTmrMultiIOLinkSMI()
     Script.notifyEvent('MultiIOLinkSMI_OnNewProductId', deviceInfo.deviceId)
     Script.notifyEvent('MultiIOLinkSMI_OnNewProductName', deviceInfo.productName)
     Script.notifyEvent('MultiIOLinkSMI_OnNewProductText', deviceInfo.productText)
+  else
+    Script.notifyEvent('MultiIOLinkSMI_OnNewFirmwareVersion', "")
+    Script.notifyEvent('MultiIOLinkSMI_OnNewHardwareVersion', "")
+    Script.notifyEvent('MultiIOLinkSMI_OnNewSerialNumber', "")
+    Script.notifyEvent('MultiIOLinkSMI_OnNewVendorId', "")
+    Script.notifyEvent('MultiIOLinkSMI_OnNewVendorName', "")
+    Script.notifyEvent('MultiIOLinkSMI_OnNewVendorText', "")
+    Script.notifyEvent('MultiIOLinkSMI_OnNewProductId', "")
+    Script.notifyEvent('MultiIOLinkSMI_OnNewProductName', "")
+    Script.notifyEvent('MultiIOLinkSMI_OnNewProductText', "")
   end
   Script.notifyEvent('MultiIOLinkSMI_OnNewStatusNewDeviceFound', (multiIOLinkSMI_Instances[selectedInstance].parameters.newDeviceIdentification ~= nil))
   if multiIOLinkSMI_Instances[selectedInstance].parameters.newDeviceIdentification then
@@ -392,7 +395,6 @@ local function pageCalled()
   if _G.availableAPIs.ioLinkSmi then
     updateUserLevel() -- try to hide user specific content asap
   end
-  bugFixCntr = 1
   tmrMultiIOLinkSMI:start()
   return ''
 end
@@ -416,14 +418,13 @@ local function setSelectedInstance(instance)
     CSK_IODDInterpreter.setSelectedInstance(multiIOLinkSMI_Instances[selectedInstance].ioddInfo.ioddInstanceId)
   end
   Script.notifyEvent('MultiIOLinkSMI_OnNewProcessingParameter', selectedInstance, 'activeInUi', true)
-  tmrMultiIOLinkSMI:start()
+  handleOnExpiredTmrMultiIOLinkSMI()
 end
 Script.serveFunction("CSK_MultiIOLinkSMI.setSelectedInstance", setSelectedInstance)
 
 local function setSelectedTab(tabNumber)
   if not multiIOLinkSMI_Instances[selectedInstance].parameters.ioddInfo then
     selectedTab = 0
-    bugFixCntr = 1
     handleOnExpiredTmrMultiIOLinkSMI()
     return
   end
@@ -521,7 +522,11 @@ local function handleOnNewPortEvent(port, eventType, eventCode)
       handleOnExpiredTmrMultiIOLinkSMI()
       return
     end
-    if not multiIOLinkSMI_Instances[updatedInstanceNumber].parameters.deviceIdentification then
+    if not CSK_IODDInterpreter then
+      multiIOLinkSMI_Instances[updatedInstanceNumber].parameters.deviceIdentification = deviceInfo
+      handleOnExpiredTmrMultiIOLinkSMI()
+      return
+    elseif not multiIOLinkSMI_Instances[updatedInstanceNumber].parameters.deviceIdentification then
       multiIOLinkSMI_Instances[updatedInstanceNumber].parameters.newDeviceIdentification = deviceInfo
       applyNewDeviceIdentificationUI()
       return
@@ -658,7 +663,7 @@ local function writeProcessDataByteArrayUI()
     Script.notifyEvent('MultiIOLinkSMI_OnNewTestCommandState', 'Wrong byte array format')
     return
   end
-  local success, errorDescription = writeProcessDataByteArray(selectedInstance, tableProcessDataByteArray)
+  local success, errorDescription = writeProcessDataByteArray(tableProcessDataByteArray)
   if success then
     Script.notifyEvent('MultiIOLinkSMI_OnNewTestCommandState', 'Writing process data successful')
   else
@@ -939,7 +944,7 @@ local function refreshWriteDataResult()
   end
   local _, writeSuccess, writeMessage = Script.callFunction("CSK_MultiIOLinkSMI.getWriteDataResult" .. tostring(selectedInstance), selectedIODDWriteMessage)
   if writeSuccess ~= nil then
-    Script.notifyEvent('MultiIOLinkSMI_OnNewWriteDataMessage', jsonTableViewer.jsonLine2Table(writeMessage))
+    Script.notifyEvent('MultiIOLinkSMI_OnNewWriteDataMessage', writeMessage)
     Script.notifyEvent('MultiIOLinkSMI_OnNewWriteDataSuccess', writeSuccess)
   else
     Script.notifyEvent('MultiIOLinkSMI_OnNewWriteDataMessage', 'No write message')
