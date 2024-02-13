@@ -387,6 +387,26 @@ NUM will be replaced by the number of instance (e.g. "OnNewValueToForward1"). +<
                     <desc>Event to notify the name of the write data function that can be used externally.</desc>
                     <param desc="Name of the function." multiplicity="1" name="functionName" type="string"/>
                 </event>
+                <event name="OnNewProcessDataInTableContentCSKIODDInterpreter">
+                    <trait>released</trait>
+                    <desc>Event to forward data from CSK_IODDInterpreter.OnNewProcessDataInTableContent event to fill the process data in table of the read message.</desc>
+                    <param desc="Table content in JSON format." multiplicity="1" name="tableContent" type="string"/>
+                </event>
+                <event name="OnNewReadParametersTableContentCSKIODDInterpreter">
+                    <trait>released</trait>
+                    <desc>Event to forward data from CSK_IODDInterpreter.OnNewReadParametersTableContent event to fill the paramters table of the read message.</desc>
+                    <param desc="Table content in JSON format." multiplicity="1" name="tableContent" type="string"/>
+                </event>
+                <event name="OnNewProcessDataOutTableContentCSKIODDInterpreter">
+                    <trait>released</trait>
+                    <desc>Event to forward data from CSK_IODDInterpreter.OnNewProcessDataOutTableContent event to fill the process data out table of the write message.</desc>
+                    <param desc="Table content in JSON format." multiplicity="1" name="tableContent" type="string"/>
+                </event>
+                <event name="OnNewWriteParametersTableContentCSKIODDInterpreter">
+                    <trait>released</trait>
+                    <desc>Event to forward data from CSK_IODDInterpreter.OnNewWriteParametersTableContent event to fill the parameter table of the write message.</desc>
+                    <param desc="Table content in JSON format." multiplicity="1" name="tableContent" type="string"/>
+                </event>
                 <function name="setParameterName">
                     <desc>Function to set the name of the parameters if saved/loaded via the CSK_PersistentData module.</desc>
                     <param desc="Name of the parameter" multiplicity="1" name="name" type="string"/>
@@ -844,6 +864,31 @@ NUM will be replaced by the number of instance (e.g. "getWriteDataResult1").
                     <desc>Function to get the JSON template of the message that is expected to be written to IO-Link device.</desc>
                     <param desc="Name of the message." multiplicity="1" name="messageName" type="string"/>
                     <return desc="Template in JSON format." multiplicity="?" name="jsonTemplate" type="string"/>
+                </function>
+                <function name="processDataInRowSelectedCSKIODDInterpreter">
+                    <trait>released</trait>
+                    <desc>Function to call  CSK_IODDInterpreter.processDataInRowSelected function when row in process data in of read message table is selected.</desc>
+                    <param desc="Row data in JSON format." multiplicity="1" name="rowData" type="string"/>
+                </function>
+                <function name="readParameterRowSelectedCSKIODDInterpreter">
+                    <trait>released</trait>
+                    <desc>Function to call  CSK_IODDInterpreter.readParameterRowSelected function when row in read parameters table of read message is selected.</desc>
+                    <param desc="Row data in JSON format." multiplicity="1" name="rowData" type="string"/>
+                </function>
+                <function name="processDataOutRowSelectedCSKIODDInterpreter">
+                    <trait>released</trait>
+                    <desc>Function to call  CSK_IODDInterpreter.processDataOutRowSelected function when row in process data out of write message table is selected.</desc>
+                    <param desc="Row data in JSON format." multiplicity="1" name="rowData" type="string"/>
+                </function>
+                <function name="writeParameterRowSelectedCSKIODDInterpreter">
+                    <trait>released</trait>
+                    <desc>Function to call  CSK_IODDInterpreter.writeParameterRowSelected function when row in write parameters table of write message is selected.</desc>
+                    <param desc="Row data in JSON format." multiplicity="1" name="rowData" type="string"/>
+                </function>
+                <function name="uploadFinishedCSKIODDInterpreter">
+                    <trait>released</trait>
+                    <desc>Function to call  CSK_IODDInterpreter.uploadFinished function when IODD file upload is finished.</desc>
+                    <param desc="Succcess of uploading." multiplicity="1" name="uploadSuccess" type="string"/>
                 </function>
             </serves>
         </crown>

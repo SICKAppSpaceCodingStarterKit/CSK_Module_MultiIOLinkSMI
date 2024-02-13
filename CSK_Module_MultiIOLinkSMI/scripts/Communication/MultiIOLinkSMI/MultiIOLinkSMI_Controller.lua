@@ -149,6 +149,11 @@ Script.serveEvent('CSK_MultiIOLinkSMI.OnNewReadProcessDataByteArray',         'M
 
 Script.serveEvent('CSK_MultiIOLinkSMI.OnNewTestCommandState',                 'MultiIOLinkSMI_OnNewTestCommandState')
 
+Script.serveEvent('CSK_MultiIOLinkSMI.OnNewProcessDataInTableContentCSKIODDInterpreter', 'OnNewProcessDataInTableContentCSKIODDInterpreter')
+Script.serveEvent('CSK_MultiIOLinkSMI.OnNewReadParametersTableContentCSKIODDInterpreter', 'OnNewReadParametersTableContentCSKIODDInterpreter')
+Script.serveEvent('CSK_MultiIOLinkSMI.OnNewProcessDataOutTableContentCSKIODDInterpreter', 'OnNewProcessDataOutTableContentCSKIODDInterpreter')
+Script.serveEvent('CSK_MultiIOLinkSMI.OnNewWriteParametersTableContentCSKIODDInterpreter', 'OnNewWriteParametersTableContentCSKIODDInterpreter')
+
 Script.serveEvent("CSK_MultiIOLinkSMI.OnNewStatusLoadParameterOnReboot", "MultiIOLinkSMI_OnNewStatusLoadParameterOnReboot")
 Script.serveEvent("CSK_MultiIOLinkSMI.OnPersistentDataModuleAvailable", "MultiIOLinkSMI_OnPersistentDataModuleAvailable")
 Script.serveEvent("CSK_MultiIOLinkSMI.OnNewParameterName", "MultiIOLinkSMI_OnNewParameterName")
@@ -872,7 +877,6 @@ local function getIODDReadMessageJSONTemplate(messageName)
 end
 Script.serveFunction('CSK_MultiIOLinkSMI.getIODDReadMessageJSONTemplate', getIODDReadMessageJSONTemplate)
 
-
 --**************************************************************************
 --**************************Write messages scope****************************
 --**************************************************************************
@@ -979,6 +983,56 @@ local function getIODDWriteMessageJSONTemplate(messageName)
 end
 Script.serveFunction('CSK_MultiIOLinkSMI.getIODDWriteMessageJSONTemplate', getIODDWriteMessageJSONTemplate)
 
+--**************************************************************************
+--*************Forwarding data to/from CSK_IODDInterpreter scope************
+--**************************************************************************
+
+if CSK_IODDInterpreter then
+  local function handleOnNewProcessDataInTableContentCSKIODDInterpreter(tableContent)
+    Script.notifyEvent('OnNewProcessDataInTableContentCSKIODDInterpreter', tableContent)
+  end
+  Script.register('CSK_IODDInterpreter.OnNewProcessDataInTableContent', handleOnNewProcessDataInTableContentCSKIODDInterpreter)
+
+  local function handleOnNewReadParametersTableContentCSKIODDInterpreter(tableContent)
+    Script.notifyEvent('OnNewReadParametersTableContentCSKIODDInterpreter', tableContent)
+  end
+  Script.register('CSK_IODDInterpreter.OnNewReadParametersTableContent', handleOnNewReadParametersTableContentCSKIODDInterpreter)
+
+  local function handleOnNewProcessDataOutTableContentCSKIODDInterpreter(tableContent)
+    Script.notifyEvent('OnNewProcessDataOutTableContentCSKIODDInterpreter', tableContent)
+  end
+  Script.register('CSK_IODDInterpreter.OnNewProcessDataOutTableContent', handleOnNewProcessDataOutTableContentCSKIODDInterpreter)
+
+  local function handleOnNewWriteParametersTableContentCSKIODDInterpreter(tableContent)
+    Script.notifyEvent('OnNewWriteParametersTableContentCSKIODDInterpreter', tableContent)
+  end
+  Script.register('CSK_IODDInterpreter.OnNewWriteParametersTableContent', handleOnNewWriteParametersTableContentCSKIODDInterpreter)
+
+  local function uploadFinishedCSKIODDInterpreter(uploadSuccess)
+    CSK_IODDInterpreter.uploadFinished(uploadSuccess)
+  end
+  Script.serveFunction('CSK_MultiIOLinkSMI.uploadFinishedCSKIODDInterpreter', uploadFinishedCSKIODDInterpreter)
+
+  local function processDataInRowSelectedCSKIODDInterpreter(rowData)
+    CSK_IODDInterpreter.processDataInRowSelected(rowData)
+  end
+  Script.serveFunction('CSK_MultiIOLinkSMI.processDataInRowSelectedCSKIODDInterpreter', processDataInRowSelectedCSKIODDInterpreter)
+
+  local function readParameterRowSelectedCSKIODDInterpreter(rowData)
+    CSK_IODDInterpreter.readParameterRowSelected(rowData)
+  end
+  Script.serveFunction('CSK_MultiIOLinkSMI.readParameterRowSelectedCSKIODDInterpreter', readParameterRowSelectedCSKIODDInterpreter)
+
+  local function processDataOutRowSelectedCSKIODDInterpreter(rowData)
+    CSK_IODDInterpreter.processDataOutRowSelected(rowData)
+  end
+  Script.serveFunction('CSK_MultiIOLinkSMI.processDataOutRowSelectedCSKIODDInterpreter', processDataOutRowSelectedCSKIODDInterpreter)
+
+  local function writeParameterRowSelectedCSKIODDInterpreter(rowData)
+    CSK_IODDInterpreter.writeParameterRowSelected(rowData)
+  end
+  Script.serveFunction('CSK_MultiIOLinkSMI.writeParameterRowSelectedCSKIODDInterpreter', writeParameterRowSelectedCSKIODDInterpreter)
+end
 
 --**************************************************************************
 --***************Instance handling scope************************************

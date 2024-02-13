@@ -295,7 +295,7 @@
                                                         path="public/tempIODD.xml" is-file>
                                                         <span>Upload IODD XML</span>
                                                         <crown-binding event="finished"
-                                                            name="CSK_IODDInterpreter/uploadFinished"
+                                                            name="CSK_MultiIOLinkSMI/uploadFinishedCSKIODDInterpreter"
                                                             path="param/args/uploadSuccess" auto-commit>
                                                         </crown-binding>
                                                     </appspace-file-upload-button>
@@ -568,11 +568,11 @@
 													header="Data type, Range, Single value description">
 												</curie-table-column>
 												<crown-binding event="row-selected"
-													name="CSK_IODDInterpreter/processDataInRowSelected"
-													path="param/args/jsonSelectedRow" auto-commit>
+													name="CSK_MultiIOLinkSMI/processDataInRowSelectedCSKIODDInterpreter"
+													path="param/args/rowData" auto-commit>
 												</crown-binding>
 												<crown-on property="data"
-													crown-event="CSK_IODDInterpreter/OnNewProcessDataInTableContent">
+													crown-event="CSK_MultiIOLinkSMI/OnNewProcessDataInTableContentCSKIODDInterpreter">
 												</crown-on>
 												</curie-table>
 											</davinci-collapse>
@@ -597,11 +597,11 @@
 												<curie-table-column id="read_colSD7" header="Description">
 												</curie-table-column>
 												<crown-binding event="row-selected"
-													name="CSK_IODDInterpreter/readParameterRowSelected"
-													path="param/args/jsonSelectedRow" auto-commit>
+													name="CSK_MultiIOLinkSMI/readParameterRowSelectedCSKIODDInterpreter"
+													path="param/args/rowData" auto-commit>
 												</crown-binding>
 												<crown-on property="data"
-													crown-event="CSK_IODDInterpreter/OnNewReadParametersTableContent">
+													crown-event="CSK_MultiIOLinkSMI/OnNewReadParametersTableContentCSKIODDInterpreter">
 												</crown-on>
 												</curie-table>
 											</davinci-collapse>
@@ -737,11 +737,11 @@ write success (bool); write queue size (int); time taken to read message (int); 
 													header="Data type, Range, Single value description">
 												</curie-table-column>
 												<crown-on property="data"
-													crown-event="CSK_IODDInterpreter/OnNewProcessDataOutTableContent">
+													crown-event="CSK_MultiIOLinkSMI/OnNewProcessDataOutTableContentCSKIODDInterpreter">
 												</crown-on>
 												<crown-set event="row-selected"
-													crown-function="CSK_IODDInterpreter/processDataOutRowSelected"
-													protocol="crownMSGPACK" crown-path="jsonSelectedRow">
+													crown-function="CSK_MultiIOLinkSMI/processDataOutRowSelectedCSKIODDInterpreter"
+													protocol="crownMSGPACK" crown-path="rowData">
 												</crown-set>
 												</curie-table>
 											</davinci-collapse>
@@ -766,11 +766,11 @@ write success (bool); write queue size (int); time taken to read message (int); 
 												<curie-table-column id="write_colSD7" header="Description">
 												</curie-table-column>
 												<crown-on property="data"
-													crown-event="CSK_IODDInterpreter/OnNewWriteParametersTableContent">
+													crown-event="CSK_MultiIOLinkSMI/OnNewWriteParametersTableContentCSKIODDInterpreter">
 												</crown-on>
 												<crown-set event="row-selected"
-													crown-function="CSK_IODDInterpreter/writeParameterRowSelected"
-													protocol="crownMSGPACK" crown-path="jsonSelectedRow">
+													crown-function="CSK_MultiIOLinkSMI/writeParameterRowSelectedCSKIODDInterpreter"
+													protocol="crownMSGPACK" crown-path="rowData">
 												</crown-set>
 												</curie-table>
 											</davinci-collapse>
