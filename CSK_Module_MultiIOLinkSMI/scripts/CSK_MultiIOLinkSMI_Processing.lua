@@ -607,7 +607,7 @@ end
 local function handleOnNewProcessingParameter(multiIOLinkSMINo, parameter, value, internalObjectNo)
 
   if multiIOLinkSMINo == multiIOLinkSMIInstanceNumber then -- set parameter only in selected script
-    _G.logger:info(nameOfModule .. ": Update parameter '" .. parameter .. "' of multiIOLinkSMIInstanceNo." .. tostring(multiIOLinkSMINo) .. " to value = " .. tostring(value))
+    _G.logger:fine(nameOfModule .. ": Update parameter '" .. parameter .. "' of multiIOLinkSMIInstanceNo." .. tostring(multiIOLinkSMINo) .. " to value = " .. tostring(value))
     if parameter == "readMessages" then
       ioddReadMessages = json.decode(value)
       updateIODDReadMessages()

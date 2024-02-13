@@ -68,8 +68,6 @@
 						<layout-column id="ColumnLayout24">
 							<layout-row id="RowLayout16">
 								<stacked-view id="SV_IsNewDeviceDiscovered">
-									<stacked-pane id="SP_NewDeviceIsNOTDiscovered" value="false">
-									</stacked-pane>
 									<stacked-pane id="SP_NewDeviceIsDiscovered" value="true">
 										<layout-column id="ColumnLayout7">
 											<h6 id="H61_FoundNewDeviceIdentification">
@@ -174,6 +172,8 @@
 											</davinci-button>
 										</layout-column>
 									</stacked-pane>
+									<stacked-pane id="SP_NewDeviceIsNOTDiscovered" value="false">
+									</stacked-pane>
 									<crown-on property="value"
 										crown-event="CSK_MultiIOLinkSMI/OnNewStatusNewDeviceFound"
 										converter="bool2str">
@@ -275,13 +275,6 @@
 									</layout-row>
 								</layout-column>
 								<stacked-view id="SV_isCSKIODDInterpreterAvailable">
-									<stacked-pane id="SP_ModuleIsNOTAvailable" value="false">
-										<davinci-callout id="C_NoCSKIODDInterpreter" type="warning">
-											<span>
-												No CSK IODD Interpreter module is found in the project. Setting interpreted read and write data is not possible.
-											</span>
-										</davinci-callout>
-									</stacked-pane>
 									<stacked-pane id="SP_ModuleISAavailable" value="true">
 										<stacked-view id="SV_IODDMatchFound">
 											<stacked-pane id="SP_IODDMatchIsNOTFound" value="false">
@@ -339,6 +332,13 @@
 												converter="bool2str">
 											</crown-on>
 										</stacked-view>
+									</stacked-pane>
+									<stacked-pane id="SP_ModuleIsNOTAvailable" value="false">
+										<davinci-callout id="C_NoCSKIODDInterpreter" type="warning">
+											<span>
+												No CSK IODD Interpreter module is found in the project. Setting interpreted read and write data is not possible.
+											</span>
+										</davinci-callout>
 									</stacked-pane>
 									<crown-on property="value"
 										crown-event="CSK_MultiIOLinkSMI/OnNewStatusCSKIODDInterpreterAvailable"

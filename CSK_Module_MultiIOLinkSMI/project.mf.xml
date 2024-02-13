@@ -888,7 +888,7 @@ NUM will be replaced by the number of instance (e.g. "getWriteDataResult1").
                 <function name="uploadFinishedCSKIODDInterpreter">
                     <trait>released</trait>
                     <desc>Function to call  CSK_IODDInterpreter.uploadFinished function when IODD file upload is finished.</desc>
-                    <param desc="Succcess of uploading." multiplicity="1" name="uploadSuccess" type="string"/>
+                    <param desc="Succcess of uploading." multiplicity="1" name="uploadSuccess" type="bool"/>
                 </function>
             </serves>
         </crown>

@@ -407,7 +407,7 @@ Script.serveFunction("CSK_MultiIOLinkSMI.pageCalled", pageCalled)
 
 local function setSelectedInstance(instance)
   selectedInstance = instance
-  _G.logger:info(nameOfModule .. ": New selected instance = " .. tostring(selectedInstance))
+  _G.logger:fine(nameOfModule .. ": New selected instance = " .. tostring(selectedInstance))
   multiIOLinkSMI_Instances[selectedInstance].activeInUi = true
   selectedIODDReadMessage = ''
   selectedIODDWriteMessage = ''
@@ -1044,7 +1044,7 @@ end
 Script.serveFunction("CSK_MultiIOLinkSMI.getInstancesAmount", getInstancesAmount)
 
 local function addInstance()
-  _G.logger:info(nameOfModule .. ": Add instance")
+  _G.logger:fine(nameOfModule .. ": Add instance")
   table.insert(multiIOLinkSMI_Instances, multiIOLinkSMI_Model.create(#multiIOLinkSMI_Instances+1))
   Script.deregister("CSK_MultiIOLinkSMI.OnNewValueToForward" .. tostring(#multiIOLinkSMI_Instances) , handleOnNewValueToForward)
   Script.register("CSK_MultiIOLinkSMI.OnNewValueToForward" .. tostring(#multiIOLinkSMI_Instances) , handleOnNewValueToForward)
@@ -1102,7 +1102,7 @@ end
 -- *****************************************************************
 
 local function setParameterName(name)
-  _G.logger:info(nameOfModule .. ": Set parameter name = " .. tostring(name))
+  _G.logger:fine(nameOfModule .. ": Set parameter name = " .. tostring(name))
   multiIOLinkSMI_Instances[selectedInstance].parametersName = name
 end
 Script.serveFunction("CSK_MultiIOLinkSMI.setParameterName", setParameterName)
@@ -1122,7 +1122,7 @@ local function sendParameters()
     else
       CSK_PersistentData.setModuleParameterName(nameOfModule, multiIOLinkSMI_Instances[selectedInstance].parametersName, multiIOLinkSMI_Instances[selectedInstance].parameterLoadOnReboot, tostring(selectedInstance))
     end
-    _G.logger:info(nameOfModule .. ": Send MultiIOLinkSMI parameters with name '" .. multiIOLinkSMI_Instances[selectedInstance].parametersName .. "' to CSK_PersistentData module.")
+    _G.logger:fine(nameOfModule .. ": Send MultiIOLinkSMI parameters with name '" .. multiIOLinkSMI_Instances[selectedInstance].parametersName .. "' to CSK_PersistentData module.")
     CSK_PersistentData.saveData()
   else
     _G.logger:warning(nameOfModule .. ": CSK_PersistentData module not available.")
@@ -1134,7 +1134,7 @@ local function loadParameters()
   if multiIOLinkSMI_Instances[selectedInstance].persistentModuleAvailable then
     local data = CSK_PersistentData.getParameter(multiIOLinkSMI_Instances[selectedInstance].parametersName)
     if data then
-      _G.logger:info(nameOfModule .. ": Loaded parameters for multiIOLinkSMIObject " .. tostring(selectedInstance) .. " from PersistentData module.")
+      _G.logger:fine(nameOfModule .. ": Loaded parameters for multiIOLinkSMIObject " .. tostring(selectedInstance) .. " from PersistentData module.")
       multiIOLinkSMI_Instances[selectedInstance].parameters = helperFuncs.convertContainer2Table(data)
       updateProcessingParameters()
       if CSK_IODDInterpreter and multiIOLinkSMI_Instances[selectedInstance].parameters.ioddInfo then
@@ -1154,14 +1154,14 @@ Script.serveFunction("CSK_MultiIOLinkSMI.loadParameters", loadParameters)
 
 local function setLoadOnReboot(status)
   multiIOLinkSMI_Instances[selectedInstance].parameterLoadOnReboot = status
-  _G.logger:info(nameOfModule .. ": Set new status to load setting on reboot: " .. tostring(status))
+  _G.logger:fine(nameOfModule .. ": Set new status to load setting on reboot: " .. tostring(status))
 end
 Script.serveFunction("CSK_MultiIOLinkSMI.setLoadOnReboot", setLoadOnReboot)
 
 --- Function to react on initial load of persistent parameters
 local function handleOnInitialDataLoaded()
 
-  _G.logger:info(nameOfModule .. ': Try to initially load parameter from CSK_PersistentData module.')
+  _G.logger:fine(nameOfModule .. ': Try to initially load parameter from CSK_PersistentData module.')
   if string.sub(CSK_PersistentData.getVersion(), 1, 1) == '1' then
 
     _G.logger:warning(nameOfModule .. ': CSK_PersistentData module is too old and will not work. Please update CSK_PersistentData module.')
