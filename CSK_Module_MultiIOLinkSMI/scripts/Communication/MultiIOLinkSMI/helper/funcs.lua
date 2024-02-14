@@ -9,13 +9,62 @@
 
 local funcs = {}
 -- Providing standard JSON functions
-funcs.json = require('Communication/MultiIOLinkSMI/helper/Json')
+local json = require('Communication/MultiIOLinkSMI/helper/Json')
 
 --**************************************************************************
 --********************** End Global Scope **********************************
 --**************************************************************************
 --**********************Start Function Scope *******************************
 --**************************************************************************
+
+local function copy(origTable, seen)
+  if type(origTable) ~= 'table' then return origTable end
+  if seen and seen[origTable] then return seen[origTable] end
+  local s = seen or {}
+  local res = setmetatable({}, getmetatable(origTable))
+  s[origTable] = res
+  for k, v in pairs(origTable) do res[copy(k, s)] = copy(v, s) end
+  return res
+end
+funcs.copy = copy
+
+local function getTableSize(someTable)
+  if not someTable then
+    return 0
+  end
+  local size = 0
+  for _,_ in pairs(someTable) do
+    size = size + 1
+  end
+  return size
+end
+funcs.getTableSize = getTableSize
+
+
+local function createDynamicTableContent(tableType, inputTable, selectedID)
+  local content = {}
+  for id, dataPointInfo in ipairs(inputTable) do
+    local singleRowContent = {}
+    for parameter, value in pairs(dataPointInfo) do
+      local contentValue = value
+      if parameter == 'Datatype' then
+        contentValue = ''
+        for datatypeParameter, datatypeParameterValue in pairs(value) do
+          if datatypeParameter ~= 'type' and datatypeParameter ~= 'RecordItem' then
+            contentValue = contentValue .. datatypeParameter .. ' = ' .. tostring(datatypeParameterValue) .. '; \n'
+          end
+        end
+        singleRowContent[tableType..'type'] = value.type
+      end
+      singleRowContent[tableType..parameter] = contentValue
+    end
+    singleRowContent[tableType.. 'ID'] = id
+    singleRowContent.selected = selectedID == id
+    table.insert(content, singleRowContent)
+  end
+  return json.encode(content)
+end
+funcs.createDynamicTableContent = createDynamicTableContent
 
 --- Function to create a list with numbers
 ---@param size int Size of the list
@@ -35,17 +84,45 @@ local function createStringListBySize(size)
 end
 funcs.createStringListBySize = createStringListBySize
 
---- Function to convert a table into a Container object
----@param content auto[] Lua Table to convert to Container
----@return Container cont Created Container
-local function convertTable2Container(content)
-  local cont = Container.create()
-  for key, value in pairs(content) do
-    if type(value) == 'table' then
-      cont:add(key, convertTable2Container(value), nil)
-    else
-      cont:add(key, value, nil)
+local function checkIfKeyListFormArray(keyList)
+  local success, _ = pcall(
+    table.sort,
+    keyList,
+    function(left,right)
+      return tonumber(left) < tonumber(right)
     end
+  )
+  if not success then
+    return false, keyList
+  end
+  local i = 0
+  for _, key in ipairs(keyList) do
+    if tonumber(key) and tonumber(key)-i == 1 then
+      i = i + 1
+    else
+      return false, keyList
+    end
+  end
+  if i ~= #keyList then
+    return false, keyList
+  end
+  return true, keyList
+end
+
+-- Function to convert a table into a Container object
+---@param data auto[] Lua Table to convert to Container
+---@return Container cont Created Container
+local function convertTable2Container(data)
+  local cont = Container.create()
+  for key, val in pairs(data) do
+    local valType = nil
+    local val2add = val
+    if type(val) == 'table' then
+      val2add = convertTable2Container(val)
+      valType = 'OBJECT'
+    end
+    if type(val) == 'string' then valType = 'STRING' end
+    cont:add(key, val2add, valType)
   end
   return cont
 end
@@ -55,92 +132,27 @@ funcs.convertTable2Container = convertTable2Container
 ---@param cont Container Container to convert to Lua table
 ---@return auto[] data Created Lua table
 local function convertContainer2Table(cont)
-  local data = {}
-  local containerList = Container.list(cont)
-  local containerCheck = false
-  if tonumber(containerList[1]) then
-    containerCheck = true
-  end
-  for i=1, #containerList do
-
-    local subContainer
-
-    if containerCheck then
-      subContainer = Container.get(cont, tostring(i) .. '.00')
-    else
-      subContainer = Container.get(cont, containerList[i])
+  local arrayInside, keyList = checkIfKeyListFormArray(cont:list())
+  local tab = {}
+  for _, key in ipairs(keyList) do
+    local tempVal = cont:get(key, cont:getType(key))
+    local keyToAdd = key
+    if arrayInside then
+      keyToAdd = tonumber(key)
     end
-    if type(subContainer) == 'userdata' then
-      if Object.getType(subContainer) == "Container" then
-
-        if containerCheck then
-          table.insert(data, convertContainer2Table(subContainer))
-        else
-          data[containerList[i]] = convertContainer2Table(subContainer)
-        end
-
+    if cont:getType(key) == 'OBJECT' then
+      if Object.getType(tempVal) == 'Container' then
+        tab[keyToAdd] = convertContainer2Table(tempVal)
       else
-        if containerCheck then
-          table.insert(data, subContainer)
-        else
-          data[containerList[i]] = subContainer
-        end
+        tab[keyToAdd] = tempVal
       end
     else
-      if containerCheck then
-        table.insert(data, subContainer)
-      else
-        data[containerList[i]] = subContainer
-      end
+      tab[keyToAdd] = tempVal
     end
   end
-  return data
+  return tab
 end
 funcs.convertContainer2Table = convertContainer2Table
-
---- Function to get content list out of table
----@param data string[] Table with data entries
----@return string sortedTable Sorted entries as string, internally seperated by ','
-local function createContentList(data)
-  local sortedTable = {}
-  for key, _ in pairs(data) do
-    table.insert(sortedTable, key)
-  end
-  table.sort(sortedTable)
-  return table.concat(sortedTable, ',')
-end
-funcs.createContentList = createContentList
-
---- Function to get content list as JSON string
----@param data string[] Table with data entries
----@return string sortedTable Sorted entries as JSON string
-local function createJsonList(data)
-  local sortedTable = {}
-  for key, _ in pairs(data) do
-    table.insert(sortedTable, key)
-  end
-  table.sort(sortedTable)
-  return funcs.json.encode(sortedTable)
-end
-funcs.createJsonList = createJsonList
-
---- Function to create a list from table
----@param content string[] Table with data entries
----@return string list String list
-local function createStringListBySimpleTable(content)
-  local list = "["
-  if #content >= 1 then
-    list = list .. '"' .. content[1] .. '"'
-  end
-  if #content >= 2 then
-    for i=2, #content do
-      list = list .. ', ' .. '"' .. content[i] .. '"'
-    end
-  end
-  list = list .. "]"
-  return list
-end
-funcs.createStringListBySimpleTable = createStringListBySimpleTable
 
 return funcs
 

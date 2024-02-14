@@ -1,15 +1,16 @@
----@diagnostic disable: undefined-global, redundant-parameter, missing-parameter
-
 -- Load all relevant APIs for this module
+-- By doing this the internal garbage collection will perform better
 --**************************************************************************
 
 local availableAPIs = {}
 
 local function loadAPIs()
-  CSK_ModuleName = require 'API.CSK_ModuleName'
+  CSK_MultiIOLinkSMI = require 'API.CSK_MultiIOLinkSMI'
 
   Container = require 'API.Container'
+  DateTime = require 'API.DateTime'
   Engine = require 'API.Engine'
+  File = require 'API.File'
   Log = require 'API.Log'
   Log.Handler = require 'API.Log.Handler'
   Log.SharedLogger = require 'API.Log.SharedLogger'
@@ -21,20 +22,25 @@ local function loadAPIs()
   for i = 1, #appList do
     if appList[i] == 'CSK_Module_PersistentData' then
       CSK_PersistentData = require 'API.CSK_PersistentData'
+    elseif appList[i] == 'CSK_Module_IODDInterpreter' then
+      CSK_IODDInterpreter = require 'API.CSK_IODDInterpreter'
     elseif appList[i] == 'CSK_Module_UserManagement' then
       CSK_UserManagement = require 'API.CSK_UserManagement'
     end
   end
 end
 
-local function loadSpecificAPIs()
+local function loadIoLinkSmiApi()
   -- If you want to check for specific APIs/functions supported on the device the module is running, place relevant APIs here
-  -- e.g.:
-  -- NTPClient = require 'API.NTPClient'
+
+  IOLink = {}
+  IOLink.SMI = require 'API.IOLink.SMI'
+  IOLink.SMI.PortConfigList = require 'API.IOLink.SMI.PortConfigList'
+  IOLink.SMI.PortStatus = require 'API.IOLink.SMI.PortStatus'
 end
 
-availableAPIs.default = xpcall(loadAPIs, debug.traceback) -- TRUE if all default APIs were loaded correctly
-availableAPIs.specific = xpcall(loadSpecificAPIs, debug.traceback) -- TRUE if all specific APIs were loaded correctly
+availableAPIs.default = xpcall(loadAPIs, debug.traceback)
+availableAPIs.ioLinkSmi = xpcall(loadIoLinkSmiApi, debug.traceback)
 
 return availableAPIs
 --**************************************************************************
