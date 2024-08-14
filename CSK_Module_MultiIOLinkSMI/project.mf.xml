@@ -3,6 +3,7 @@
     <application name="CSK_Module_MultiIOLinkSMI">
         <crown name="CSK_Module_MultiIOLinkSMI">
             <desc>This is an automatically generated CROWN (description not necessary).</desc>
+            <serves/>
         </crown>
         <crown name="CSK_MultiIOLinkSMI">
             <trait>released</trait>
@@ -407,15 +408,25 @@ NUM will be replaced by the number of instance (e.g. "OnNewValueToForward1"). +<
                     <desc>Event to forward data from CSK_IODDInterpreter.OnNewWriteParametersTableContent event to fill the parameter table of the write message.</desc>
                     <param desc="Table content in JSON format." multiplicity="1" name="tableContent" type="string"/>
                 </event>
+                <event name="OnNewStatusFlowConfigPriority">
+                    <desc>Notify if FlowConfig should have priority for FlowConfig relevant configurations.</desc>
+                    <param desc="Status" multiplicity="1" name="status" type="bool"/>
+                </event>
+                <event name="OnNewStatusCSKStyle">
+                    <desc>Notify UI style to use for CSK modules.</desc>
+                    <param desc="UI style" multiplicity="1" name="theme" type="string"/>
+                </event>
+                <event name="OnNewStatusModuleVersion">
+                    <desc>Notify version of module.</desc>
+                    <param desc="Version" multiplicity="1" name="version" type="string"/>
+                </event>
                 <function name="setParameterName">
                     <desc>Function to set the name of the parameters if saved/loaded via the CSK_PersistentData module.</desc>
                     <param desc="Name of the parameter" multiplicity="1" name="name" type="string"/>
                 </function>
                 <function name="sendParameters">
                     <desc>Send parameters to CSK_PersistentData module if possible to save them.</desc>
-                </function>
-                <function name="loadParameters">
-                    <desc>Load parameters for this module from the CSK_PersistentData module if possible and use them.</desc>
+                    <param desc="[Optional] Set to TRUE if the data should NOT be saved immediately after sending." multiplicity="?" name="noDataSave" type="bool"/>
                 </function>
                 <function name="setLoadOnReboot">
                     <desc>Configure if this module should load its saved parameters at app/ device boot up.</desc>
@@ -890,10 +901,72 @@ NUM will be replaced by the number of instance (e.g. "getWriteDataResult1").
                     <desc>Function to call  CSK_IODDInterpreter.uploadFinished function when IODD file upload is finished.</desc>
                     <param desc="Succcess of uploading." multiplicity="1" name="uploadSuccess" type="bool"/>
                 </function>
+                <function name="clearFlowConfigRelevantConfiguration">
+                    <desc>Function to clear FlowConfig relevant configurations.</desc>
+                </function>
+                <function name="setFlowConfigPriority">
+                    <desc>Function to configure if FlowConfig should have priority for FlowConfig relevant configuration.</desc>
+                    <param desc="Status" multiplicity="1" name="status" type="bool"/>
+                </function>
+                <function name="getPort">
+                    <desc>Function to get port of currently selected instance.</desc>
+                    <return desc="Port" multiplicity="?" name="port" type="string"/>
+                </function>
+                <function name="getStatusModuleActive">
+                    <desc>Function to get status if module is active.</desc>
+                    <return desc="Status" multiplicity="1" name="status" type="bool"/>
+                </function>
+                <function name="loadParameters">
+                    <desc>Load parameters for this module from the CSK_PersistentData module if possible and use them.</desc>
+                    <return desc="Success to load parameters." multiplicity="1" name="success" type="bool"/>
+                </function>
+                <function name="getParameters">
+                    <trait>released</trait>
+                    <desc>Function to get all parameters of the client in JSON format.</desc>
+                    <param desc="Number of instance to get parameters from." multiplicity="1" name="instanceNo" type="int"/>
+                    <return desc="JSON string with all parameters." multiplicity="1" name="jsonParameters" type="string"/>
+                </function>
+                <function name="resetModule">
+                    <desc>Function to reset main configuration of module.</desc>
+                </function>
             </serves>
         </crown>
+        <crown name="MultiIOLinkSMI_FC">
+            <trait>released</trait>
+            <desc>Crown to provide CSK_FlowConfig relevant features.</desc>
+            <serves/>
+            <crown name="OnNewData">
+                <trait>released</trait>
+                <desc>IMPORTANT: First activate ports in IOLinkSMI module!
+Provide IOLink data via event.</desc>
+                <serves>
+                    <event name="OnNewData">
+                        <include>data-flow</include>
+                        <desc>IMPORTANT: First activate ports in IOLinkSMI module!
+Provide IOLink data via event.</desc>
+                        <param desc="Handle to internally used FlowConfig instance." multiplicity="1" name="handle" type="handle"/>
+                        <param desc="'CSK_MultiIOLinkSMI.readMessage[PORT][READMESSAGENAME]'&#10;&#10;Parameter:&#10;1: Success (BOOL)&#10;2: QueueSize (INT)&#10;3:Time (INT)&#10;4: JSON content (STRING)&#10;5: Opt.Error (STRING)" multiplicity="1" name="OnNewData" ref="MultiColorSelection_FC.ResultType" type="string"/>
+                    </event>
+                    <function name="create">
+                        <trait>released</trait>
+                        <desc>Internally used CSK_FlowConfig create function.</desc>
+                        <param desc="Numeric identifier of processing instance (must be &gt;=1)." multiplicity="1" name="Instance" type="int"/>
+                        <param desc="Name of read message to receive data." multiplicity="1" name="ReadMessageName" type="string"/>
+                        <return desc="Handle to internally used FlowConfig instance." multiplicity="1" name="handle" type="handle"/>
+                    </function>
+                    <function name="register">
+                        <trait>released</trait>
+                        <desc>Internally used CSK_FlowConfig register function.</desc>
+                        <param desc="Handle to internally used FlowConfig instance." multiplicity="1" name="handle" type="handle"/>
+                        <param desc="Internal parameter (not used)." multiplicity="1" name="eventname" type="string"/>
+                        <param desc="Internally used callback function." multiplicity="1" name="callback" type="string"/>
+                        <return desc="Success of register process." multiplicity="1" name="success" type="bool"/>
+                    </function>
+                </serves>
+            </crown>
+        </crown>
         <meta key="author">SICK AG</meta>
-        <meta key="version">1.0.0</meta>
+        <meta key="version">2.0.0</meta>
         <meta key="priority">low</meta>
         <meta key="copy-protected">false</meta>
         <meta key="read-protected">false</meta>

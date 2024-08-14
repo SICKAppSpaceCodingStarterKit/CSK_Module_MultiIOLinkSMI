@@ -20,7 +20,7 @@
 --OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 --SOFTWARE.
 
--- luacheck: no max line length
+---@diagnostic disable: undefined-global, redundant-parameter, missing-parameter
 
 --**************************************************************************
 --**********************Start Global Scope *********************************
@@ -49,12 +49,13 @@ local multiIOLinkSMI_Instances = {} -- Handle all instances
 -- Check / edit this script to see/edit functions which communicate with the UI
 local multiIOLinkSMIController = require('Communication/MultiIOLinkSMI/MultiIOLinkSMI_Controller')
 
-if _G.availableAPIs.ioLinkSmi and Engine.getEnumValues('IOLinkMasterPorts') ~= nil then
-  _G.logger:info("IOLinkSMI API Support = true")
+if _G.availableAPIs.default and _G.availableAPIs.specific and Engine.getEnumValues('IOLinkMasterPorts') ~= nil then
+  local setInstanceHandle = require('Communication/MultiIOLinkSMI/FlowConfig/MultiIOLinkSMI_FlowConfig')
   table.insert(multiIOLinkSMI_Instances, multiIOLinkSMI_Model.create(1))
   multiIOLinkSMIController.setMultiIOLinkSMI_Instances_Handle(multiIOLinkSMI_Instances) -- share handle of instances
+  setInstanceHandle(multiIOLinkSMI_Instances)
 else
-  _G.logger:warning("CSK_MultiIOLinkSMI: Features of this module are not supported on this device. Missing APIs.")
+  _G.logger:warning("CSK_MultiIOLinkSMI: Relevant CROWN(s) not available on device. Module is not supported...")
 end
 
 --**************************************************************************
@@ -65,12 +66,9 @@ end
 
 local function main()
 
-  if _G.availableAPIs.ioLinkSmi then
-    multiIOLinkSMIController.setMultiIOLinkSMI_Model_Handle(multiIOLinkSMI_Model) -- share handle of model
-    CSK_MultiIOLinkSMI.setSelectedInstance(1)
-    CSK_MultiIOLinkSMI.pageCalled()
-  end
-    ----------------------------------------------------------------------------------------
+  multiIOLinkSMIController.setMultiIOLinkSMI_Model_Handle(multiIOLinkSMI_Model) -- share handle of model
+
+  ----------------------------------------------------------------------------------------
   -- INFO: Please check if module will eventually load inital configuration triggered via
   --       event CSK_PersistentData.OnInitialDataLoaded
   --       (see internal variable _G.deepLearningObjects.parameterLoadOnReboot)
@@ -89,8 +87,8 @@ local function main()
   -- Optionally register to 'CSK_MultiIOLinkSMI.OnNewDeviceIdentificationApplied'-event
 
   -- Read message handling
-  CSK_MultiIOLinkSMI.createIODDReadMessage()
   CSK_MultiIOLinkSMI.setIODDReadMessageName('readMessageTitle')
+  CSK_MultiIOLinkSMI.createIODDReadMessage()
   CSK_MultiIOLinkSMI.setSelectedIODDReadMessage('readMessageTitle')
   -- Register to "CSK_MultiIOLinkSMI.readMessage[port][readMessageTitle]"-event
 
@@ -115,6 +113,11 @@ local function main()
   local success5 = CSK_MultiIOLinkSMI.writeIODDMessage(messageName, jsonDataToWrite) -- after defining a write message in UI or IODD module
   ]]
   ----------------------------------------------------------------------------------------
+
+  if _G.availableAPIs.default and _G.availableAPIs.specific then
+    CSK_MultiIOLinkSMI.setSelectedInstance(1)
+    CSK_MultiIOLinkSMI.pageCalled()
+  end
 
 end
 Script.register("Engine.OnStarted", main)

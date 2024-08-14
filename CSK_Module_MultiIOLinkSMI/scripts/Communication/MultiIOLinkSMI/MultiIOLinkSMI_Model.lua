@@ -14,8 +14,11 @@ local nameOfModule = 'CSK_MultiIOLinkSMI'
 local multiIOLinkSMI = {}
 multiIOLinkSMI.__index = multiIOLinkSMI
 
+multiIOLinkSMI.styleForUI = 'None' -- Optional parameter to set UI style
+multiIOLinkSMI.version = Engine.getCurrentAppVersion() -- Version of module
+
 -- IO-Link SMI handle used by all instances
-if _G.availableAPIs.ioLinkSmi then
+if _G.availableAPIs.specific then
   multiIOLinkSMI.IOLinkSMIhandle = IOLink.SMI.create()
 end
 -- Registering function to be called when any port event occurs 
@@ -31,6 +34,13 @@ end
 --**************************************************************************
 --**********************Start Function Scope *******************************
 --**************************************************************************
+
+--- Function to react on UI style change
+local function handleOnStyleChanged(theme)
+  multiIOLinkSMI.styleForUI = theme
+  Script.notifyEvent("MultiIOLinkSMI_OnNewStatusCSKStyle", multiIOLinkSMI.styleForUI)
+end
+Script.register('CSK_PersistentData.OnNewStatusCSKStyle', handleOnStyleChanged)
 
 --- Function to get device identification from set of parameters available for almost any IO-Link device
 ---@param port string IO-Link port with connected device of interest
@@ -115,6 +125,7 @@ function multiIOLinkSMI.create(multiIOLinkSMIInstanceNo)
 
   -- Parameters to be saved permanently if wanted
   self.parameters = {}
+  self.parameters.flowConfigPriority = CSK_FlowConfig ~= nil or false -- Status if FlowConfig should have priority for FlowConfig relevant configurations
   self.parameters.name = 'Sensor'.. self.multiIOLinkSMIInstanceNoString -- for future use
   self.parameters.processingFile = 'CSK_MultiIOLinkSMI_Processing'
   self.parameters.port = '' -- IOLink port used
@@ -242,13 +253,8 @@ end
 --*************************************************************************
 
 --- Function to create a read message and instance for the message in CSK_Module_IODDInterpreter
-function multiIOLinkSMI:createIODDReadMessage()
-  local index = 0
-  local messageName = 'input_data'
-  while self.parameters.ioddReadMessages[messageName] do
-    index = index + 1
-    messageName = 'input_data' .. tostring(index)
-  end
+---@param messageName string Name of message to create
+function multiIOLinkSMI:createIODDReadMessage(messageName)
   self.parameters.ioddReadMessages[messageName] = {
     triggerType = 'Periodic',
     triggerValue = 1000,
@@ -264,18 +270,6 @@ function multiIOLinkSMI:createIODDReadMessage()
     )
   end
   CSK_IODDInterpreter.setSelectedInstance(self.parameters.ioddReadMessages[messageName].ioddInstanceId)
-  return messageName
-end
-
---- Function to rename an IODD message and instance in CSK_Module_IODDInterpreter
----@param oldName string Current name of the IODD message to be renamed
----@param newName string New name of the IODD message
-function multiIOLinkSMI:renameIODDReadMessage(oldName, newName)
-  self.parameters.ioddReadMessages[newName] = helperFuncs.copy(self.parameters.ioddReadMessages[oldName])
-  CSK_IODDInterpreter.setSelectedInstance(self.parameters.ioddReadMessages[oldName].ioddInstanceId)
-  self.parameters.ioddReadMessages[newName].ioddInstanceId = self.parameters.ioddInfo.ioddInstanceId .. '_ReadMessage_' .. newName
-  CSK_IODDInterpreter.setInstanceName(self.parameters.ioddReadMessages[newName].ioddInstanceId)
-  self.parameters.ioddReadMessages[oldName] = nil
 end
 
 --- Function to delete an IODD message and instance in CSK_Module_IODDInterpreter
@@ -291,13 +285,8 @@ end
 --*************************************************************************
 
 --- Function to create a write message and instance for the message in CSK_Module_IODDInterpreter
-function multiIOLinkSMI:createIODDWriteMessage()
-  local index = 0
-  local messageName = 'output_data'
-  while self.parameters.ioddWriteMessages[messageName] do
-    index = index + 1
-    messageName = 'output_data' .. tostring(index)
-  end
+---@param messageName string Name of message to create
+function multiIOLinkSMI:createIODDWriteMessage(messageName)
   self.parameters.ioddWriteMessages[messageName] = {
     ioddInstanceId = self.parameters.ioddInfo.ioddInstanceId .. '_WriteMessage_' .. messageName
   }
@@ -311,18 +300,6 @@ function multiIOLinkSMI:createIODDWriteMessage()
     )
   end
   CSK_IODDInterpreter.setSelectedInstance(self.parameters.ioddWriteMessages[messageName].ioddInstanceId)
-  return messageName
-end
-
---- Function to rename an IODD message and instance in CSK_Module_IODDInterpreter
----@param oldName string Current name of the IODD message to be renamed
----@param newName string New name of the IODD message
-function multiIOLinkSMI:renameIODDWriteMessage(oldName, newName)
-  self.parameters.ioddWriteMessages[newName] = helperFuncs.copy(self.parameters.ioddWriteMessages[oldName])
-  CSK_IODDInterpreter.setSelectedInstance(self.parameters.ioddWriteMessages[oldName].ioddInstanceId)
-  self.parameters.ioddWriteMessages[newName].ioddInstanceId = self.parameters.ioddInfo.ioddInstanceId .. '_WriteMessage_' .. newName
-  CSK_IODDInterpreter.setInstanceName(self.parameters.ioddWriteMessages[newName].ioddInstanceId)
-  self.parameters.ioddWriteMessages[oldName] = nil
 end
 
 --- Function to delete an IODD message and instance in CSK_Module_IODDInterpreter

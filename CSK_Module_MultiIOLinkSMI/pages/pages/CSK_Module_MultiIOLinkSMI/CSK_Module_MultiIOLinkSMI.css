@@ -1,11 +1,104 @@
-.myCustomFrame_CSK_Module_MultiIOLinkSMI {
-  border-style: solid;
-  border-width: 1px;
-  border-color: grey;
-  margin: 6px;
-}
 .marginTop {
   margin-top: 1.5rem
 }
-.myCustomCssClass_CSK_Module_MultiIOLinkSMI {
+
+.myCustomSpacerVert10_CSK_Module_MultiIOLinkSMI {
+  min-height: 10px;
+}
+
+.myCustomSpacerVert20_CSK_Module_MultiIOLinkSMI {
+  min-height: 20px;
+}
+
+.myCustomFrameLabel_CSK_Module_MultiIOLinkSMI {
+  background: white;
+  position:relative;
+  top: calc(-1.2rem);
+  left: calc(1rem);
+  font-size: medium;
+}
+
+.myCustomMargin99Percent_CSK_Module_MultiIOLinkSMI {
+  margin: calc(1rem);
+  margin-top: 20px;
+}
+
+.myCustomMarginFirstRow_CSK_Module_MultiIOLinkSMI {
+  margin-top: -49px;
+}
+
+.myCustomMarginLeft30PX_CSK_Module_MultiIOLinkSMI {
+  margin-left:30px;
+}
+
+.myCustomMarginLeft-30PX_CSK_Module_MultiIOLinkSMI {
+  margin-left:-30px;
+}
+
+.myCustomPersistentDataMargin_CSK_Module_MultiIOLinkSMI {
+  margin-top: -53px;
+  margin-left: 130px;
+}
+
+.myCustomPersistentDataMarginBack_CSK_Module_MultiIOLinkSMI {
+  margin-left: -127px;
+}
+
+.myCustomBorderBottom_CSK_Module_MultiIOLinkSMI {
+  border-bottom: 1px solid lightgray;
+  margin-inline: calc(1rem);
+}
+
+.myCustomBorderLeft_CSK_Module_MultiIOLinkSMI {
+  border-left: 1px solid lightgray;
+}
+
+.myCustomTabFrame_CSK_Module_MultiIOLinkSMI {
+  width: 98%;
+  align-self: center;  
+}
+
+.myCustomLabel_CSK_Module_MultiIOLinkSMI {
+  font-size:30px;
+  color: grey;
+  margin-top: 10px;
+}
+
+.myCustomFrameNoColor_CSK_Module_MultiIOLinkSMI {
+  margin: 6px;
+  border-radius: 10px;
+  border-style: solid;
+  border-width: 0px;
+  border-color: 007CC1;
+  background-color: #FFFFFF;
+}
+
+.myCustomFrame_CSK_Module_MultiIOLinkSMI {
+  margin: 6px;
+  border-radius: 10px;
+  border-style: solid;
+  border-width: 1px;
+  border-color: #007CC1;
+  background-color: white;
+}
+
+.myCustomFrameNoColor_CSK_Module_MultiIOLinkSMI {
+  margin: 6px;
+  border-radius: 10px;
+  border-style: solid;
+  border-width: 0px;
+  border-color: 007CC1;
+  background-color: white;
+}
+
+.myCustomMarginTop7PX_CSK_Module_MultiIOLinkSMI {
+  margin-top: 7px;
+}
+
+.myCustomBackground_CSK_Module_MultiIOLinkSMI {
+}
+
+.myCustomButton_CSK_Module_MultiIOLinkSMI {
+  border-radius: 30px;
+  padding-right: 0px;
 }
