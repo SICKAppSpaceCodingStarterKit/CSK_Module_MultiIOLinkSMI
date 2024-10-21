@@ -131,6 +131,7 @@ function multiIOLinkSMI.create(multiIOLinkSMIInstanceNo)
   self.parameters.port = '' -- IOLink port used
   self.parameters.active = false -- Parameter showing if instance is activated or not
   self.parameters.ioddInfo = nil -- Table containing IODD information
+  self.parameters.deviceIdentification = nil -- Table containing IODD information
   self.parameters.ioddReadMessages = {} -- Table contatining information about read messages. Each read message has its own IODD Interpreter instance
   self.parameters.ioddWriteMessages = {} -- Table contatining information about write messages. Each write message has its own IODD Interpreter instance
 
@@ -144,12 +145,54 @@ function multiIOLinkSMI.create(multiIOLinkSMIInstanceNo)
 
   -- Handle processing
   Script.startScript(self.parameters.processingFile, self.multiIOLinkSMIProcessingParams)
-
   return self
+end
+
+function multiIOLinkSMI:readParameter(index, subindex)
+  if not self.parameters.ioddInfo then
+    return false
+  end
+  local jsonDataPointInfo = CSK_IODDInterpreter.getParameterDataPointInfo(
+    self.parameters.ioddInfo.ioddInstanceId,
+    index,
+    subindex
+  )
+  if not jsonDataPointInfo then
+    return false, nil
+  end
+  local readSuccess, readData = Script.callFunction(
+    'CSK_MultiIOLinkSMI.readParameterIODD_' .. self.multiIOLinkSMIInstanceNoString,
+    index,
+    subindex,
+    jsonDataPointInfo
+  )
+  return readSuccess, readData
+end
+
+function multiIOLinkSMI:writeParameter(index, subindex, jsonDataToWrite)
+  local jsonDataPointInfo = CSK_IODDInterpreter.getParameterDataPointInfo(
+    self.parameters.ioddInfo.ioddInstanceId,
+    index,
+    subindex
+  )
+  if not jsonDataPointInfo then
+    return false
+  end
+  local callSuccess, writeSuccess = Script.callFunction(
+    'CSK_MultiIOLinkSMI.writeParameterIODD_' .. self.multiIOLinkSMIInstanceNoString,
+    index,
+    subindex,
+    jsonDataPointInfo,
+    jsonDataToWrite
+  )
+  return writeSuccess
 end
 
 --- Function to apply a new device identification when a new device is connected 
 function multiIOLinkSMI:applyNewDeviceIdentification()
+  if not self.parameters.deviceIdentification then
+    return
+  end
   for messageName, _ in pairs(self.parameters.ioddReadMessages) do
     self:deleteIODDReadMessage(messageName)
   end
@@ -166,6 +209,15 @@ function multiIOLinkSMI:applyNewDeviceIdentification()
   end
   self.parameters.ioddInfo = nil
   if not foundMatchingIODD then
+    Script.notifyEvent(
+      'MultiIOLinkSMI_OnNewPortInformation',
+      self.multiIOLinkSMIInstanceNo,
+      self.parameters.port,
+      self.status,
+      json.encode(self.parameters.deviceIdentification),
+      nil,
+      nil
+    )
     return
   end
   self.parameters.ioddInfo = {}
@@ -185,7 +237,7 @@ function multiIOLinkSMI:applyNewDeviceIdentification()
     }
     self.parameters.ioddInfo.processDataConditionList = CSK_IODDInterpreter.getProcessDataConditionList()
     for _ = 1,2 do
-      local readSuccess, jsonConditionValue = CSK_MultiIOLinkSMI.readParameter(
+      local readSuccess, jsonConditionValue = self:readParameter(
         tonumber(self.parameters.ioddInfo.processDataConditionInfo.index),
         tonumber(self.parameters.ioddInfo.processDataConditionInfo.subindex)
       )
@@ -199,6 +251,15 @@ function multiIOLinkSMI:applyNewDeviceIdentification()
       end
     end
   end
+  Script.notifyEvent(
+    'MultiIOLinkSMI_OnNewPortInformation',
+    self.multiIOLinkSMIInstanceNo,
+    self.parameters.port,
+    self.status,
+    json.encode(self.parameters.deviceIdentification),
+    self.parameters.ioddInfo.ioddName,
+    nil
+  )
   Script.notifyEvent('MultiIOLinkSMI_OnNewDeviceIdentificationApplied', self.multiIOLinkSMIInstanceNo, json.encode(self.parameters))
 end
 
@@ -209,13 +270,13 @@ function multiIOLinkSMI:setProcessDataConditionValue(newConditionValue)
   local dataToWrite = {
     value = newConditionValue
   }
-  local writeSuccess = CSK_MultiIOLinkSMI.writeParameter(
+  local writeSuccess = self:writeParameter(
     tonumber(self.parameters.ioddInfo.processDataConditionInfo.index),
     tonumber(self.parameters.ioddInfo.processDataConditionInfo.subindex),
     json.encode(dataToWrite)
   )
   if not writeSuccess then return false end
-  local readSuccess, jsonConditionValue = CSK_MultiIOLinkSMI.readParameter(
+  local readSuccess, jsonConditionValue = self:readParameter(
     tonumber(self.parameters.ioddInfo.processDataConditionInfo.index),
     tonumber(self.parameters.ioddInfo.processDataConditionInfo.subindex)
   )
@@ -278,6 +339,9 @@ function multiIOLinkSMI:deleteIODDReadMessage(messageToDelete)
   CSK_IODDInterpreter.setSelectedInstance(self.parameters.ioddReadMessages[messageToDelete].ioddInstanceId)
   CSK_IODDInterpreter.deleteInstance()
   self.parameters.ioddReadMessages[messageToDelete] = nil
+  if not self.parameters.ioddReadMessages then
+    self.parameters.ioddReadMessages = {}
+  end
 end
 
 --*************************************************************************
@@ -308,6 +372,9 @@ function multiIOLinkSMI:deleteIODDWriteMessage(messageToDelete)
   CSK_IODDInterpreter.setSelectedInstance(self.parameters.ioddWriteMessages[messageToDelete].ioddInstanceId)
   CSK_IODDInterpreter.deleteInstance()
   self.parameters.ioddWriteMessages[messageToDelete] = nil
+  if not self.parameters.ioddWriteMessages then
+    self.parameters.ioddWriteMessages = {}
+  end
 end
 
 return multiIOLinkSMI

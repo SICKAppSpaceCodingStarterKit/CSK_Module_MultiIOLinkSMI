@@ -420,6 +420,32 @@ NUM will be replaced by the number of instance (e.g. "OnNewValueToForward1"). +<
                     <desc>Notify version of module.</desc>
                     <param desc="Version" multiplicity="1" name="version" type="string"/>
                 </event>
+                <event name="OnNewPortInformation">
+                    <trait>released</trait>
+                    <param desc="" multiplicity="1" name="instanceId" type="int"/>
+                    <param desc="" multiplicity="1" name="portNumber" type="string"/>
+                    <param desc="" multiplicity="1" name="portStatus" type="string"/>
+                    <param desc="" multiplicity="?" name="jsonDeviceIdentification" type="string"/>
+                    <param desc="" multiplicity="?" name="ioddName" type="string"/>
+                    <param desc="" multiplicity="?" name="jsonNewDeviceIdentification" type="string"/>
+                </event>
+                <event name="OnNewDeviceId">
+                    <trait>released</trait>
+                    <param desc="" multiplicity="1" name="deviceId" type="string"/>
+                </event>
+                <event name="OnNewNewDeviceDeviceId">
+                    <trait>released</trait>
+                    <param desc="" multiplicity="1" name="deviceId" type="string"/>
+                </event>
+                <event name="readMessagePortMessageName">
+                    <trait>released</trait>
+                    <desc>Event that can be used to get the message with data received from IOLink device. Port - sensor port the device is connected to (S1,S2 ...). MessageName - the configured name of the message.</desc>
+                    <param desc="Success of reading data." multiplicity="1" name="success" type="bool"/>
+                    <param desc="Size of the queue calls in the thread responsible for communication with this IOLink device. If the queue builds up, this can lead to memory overflow. That's why the queue is recet to 0 in case there are more than 10 calls." multiplicity="1" name="queueSize" type="int"/>
+                    <param desc="Time in milliseconds spent for getting and parsing the data." multiplicity="1" name="time" type="int"/>
+                    <param desc="JSON object containing the interpreted data." multiplicity="?" name="data" type="string"/>
+                    <param desc="Error message, if any." multiplicity="?" name="detailedErrorMessage" type="string"/>
+                </event>
                 <function name="setParameterName">
                     <desc>Function to set the name of the parameters if saved/loaded via the CSK_PersistentData module.</desc>
                     <param desc="Name of the parameter" multiplicity="1" name="name" type="string"/>
@@ -618,7 +644,8 @@ IMPORTANT: As instances start their own threads, the module needs to be restarte
                 <function name="applyNewDeviceIdentification">
                     <trait>released</trait>
                     <desc>Set device identification of a new device.</desc>
-                    <param desc="Json table containing the device identification." multiplicity="1" name="jsonNewDeviceIdentification" type="string"/>
+                    <param desc="" multiplicity="1" name="instance" type="int"/>
+                    <param desc="Json table containing the device identification." multiplicity="?" name="jsonNewDeviceIdentification" type="string"/>
                 </function>
                 <function name="makeDefaultInstance">
                     <desc>Set all instance parameters to default values.</desc>
@@ -928,6 +955,41 @@ NUM will be replaced by the number of instance (e.g. "getWriteDataResult1").
                 </function>
                 <function name="resetModule">
                     <desc>Function to reset main configuration of module.</desc>
+                </function>
+                <function name="getInstancePortMap">
+                    <desc/>
+                    <return desc="" multiplicity="1" name="jsonInstancePortMap" type="string"/>
+                </function>
+                <function name="getDeviceConfig">
+                    <desc/>
+                    <return desc="" multiplicity="1" name="jsonCopiedDeviceConfig" type="string"/>
+                </function>
+                <function name="pasteReadDataMessage">
+                    <trait>released</trait>
+                    <return desc="" multiplicity="?" name="processDataTableContent" type="string"/>
+                    <return desc="" multiplicity="?" name="parameterTableContent" type="string"/>
+                    <return desc="" multiplicity="?" name="jsonTemplate" type="string"/>
+                </function>
+                <function name="copyReadDataMessage">
+                    <trait>released</trait>
+                </function>
+                <function name="copyWriteDataMessage">
+                    <trait>released</trait>
+                </function>
+                <function name="pasteWriteDataMessage">
+                    <trait>released</trait>
+                    <return desc="" multiplicity="?" name="processDataTableContent" type="string"/>
+                    <return desc="" multiplicity="?" name="parameterTableContent" type="string"/>
+                    <return desc="" multiplicity="?" name="jsonTemplate" type="string"/>
+                </function>
+                <function name="writeMessagePortMessageName">
+                    <trait>released</trait>
+                    <desc>Function to write the message with to IOLink device. The data must a JSON object that has the same structure as the configured message. Port - sensor port the device is connected to (S1,S2 ...). MessageName - the configured name of the message.</desc>
+                    <param desc="JSON object that has the same structure as the configured message." multiplicity="1" name="data" type="string"/>
+                    <return desc="Success of writing data." multiplicity="1" name="success" type="bool"/>
+                    <return desc="Size of the queue calls in the thread responsible for communication with this IOLink device. If the queue builds up, this can lead to memory overflow. That's why the queue is recet to 0 in case there are more than 10 calls." multiplicity="1" name="queueSize" type="int"/>
+                    <return desc="Time in milliseconds spent for getting and parsing the data." multiplicity="1" name="time" type="int"/>
+                    <return desc="Error message, if any." multiplicity="1" name="errorMessage" type="string"/>
                 </function>
             </serves>
         </crown>
