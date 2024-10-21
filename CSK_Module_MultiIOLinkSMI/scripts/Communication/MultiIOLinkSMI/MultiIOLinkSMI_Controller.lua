@@ -1056,7 +1056,6 @@ Script.serveFunction('CSK_MultiIOLinkSMI.getIODDWriteMessageJSONTemplate', getIO
 --**************************************************************************
 
 
----@return string jsonCopiedDeviceConfig 
 local function getDeviceConfig()
   local copiedConfig = {
     deviceId = multiIOLinkSMI_Instances[selectedInstance].parameters.deviceIdentification.deviceId,

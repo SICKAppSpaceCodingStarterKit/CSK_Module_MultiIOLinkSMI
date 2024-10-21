@@ -422,20 +422,23 @@ NUM will be replaced by the number of instance (e.g. "OnNewValueToForward1"). +<
                 </event>
                 <event name="OnNewPortInformation">
                     <trait>released</trait>
-                    <param desc="" multiplicity="1" name="instanceId" type="int"/>
-                    <param desc="" multiplicity="1" name="portNumber" type="string"/>
-                    <param desc="" multiplicity="1" name="portStatus" type="string"/>
-                    <param desc="" multiplicity="?" name="jsonDeviceIdentification" type="string"/>
-                    <param desc="" multiplicity="?" name="ioddName" type="string"/>
-                    <param desc="" multiplicity="?" name="jsonNewDeviceIdentification" type="string"/>
+                    <desc>Event triggerd when port status has changed which might mean that the IOLink device was connected/disconnected or another devices was connected. </desc>
+                    <param desc="Instance ID." multiplicity="1" name="instanceId" type="int"/>
+                    <param desc="Port name like S1, S2 ..." multiplicity="1" name="portNumber" type="string"/>
+                    <param desc="New port status." multiplicity="1" name="portStatus" type="string"/>
+                    <param desc="JSON object containing the saved device identification for this port." multiplicity="?" name="jsonDeviceIdentification" type="string"/>
+                    <param desc="IODD name of an IODD object used in CSK_Module_IODDInterpreter for this instance." multiplicity="?" name="ioddName" type="string"/>
+                    <param desc="Optional JSON object with the device identification of the connected device if its ID does not match the saved one for this instance." multiplicity="?" name="jsonNewDeviceIdentification" type="string"/>
                 </event>
                 <event name="OnNewDeviceId">
                     <trait>released</trait>
-                    <param desc="" multiplicity="1" name="deviceId" type="string"/>
+                    <desc>Event to show the device ID of the device.</desc>
+                    <param desc="Device ID." multiplicity="1" name="deviceId" type="string"/>
                 </event>
                 <event name="OnNewNewDeviceDeviceId">
                     <trait>released</trait>
-                    <param desc="" multiplicity="1" name="deviceId" type="string"/>
+                    <desc>Event to show the device ID of new discovered device.</desc>
+                    <param desc="Device ID." multiplicity="1" name="deviceId" type="string"/>
                 </event>
                 <event name="readMessagePortMessageName">
                     <trait>released</trait>
@@ -957,30 +960,36 @@ NUM will be replaced by the number of instance (e.g. "getWriteDataResult1").
                     <desc>Function to reset main configuration of module.</desc>
                 </function>
                 <function name="getInstancePortMap">
-                    <desc/>
-                    <return desc="" multiplicity="1" name="jsonInstancePortMap" type="string"/>
+                    <desc>Function to get a map of what ports are controlled by instances.</desc>
+                    <return desc="JSON object with the map." multiplicity="1" name="jsonInstancePortMap" type="string"/>
                 </function>
                 <function name="getDeviceConfig">
-                    <desc/>
-                    <return desc="" multiplicity="1" name="jsonCopiedDeviceConfig" type="string"/>
+                    <desc>Function to get the device configuration that can be use to copy it and apply for another device if DeviceId and VendorId are matched.</desc>
+                    <return desc="JSON object with device configuration" multiplicity="1" name="jsonCopiedDeviceConfig" type="string"/>
                 </function>
                 <function name="pasteReadDataMessage">
                     <trait>released</trait>
-                    <return desc="" multiplicity="?" name="processDataTableContent" type="string"/>
-                    <return desc="" multiplicity="?" name="parameterTableContent" type="string"/>
-                    <return desc="" multiplicity="?" name="jsonTemplate" type="string"/>
+                    <desc>Function to paste the copied read data message configuration. See copyReadDataMessage</desc>
+                    <return desc="JSON object with selected process data information." multiplicity="?" name="processDataTableContent" type="string"/>
+                    <return desc="JSON object with selected parameters information." multiplicity="?" name="parameterTableContent" type="string"/>
+                    <return desc="New JSON template of the read message." multiplicity="?" name="jsonTemplate" type="string"/>
                 </function>
                 <function name="copyReadDataMessage">
                     <trait>released</trait>
+                    <desc>Function to copy the selected read data message. It can be pasted in another instance (IOLink device) if the device is same. Pasting is done via 
+pasteReadDataMessage.</desc>
                 </function>
                 <function name="copyWriteDataMessage">
                     <trait>released</trait>
+                    <desc>Function to copy the selected write data message. It can be pasted in another instance (IOLink device) if the device is same. Pasting is done via 
+pasteWriteDataMessage.</desc>
                 </function>
                 <function name="pasteWriteDataMessage">
                     <trait>released</trait>
-                    <return desc="" multiplicity="?" name="processDataTableContent" type="string"/>
-                    <return desc="" multiplicity="?" name="parameterTableContent" type="string"/>
-                    <return desc="" multiplicity="?" name="jsonTemplate" type="string"/>
+                    <desc>Function to paste the copied write data message configuration. See copyWriteDataMessage</desc>
+                    <return desc="JSON object with selected process data information." multiplicity="?" name="processDataTableContent" type="string"/>
+                    <return desc="JSON object with selected parameters information." multiplicity="?" name="parameterTableContent" type="string"/>
+                    <return desc="New JSON template of the write message." multiplicity="?" name="jsonTemplate" type="string"/>
                 </function>
                 <function name="writeMessagePortMessageName">
                     <trait>released</trait>
