@@ -140,13 +140,24 @@ converter.reverseBinaryString = reverseBinaryString
 
 -------------------------------------------------------------------------------------
 -- Disassemble data
+
+local function extract(n, field, width)
+    -- Shift right by 'field' to get the bits starting at 'field' in the least significant bits
+    local shifted = n >> field
+    -- Create a mask with 'width' bits set to 1
+    local mask = (1 << width) - 1
+    -- Apply the mask to isolate 'width' bits
+    return shifted & mask
+end
+
 local function disassembleData(data, startBit, bitLength)
   local l_startByte = math.floor(startBit / 8) + 1
   local l_startBitInByte = startBit % 8
   local l_byteLengthItem = math.ceil(bitLength / 8)
   local l_revRawData = reverseBinaryString(data)
   local l_dataAsNumber = string.unpack("<I" .. tostring(l_byteLengthItem), l_revRawData, l_startByte)
-  local l_extractedValue = bit32.extract(l_dataAsNumber, l_startBitInByte, bitLength)
+  local l_extractedValue = extract(l_dataAsNumber, l_startBitInByte, bitLength)
+  --local l_extractedValue = bit32.extract(l_dataAsNumber, l_startBitInByte, bitLength)
   local l_asBinaryString = toBinaryString(l_extractedValue, l_byteLengthItem)
   return l_asBinaryString
 end
@@ -183,14 +194,55 @@ converter.getReadServiceDataResult = getReadServiceDataResult
 -------------------------------------------------------------------------------------
 -- Convert a raw binary data from IO-Link device to a meaningful Lua table
 local function getReadProcessDataResult(binData, processDataInfo)
-  if tonumber(processDataInfo.bitOffset) == 0 then
-    return getReadServiceDataResult(binData, processDataInfo)
-  else
-    local offSetData = disassembleData(binData, tonumber(processDataInfo.bitOffset), getDatatypeBitlength(processDataInfo.Datatype))
-    return getReadServiceDataResult(offSetData, processDataInfo)
+  local resultData = {}
+  for dataPointID, dataPointInfo in pairs(processDataInfo) do
+    if dataPointInfo.Datatype.type == 'RecordT' or dataPointInfo.Datatype.type == 'ArrayT' then
+      resultData[dataPointID] = getReadServiceDataResult(binData, dataPointInfo)
+    else
+      local offsetData = disassembleData(binData, tonumber(dataPointInfo.bitOffset), getDatatypeBitlength(dataPointInfo.Datatype))
+      resultData[dataPointID] = {value = toDataType(offsetData, dataPointInfo.Datatype.type)}
+    end
   end
+  return resultData
 end
 converter.getReadProcessDataResult = getReadProcessDataResult
+
+
+--Return a JSON payload of expacted format filled with null values in case reading of a Parameter has failed 
+local function getFailedReadServiceDataResult(parameterInfo)
+  local Result = {}
+  if parameterInfo.Datatype.type == 'ArrayT' then
+    for i = 1, parameterInfo.Datatype.count do
+      Result["element_" .. tostring(i)] = {
+        value = "null"
+      }
+    end
+  elseif parameterInfo.Datatype.type == 'RecordT' then
+    for _, SingleItem in ipairs(parameterInfo.Datatype.RecordItem) do
+      Result[SingleItem.Name] = {
+        value = "null"
+      }
+    end
+  elseif parameterInfo.Datatype then
+    Result.value = "null"
+  end
+  return Result
+end
+converter.getFailedReadServiceDataResult = getFailedReadServiceDataResult
+
+--Return a JSON payload of expacted format filled with null values in case reading of a Process data has failed 
+local function getFailedReadProcessDataResult(processDataInfo)
+  local resultData = {}
+  for dataPointID, dataPointInfo in pairs(processDataInfo) do
+    if dataPointInfo.Datatype.type == 'RecordT' or dataPointInfo.Datatype.type == 'ArrayT' then
+      resultData[dataPointID] = getFailedReadServiceDataResult(dataPointInfo)
+    else
+      resultData[dataPointID] = {value = "null"}
+    end
+  end
+  return resultData
+end
+converter.getFailedReadProcessDataResult = getFailedReadProcessDataResult
 
 local function toBitArrayPadded(num, bitLength)
     -- returns a table of bits, least significant first.

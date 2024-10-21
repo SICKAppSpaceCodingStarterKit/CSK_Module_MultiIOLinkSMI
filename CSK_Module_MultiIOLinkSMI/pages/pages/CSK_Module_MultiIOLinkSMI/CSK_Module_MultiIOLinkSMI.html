@@ -937,15 +937,13 @@
                                                                                 style="align-items: stretch">
                                                                                 <curie-table id="DT_ProcessDataIn"
                                                                                     selectable title="Process data">
-                                                                                    <curie-table-column id="read_colPD1"
-                                                                                        header="Subindex">
-                                                                                    </curie-table-column>
-                                                                                    <curie-table-column id="read_colPD2"
-                                                                                        header="Name">
-                                                                                    </curie-table-column>
-                                                                                    <curie-table-column id="read_colPD3"
-                                                                                        header="Data type, Range, Single value description">
-                                                                                    </curie-table-column>
+												<curie-table-column id="readIOLink_colPD1" header="Subindex">
+												</curie-table-column>
+												<curie-table-column id="readIOLink_colPD2" header="Name">
+												</curie-table-column>
+												<curie-table-column id="readIOLink_colPD3"
+													header="Data type, Range, Single value description">
+												</curie-table-column>
                                                                                     <crown-binding event="row-selected"
                                                                                         name="CSK_MultiIOLinkSMI/processDataInRowSelectedCSKIODDInterpreter"
                                                                                         path="param/args/rowData"
@@ -964,27 +962,21 @@
                                                                                 style="align-items: stretch">
                                                                                 <curie-table id="DT_ReadParameters"
                                                                                     selectable title="Read parameters">
-                                                                                    <curie-table-column id="read_colSD1"
-                                                                                        header="Index">
-                                                                                    </curie-table-column>
-                                                                                    <curie-table-column id="read_colSD2"
-                                                                                        header="Subindex">
-                                                                                    </curie-table-column>
-                                                                                    <curie-table-column id="read_colSD3"
-                                                                                        header="ID">
-                                                                                    </curie-table-column>
-                                                                                    <curie-table-column id="read_colSD4"
-                                                                                        header="Name">
-                                                                                    </curie-table-column>
-                                                                                    <curie-table-column id="read_colSD5"
-                                                                                        header="Data type, Range, Single value description">
-                                                                                    </curie-table-column>
-                                                                                    <curie-table-column id="read_colSD6"
-                                                                                        header="Read/Write">
-                                                                                    </curie-table-column>
-                                                                                    <curie-table-column id="read_colSD7"
-                                                                                        header="Description">
-                                                                                    </curie-table-column>
+												<curie-table-column id="readIOLink_colSD1" header="Index">
+												</curie-table-column>
+												<curie-table-column id="readIOLink_colSD2" header="Subindex">
+												</curie-table-column>
+												<curie-table-column id="readIOLink_colSD3" header="ID">
+												</curie-table-column>
+												<curie-table-column id="readIOLink_colSD4" header="Name">
+												</curie-table-column>
+												<curie-table-column id="readIOLink_colSD5"
+													header="Data type, Range, Single value description">
+												</curie-table-column>
+												<curie-table-column id="readIOLink_colSD6" header="Read/Write">
+												</curie-table-column>
+												<curie-table-column id="readIOLink_colSD7" header="Description">
+												</curie-table-column>
                                                                                     <crown-binding event="row-selected"
                                                                                         name="CSK_MultiIOLinkSMI/readParameterRowSelectedCSKIODDInterpreter"
                                                                                         path="param/args/rowData"
@@ -1349,17 +1341,13 @@
                                                                                 <curie-table id="DT_ProcessDataOut"
                                                                                     selectable
                                                                                     title="Structure of Process Data Out">
-                                                                                    <curie-table-column
-                                                                                        id="write_colPD1"
-                                                                                        header="Subindex">
-                                                                                    </curie-table-column>
-                                                                                    <curie-table-column
-                                                                                        id="write_colPD2" header="Name">
-                                                                                    </curie-table-column>
-                                                                                    <curie-table-column
-                                                                                        id="write_colPD3"
-                                                                                        header="Data type, Range, Single value description">
-                                                                                    </curie-table-column>
+												<curie-table-column id="writeIOLink_colPD1" header="Subindex">
+												</curie-table-column>
+												<curie-table-column id="writeIOLink_colPD2" header="Name">
+												</curie-table-column>
+												<curie-table-column id="writeIOLink_colPD3"
+													header="Data type, Range, Single value description">
+												</curie-table-column>
                                                                                     <crown-on property="data"
                                                                                         crown-event="CSK_MultiIOLinkSMI/OnNewProcessDataOutTableContentCSKIODDInterpreter">
                                                                                     </crown-on>
@@ -1378,32 +1366,21 @@
                                                                                 style="align-items: stretch">
                                                                                 <curie-table id="DT_WriteParameter"
                                                                                     selectable title="Write Parameters">
-                                                                                    <curie-table-column
-                                                                                        id="write_colSD1"
-                                                                                        header="Index">
-                                                                                    </curie-table-column>
-                                                                                    <curie-table-column
-                                                                                        id="write_colSD2"
-                                                                                        header="Subindex">
-                                                                                    </curie-table-column>
-                                                                                    <curie-table-column
-                                                                                        id="write_colSD3" header="ID">
-                                                                                    </curie-table-column>
-                                                                                    <curie-table-column
-                                                                                        id="write_colSD4" header="Name">
-                                                                                    </curie-table-column>
-                                                                                    <curie-table-column
-                                                                                        id="write_colSD5"
-                                                                                        header="Data type, Range, Single value description">
-                                                                                    </curie-table-column>
-                                                                                    <curie-table-column
-                                                                                        id="write_colSD6"
-                                                                                        header="Read/Write">
-                                                                                    </curie-table-column>
-                                                                                    <curie-table-column
-                                                                                        id="write_colSD7"
-                                                                                        header="Description">
-                                                                                    </curie-table-column>
+												<curie-table-column id="writeIOLink_colSD1" header="Index">
+												</curie-table-column>
+												<curie-table-column id="writeIOLink_colSD2" header="Subindex">
+												</curie-table-column>
+												<curie-table-column id="writeIOLink_colSD3" header="ID">
+												</curie-table-column>
+												<curie-table-column id="writeIOLink_colSD4" header="Name">
+												</curie-table-column>
+												<curie-table-column id="writeIOLink_colSD5"
+													header="Data type, Range, Single value description">
+												</curie-table-column>
+												<curie-table-column id="writeIOLink_colSD6" header="Read/Write">
+												</curie-table-column>
+												<curie-table-column id="writeIOLink_colSD7" header="Description">
+												</curie-table-column>
                                                                                     <crown-on property="data"
                                                                                         crown-event="CSK_MultiIOLinkSMI/OnNewWriteParametersTableContentCSKIODDInterpreter">
                                                                                     </crown-on>
