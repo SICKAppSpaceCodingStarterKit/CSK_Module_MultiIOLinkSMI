@@ -41,10 +41,10 @@ If there is available [IODD interpreter](https://github.com/SICKAppSpaceCodingSt
 ## Dependencies
 
 Following CSK modules are mostly necessary to make use of the features of this module:
-|Module|Version|Remark
+|Module|Version|Remark|
 |--|--|--|
 |CSK_Module_PowerManager|[>=V2.5.0](https://github.com/SICKAppSpaceCodingStarterKit/CSK_Module_PowerManager)|To power ports|
-|CSK_Module_IODDInterpreter|[>=V1.0.0](https://github.com/SICKAppSpaceCodingStarterKit/CSK_Module_IODDInterpreter)|To set read and write messages|
+|CSK_Module_IODDInterpreter|[>=V2.0.0](https://github.com/SICKAppSpaceCodingStarterKit/CSK_Module_IODDInterpreter)|To set read and write messages|
 |CSK_1stModule_Logger|[>=V4.0.0](https://github.com/SICKAppSpaceCodingStarterKit/CSK_1stModule_Logger)|To log problems with data interpretation|
 |CSK_Module_PersistentData|[>=V4.0.0](https://github.com/SICKAppSpaceCodingStarterKit/CSK_Module_PersistentData)|To persist data|
 

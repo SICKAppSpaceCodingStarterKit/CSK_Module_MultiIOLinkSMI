@@ -157,7 +157,6 @@ local function disassembleData(data, startBit, bitLength)
   local l_revRawData = reverseBinaryString(data)
   local l_dataAsNumber = string.unpack("<I" .. tostring(l_byteLengthItem), l_revRawData, l_startByte)
   local l_extractedValue = extract(l_dataAsNumber, l_startBitInByte, bitLength)
-  --local l_extractedValue = bit32.extract(l_dataAsNumber, l_startBitInByte, bitLength)
   local l_asBinaryString = toBinaryString(l_extractedValue, l_byteLengthItem)
   return l_asBinaryString
 end

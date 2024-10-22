@@ -39,7 +39,7 @@ After message configuration, the JSON template is available in UI for the refere
 The structure of the write message must comply with the generated JSON template. +
 {empty} +
 Each read message has its own event to register to exteranlly. +
-The event name is **"CSK_MultiIOLinkSMI.readMessage" .. port .. readMessageName** +
+The event name is **"CSK_MultiIOLinkSMI.OnNewReadMessage_" .. port .. _readMessageName** +
 {empty} +
 Each write message has its own function to be called externally. +
 The function name is **"CSK_MultiIOLinkSMI.writeMessage" .. port .. writeMessageName** +
@@ -440,9 +440,11 @@ NUM will be replaced by the number of instance (e.g. "OnNewValueToForward1"). +<
                     <desc>Event to show the device ID of new discovered device.</desc>
                     <param desc="Device ID." multiplicity="1" name="deviceId" type="string"/>
                 </event>
-                <event name="readMessagePortMessageName">
+                <event name="OnNewReadMessage_PORT_MESSAGENAME">
                     <trait>released</trait>
-                    <desc>Event that can be used to get the message with data received from IOLink device. Port - sensor port the device is connected to (S1,S2 ...). MessageName - the configured name of the message.</desc>
+                    <desc>Example of dynamically created event to notify data received from IOLink device. +
+PORT will be replaced by the sensor port the device is connected to (S1,S2 ...) and MESSAGENAME by the configured name of the message (e.g. "OnNewReadMessage_S1_MyMessage"). +
+INFO: Other modules can check via "Script.isServedAsEvent" if event exists.</desc>
                     <param desc="Success of reading data." multiplicity="1" name="success" type="bool"/>
                     <param desc="Size of the queue calls in the thread responsible for communication with this IOLink device. If the queue builds up, this can lead to memory overflow. That's why the queue is recet to 0 in case there are more than 10 calls." multiplicity="1" name="queueSize" type="int"/>
                     <param desc="Time in milliseconds spent for getting and parsing the data." multiplicity="1" name="time" type="int"/>
@@ -647,7 +649,7 @@ IMPORTANT: As instances start their own threads, the module needs to be restarte
                 <function name="applyNewDeviceIdentification">
                     <trait>released</trait>
                     <desc>Set device identification of a new device.</desc>
-                    <param desc="" multiplicity="1" name="instance" type="int"/>
+                    <param desc="Instance to select." multiplicity="1" name="instance" type="int"/>
                     <param desc="Json table containing the device identification." multiplicity="?" name="jsonNewDeviceIdentification" type="string"/>
                 </function>
                 <function name="makeDefaultInstance">
@@ -1005,10 +1007,13 @@ pasteWriteDataMessage.</desc>
         <crown name="MultiIOLinkSMI_FC">
             <trait>released</trait>
             <desc>Crown to provide CSK_FlowConfig relevant features.</desc>
+            <enum name="IOLinkMasterPorts" trait="released">
+                <desc>Placeholder for dynamic created IO-Link MasterPorts.</desc>
+            </enum>
             <serves/>
             <crown name="OnNewData">
                 <trait>released</trait>
-                <desc>IMPORTANT: First activate ports in IOLinkSMI module!
+                <desc>IMPORTANT: First activate ports in IOLinkSMI module and create readMessage!
 Provide IOLink data via event.</desc>
                 <serves>
                     <event name="OnNewData">
@@ -1016,13 +1021,13 @@ Provide IOLink data via event.</desc>
                         <desc>IMPORTANT: First activate ports in IOLinkSMI module!
 Provide IOLink data via event.</desc>
                         <param desc="Handle to internally used FlowConfig instance." multiplicity="1" name="handle" type="handle"/>
-                        <param desc="'CSK_MultiIOLinkSMI.readMessage[PORT][READMESSAGENAME]'&#10;&#10;Parameter:&#10;1: Success (BOOL)&#10;2: QueueSize (INT)&#10;3:Time (INT)&#10;4: JSON content (STRING)&#10;5: Opt.Error (STRING)" multiplicity="1" name="OnNewData" ref="MultiColorSelection_FC.ResultType" type="string"/>
+                        <param desc="'CSK_MultiIOLinkSMI.readMessage[PORT][READMESSAGENAME]'&#10;&#10;Parameter:&#10;1: Success (BOOL)&#10;2: QueueSize (INT)&#10;3:Time (INT)&#10;4: JSON content (STRING)&#10;5: Opt.Error (STRING)" multiplicity="1" name="OnNewData" type="string"/>
                     </event>
                     <function name="create">
                         <trait>released</trait>
                         <desc>Internally used CSK_FlowConfig create function.</desc>
-                        <param desc="Numeric identifier of processing instance (must be &gt;=1)." multiplicity="1" name="Instance" type="int"/>
-                        <param desc="Name of read message to receive data." multiplicity="1" name="ReadMessageName" type="string"/>
+                        <param desc="IO-Link port." multiplicity="1" name="Port" ref="MultiIOLinkSMI_FC.IOLinkMasterPorts" type="enum"/>
+                        <param desc="Name of read message to receive data.&#10;IMPORTANT: Please make sure that related readMessage already exists." multiplicity="1" name="ReadMessageName" type="string"/>
                         <return desc="Handle to internally used FlowConfig instance." multiplicity="1" name="handle" type="handle"/>
                     </function>
                     <function name="register">

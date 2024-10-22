@@ -209,28 +209,6 @@
                                                                         </layout-column>
                                                                         <layout-column id="ColumnLayout77"
                                                                             style="align-items: stretch">
-                                                                            <layout-row id="RowLayout561"
-                                                                                style="align-items: center; justify-content: flex-end">
-                                                                                <davinci-value-display
-                                                                                    id="VD_FLowConfigPrio"
-                                                                                    value="Flow config priority:"
-                                                                                    title="FlowConfig priority for FlowConfig relevant configurations.">
-                                                                                </davinci-value-display>
-                                                                                <davinci-checkbox id="CB_FlowConfigPrio"
-                                                                                    title="FlowConfig priority for FlowConfig relevant configurations.">
-                                                                                    <span></span>
-                                                                                    <crown-edpws-binding
-                                                                                        property="checked"
-                                                                                        name="CSK_MultiIOLinkSMI/OnNewStatusFlowConfigPriority"
-                                                                                        update-on-resume>
-                                                                                    </crown-edpws-binding>
-                                                                                    <crown-binding event="change"
-                                                                                        name="CSK_MultiIOLinkSMI/setFlowConfigPriority"
-                                                                                        path="param/args/status"
-                                                                                        auto-commit>
-                                                                                    </crown-binding>
-                                                                                </davinci-checkbox>
-                                                                            </layout-row>
                                                                         </layout-column>
                                                                     </layout-row>
                                                                 </layout-column>
@@ -487,8 +465,8 @@
                                                     <stacked-pane id="SP_ModuleIsNOTAvailable" value="false">
                                                         <davinci-callout id="C_NoCSKIODDInterpreter" type="warning">
                                                             <span>
-												No CSK IODD Interpreter module is found in the project. Setting interpreted read and write data is not possible.
-												</span>
+                                                                No valid CSK IODD Interpreter module is found in the project. Setting interpreted read and write data is not possible.
+                                                            </span>
                                                         </davinci-callout>
                                                     </stacked-pane>
                                                     <crown-on property="value"
@@ -712,7 +690,7 @@
                                                                                                     crown-function="CSK_MultiIOLinkSMI/setTestReadParameterIndex"
                                                                                                     protocol="crownMSGPACK"
                                                                                                     crown-path="index"
-                                                                                                    converter="function(value) {return Number(value);">
+                                                                                                    converter="function(value) {return Number(value);}">
                                                                                                 </crown-set>
                                                                                             </davinci-number-input>
                                                                                         </layout-column>
@@ -730,7 +708,7 @@
                                                                                                     crown-function="CSK_MultiIOLinkSMI/setTestReadParameterSubindex"
                                                                                                     protocol="crownMSGPACK"
                                                                                                     crown-path="subindex"
-                                                                                                    converter="function(value) {return Number(value);">
+                                                                                                    converter="function(value) {return Number(value);}">
                                                                                                 </crown-set>
                                                                                             </davinci-number-input>
                                                                                         </layout-column>
@@ -937,13 +915,15 @@
                                                                                 style="align-items: stretch">
                                                                                 <curie-table id="DT_ProcessDataIn"
                                                                                     selectable title="Process data">
-												<curie-table-column id="readIOLink_colPD1" header="Subindex">
-												</curie-table-column>
-												<curie-table-column id="readIOLink_colPD2" header="Name">
-												</curie-table-column>
-												<curie-table-column id="readIOLink_colPD3"
-													header="Data type, Range, Single value description">
-												</curie-table-column>
+                                                                                    <curie-table-column id="readIOLink_colPD1"
+                                                                                        header="Subindex">
+                                                                                    </curie-table-column>
+                                                                                    <curie-table-column id="readIOLink_colPD2"
+                                                                                        header="Name">
+                                                                                    </curie-table-column>
+                                                                                    <curie-table-column id="readIOLink_colPD3"
+                                                                                        header="Data type, Range, Single value description">
+                                                                                    </curie-table-column>
                                                                                     <crown-binding event="row-selected"
                                                                                         name="CSK_MultiIOLinkSMI/processDataInRowSelectedCSKIODDInterpreter"
                                                                                         path="param/args/rowData"
@@ -962,21 +942,27 @@
                                                                                 style="align-items: stretch">
                                                                                 <curie-table id="DT_ReadParameters"
                                                                                     selectable title="Read parameters">
-												<curie-table-column id="readIOLink_colSD1" header="Index">
-												</curie-table-column>
-												<curie-table-column id="readIOLink_colSD2" header="Subindex">
-												</curie-table-column>
-												<curie-table-column id="readIOLink_colSD3" header="ID">
-												</curie-table-column>
-												<curie-table-column id="readIOLink_colSD4" header="Name">
-												</curie-table-column>
-												<curie-table-column id="readIOLink_colSD5"
-													header="Data type, Range, Single value description">
-												</curie-table-column>
-												<curie-table-column id="readIOLink_colSD6" header="Read/Write">
-												</curie-table-column>
-												<curie-table-column id="readIOLink_colSD7" header="Description">
-												</curie-table-column>
+                                                                                    <curie-table-column id="readIOLink_colSD1"
+                                                                                        header="Index">
+                                                                                    </curie-table-column>
+                                                                                    <curie-table-column id="readIOLink_colSD2"
+                                                                                        header="Subindex">
+                                                                                    </curie-table-column>
+                                                                                    <curie-table-column id="readIOLink_colSD3"
+                                                                                        header="ID">
+                                                                                    </curie-table-column>
+                                                                                    <curie-table-column id="readIOLink_colSD4"
+                                                                                        header="Name">
+                                                                                    </curie-table-column>
+                                                                                    <curie-table-column id="readIOLink_colSD5"
+                                                                                        header="Data type, Range, Single value description">
+                                                                                    </curie-table-column>
+                                                                                    <curie-table-column id="readIOLink_colSD6"
+                                                                                        header="Read/Write">
+                                                                                    </curie-table-column>
+                                                                                    <curie-table-column id="readIOLink_colSD7"
+                                                                                        header="Description">
+                                                                                    </curie-table-column>
                                                                                     <crown-binding event="row-selected"
                                                                                         name="CSK_MultiIOLinkSMI/readParameterRowSelectedCSKIODDInterpreter"
                                                                                         path="param/args/rowData"
@@ -1166,7 +1152,7 @@
                                                                                             crown-function="CSK_MultiIOLinkSMI/setTestWriteParameterIndex"
                                                                                             protocol="crownMSGPACK"
                                                                                             crown-path="index"
-                                                                                            converter="function(value) {return Number(value);">
+                                                                                            converter="function(value) {return Number(value);}">
                                                                                         </crown-set>
                                                                                     </davinci-number-input>
                                                                                 </layout-column>
@@ -1181,7 +1167,7 @@
                                                                                             crown-function="CSK_MultiIOLinkSMI/setTestWriteParameterSubindex"
                                                                                             protocol="crownMSGPACK"
                                                                                             crown-path="subindex"
-                                                                                            converter="function(value) {return Number(value);">
+                                                                                            converter="function(value) {return Number(value);}">
                                                                                         </crown-set>
                                                                                     </davinci-number-input>
                                                                                 </layout-column>
@@ -1341,13 +1327,17 @@
                                                                                 <curie-table id="DT_ProcessDataOut"
                                                                                     selectable
                                                                                     title="Structure of Process Data Out">
-												<curie-table-column id="writeIOLink_colPD1" header="Subindex">
-												</curie-table-column>
-												<curie-table-column id="writeIOLink_colPD2" header="Name">
-												</curie-table-column>
-												<curie-table-column id="writeIOLink_colPD3"
-													header="Data type, Range, Single value description">
-												</curie-table-column>
+                                                                                    <curie-table-column
+                                                                                        id="writeIOLink_colPD1"
+                                                                                        header="Subindex">
+                                                                                    </curie-table-column>
+                                                                                    <curie-table-column
+                                                                                        id="writeIOLink_colPD2" header="Name">
+                                                                                    </curie-table-column>
+                                                                                    <curie-table-column
+                                                                                        id="writeIOLink_colPD3"
+                                                                                        header="Data type, Range, Single value description">
+                                                                                    </curie-table-column>
                                                                                     <crown-on property="data"
                                                                                         crown-event="CSK_MultiIOLinkSMI/OnNewProcessDataOutTableContentCSKIODDInterpreter">
                                                                                     </crown-on>
@@ -1366,21 +1356,32 @@
                                                                                 style="align-items: stretch">
                                                                                 <curie-table id="DT_WriteParameter"
                                                                                     selectable title="Write Parameters">
-												<curie-table-column id="writeIOLink_colSD1" header="Index">
-												</curie-table-column>
-												<curie-table-column id="writeIOLink_colSD2" header="Subindex">
-												</curie-table-column>
-												<curie-table-column id="writeIOLink_colSD3" header="ID">
-												</curie-table-column>
-												<curie-table-column id="writeIOLink_colSD4" header="Name">
-												</curie-table-column>
-												<curie-table-column id="writeIOLink_colSD5"
-													header="Data type, Range, Single value description">
-												</curie-table-column>
-												<curie-table-column id="writeIOLink_colSD6" header="Read/Write">
-												</curie-table-column>
-												<curie-table-column id="writeIOLink_colSD7" header="Description">
-												</curie-table-column>
+                                                                                    <curie-table-column
+                                                                                        id="writeIOLink_colSD1"
+                                                                                        header="Index">
+                                                                                    </curie-table-column>
+                                                                                    <curie-table-column
+                                                                                        id="writeIOLink_colSD2"
+                                                                                        header="Subindex">
+                                                                                    </curie-table-column>
+                                                                                    <curie-table-column
+                                                                                        id="writeIOLink_colSD3" header="ID">
+                                                                                    </curie-table-column>
+                                                                                    <curie-table-column
+                                                                                        id="writeIOLink_colSD4" header="Name">
+                                                                                    </curie-table-column>
+                                                                                    <curie-table-column
+                                                                                        id="writeIOLink_colSD5"
+                                                                                        header="Data type, Range, Single value description">
+                                                                                    </curie-table-column>
+                                                                                    <curie-table-column
+                                                                                        id="writeIOLink_colSD6"
+                                                                                        header="Read/Write">
+                                                                                    </curie-table-column>
+                                                                                    <curie-table-column
+                                                                                        id="writeIOLink_colSD7"
+                                                                                        header="Description">
+                                                                                    </curie-table-column>
                                                                                     <crown-on property="data"
                                                                                         crown-event="CSK_MultiIOLinkSMI/OnNewWriteParametersTableContentCSKIODDInterpreter">
                                                                                     </crown-on>

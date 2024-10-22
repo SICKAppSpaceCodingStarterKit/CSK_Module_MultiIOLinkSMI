@@ -145,9 +145,15 @@ function multiIOLinkSMI.create(multiIOLinkSMIInstanceNo)
 
   -- Handle processing
   Script.startScript(self.parameters.processingFile, self.multiIOLinkSMIProcessingParams)
+
   return self
 end
 
+--- Function to read parameter
+---@param index int Index of parameter to read
+---@param subindex int Subindex of parameter to read
+---@return bool readSuccess Success to read data
+---@return string? readData JSON table with interpted parameter value
 function multiIOLinkSMI:readParameter(index, subindex)
   if not self.parameters.ioddInfo then
     return false
@@ -169,6 +175,11 @@ function multiIOLinkSMI:readParameter(index, subindex)
   return readSuccess, readData
 end
 
+--- Function to write parameter
+---@param index int Index of parameter to write
+---@param subindex int Subindex of parameter to write
+---@param jsonDataToWrite int Data to write
+---@return bool writeSuccess Success to write data
 function multiIOLinkSMI:writeParameter(index, subindex, jsonDataToWrite)
   local jsonDataPointInfo = CSK_IODDInterpreter.getParameterDataPointInfo(
     self.parameters.ioddInfo.ioddInstanceId,
@@ -336,11 +347,13 @@ end
 --- Function to delete an IODD message and instance in CSK_Module_IODDInterpreter
 ---@param messageToDelete string Message to delete
 function multiIOLinkSMI:deleteIODDReadMessage(messageToDelete)
-  CSK_IODDInterpreter.setSelectedInstance(self.parameters.ioddReadMessages[messageToDelete].ioddInstanceId)
-  CSK_IODDInterpreter.deleteInstance()
-  self.parameters.ioddReadMessages[messageToDelete] = nil
-  if not self.parameters.ioddReadMessages then
-    self.parameters.ioddReadMessages = {}
+  if self.parameters.ioddReadMessages[messageToDelete] then
+    CSK_IODDInterpreter.setSelectedInstance(self.parameters.ioddReadMessages[messageToDelete].ioddInstanceId)
+    CSK_IODDInterpreter.deleteInstance()
+    self.parameters.ioddReadMessages[messageToDelete] = nil
+    if not self.parameters.ioddReadMessages then
+      self.parameters.ioddReadMessages = {}
+    end
   end
 end
 

@@ -90,7 +90,7 @@ local function main()
   CSK_MultiIOLinkSMI.setIODDReadMessageName('readMessageTitle')
   CSK_MultiIOLinkSMI.createIODDReadMessage()
   CSK_MultiIOLinkSMI.setSelectedIODDReadMessage('readMessageTitle')
-  -- Register to "CSK_MultiIOLinkSMI.readMessage[port][readMessageTitle]"-event
+  -- Register to "CSK_MultiIOLinkSMI.OnNewReadMessage_[port]_[readMessageTitle]"-event
 
   -- Write message handling
   CSK_MultiIOLinkSMI.createIODDWriteMessage()

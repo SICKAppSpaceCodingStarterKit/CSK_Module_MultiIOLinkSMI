@@ -25,7 +25,10 @@ local function loadAPIs()
     if appList[i] == 'CSK_Module_PersistentData' then
       CSK_PersistentData = require 'API.CSK_PersistentData'
     elseif appList[i] == 'CSK_Module_IODDInterpreter' then
-      CSK_IODDInterpreter = require 'API.CSK_IODDInterpreter'
+      local checkVersion = Script.isServedAsFunction('CSK_IODDInterpreter.sendInstancesListParameters')
+      if checkVersion then
+        CSK_IODDInterpreter = require 'API.CSK_IODDInterpreter'
+      end      
     elseif appList[i] == 'CSK_Module_UserManagement' then
       CSK_UserManagement = require 'API.CSK_UserManagement'
     elseif appList[i] == 'CSK_Module_FlowConfig' then

@@ -49,6 +49,8 @@ local ioddWriteMessagesQueue = Script.Queue.create() -- Queue of write messages 
 local ioddLatesWriteMessages = {} -- table with latest write messages
 local ioddWriteMessagesResults = {} -- table with latest results of writing messages
 
+local portStatus = 'PORT_NOT_ACTIVE' -- Status of port
+
 -------------------------------------------------------------------------------------
 -- Reading process data -------------------------------------------------------------
 -------------------------------------------------------------------------------------
@@ -56,27 +58,31 @@ local ioddWriteMessagesResults = {} -- table with latest results of writing mess
 --- Read process data and check it's validity
 ---@return binary? Raw received process data
 local function readBinaryProcessData()
-  local processData = IOLink.SMI.getPDIn(processingParams.SMIhandle, processingParams.port)
-  -- Port qualifier definition
-  -- Bit0 = Signal status Pin4
-  -- Bit1 = Signal status Pin2
-  -- Bit2-4 = Reserved
-  -- Bit5 = Device available
-  -- Bit6 = Device error
-  -- Bit7 = Data valid
-  if processData == nil then
+  if portStatus ~= 'NO_DEVICE' and portStatus ~= 'DEACTIVATED' and portStatus ~= 'PORT_NOT_ACTIVE' and portStatus ~= 'PORT_POWER_OFF' and portStatus ~= 'NOT_AVAILABLE' then
+    local processData = IOLink.SMI.getPDIn(processingParams.SMIhandle, processingParams.port)
+    -- Port qualifier definition
+    -- Bit0 = Signal status Pin4
+    -- Bit1 = Signal status Pin2
+    -- Bit2-4 = Reserved
+    -- Bit5 = Device available
+    -- Bit6 = Device error
+    -- Bit7 = Data valid
+    if processData == nil then
+      return nil
+    end
+    local portQualifier = string.byte(processData, 1)
+    if portQualifier == nil then
+      return nil
+    end
+    local dataValid = ((portQualifier & 0x80) or (portQualifier & 0xA0)) > 0
+    if not dataValid then
+      _G.logger:warning(nameOfModule..': failed to read process data on port ' .. tostring(processingParams.port) .. ' instancenumber ' .. multiIOLinkSMIInstanceNumberString)
+      return nil
+    end
+    return string.sub(processData, 3)
+  else
     return nil
   end
-  local portQualifier = string.byte(processData, 1)
-  if portQualifier == nil then
-    return nil
-  end
-  local dataValid = ((portQualifier & 0x80) or (portQualifier & 0xA0)) > 0
-  if not dataValid then
-    _G.logger:warning(nameOfModule..': failed to read process data on port ' .. tostring(processingParams.port) .. ' instancenumber ' .. multiIOLinkSMIInstanceNumberString)
-    return nil
-  end
-  return string.sub(processData, 3)
 end
 
 --- Read process data with provided info from IODD interpreter (as Lua table) and convert it to a meaningful Lua table
@@ -430,7 +436,7 @@ local function updateIODDReadMessages()
     if helperFuncs.getTableSize(messageInfo.dataInfo) == 0 then
       goto nextMessage
     end
-    local localEventName = "readMessage" .. processingParams.port .. messageName
+    local localEventName = "OnNewReadMessage_" .. processingParams.port .. '_' .. messageName
     local crownEventName = "CSK_MultiIOLinkSMI." .. localEventName
 
     local function readTheMessage()
@@ -451,7 +457,7 @@ local function updateIODDReadMessages()
         ioddReadMessagesQueue:clear()
       end
       local timestamp2 = DateTime.getTimestamp()
-      Script.notifyEvent(localEventName, success, queueSize, timestamp2-timestamp1,  jsonMessageContent, errorMessage)
+      Script.notifyEvent(localEventName, success, queueSize, timestamp2-timestamp1, jsonMessageContent, errorMessage)
     end
 
     if not Script.isServedAsEvent(crownEventName) then
@@ -633,3 +639,13 @@ local function handleOnNewProcessingParameter(multiIOLinkSMINo, parameter, value
   end
 end
 Script.register("CSK_MultiIOLinkSMI.OnNewProcessingParameter", handleOnNewProcessingParameter)
+
+--- Function to react on change of port status
+---@param instance int Instance ID.
+---@param status string Port status.
+local function handleOnNewIOLinkPortStatus(instance, status)
+  if instance == multiIOLinkSMIInstanceNumber then
+    portStatus = status
+  end
+end
+Script.register('CSK_MultiIOLinkSMI.OnNewIOLinkPortStatus', handleOnNewIOLinkPortStatus)
