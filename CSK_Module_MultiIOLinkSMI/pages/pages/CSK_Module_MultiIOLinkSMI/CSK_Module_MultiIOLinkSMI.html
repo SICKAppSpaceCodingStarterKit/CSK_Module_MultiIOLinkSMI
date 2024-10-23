@@ -399,8 +399,8 @@
                                                                         style="align-items: stretch">
                                                                         <davinci-callout id="C_LoadIODD" type="warning">
                                                                             <span>
-												Please load IODD file for the device to start setting read and write data.
-												</span>
+                                                                                Please load IODD file for the device to start setting read and write data.
+                                                                            </span>
                                                                         </davinci-callout>
                                                                         <layout-row id="RowLayout21"
                                                                             style="justify-content: flex-end">
@@ -449,6 +449,9 @@
                                                                     </stacked-pane>
                                                                     <stacked-pane id="SP_ProcessDataisNOTVariable"
                                                                         value="false">
+                                                                        <davinci-callout id="Callout_NoIODDProcessData" type="info">
+                                                                            <span>No process data format selection available.</span>
+                                                                        </davinci-callout>
                                                                     </stacked-pane>
                                                                     <crown-on property="value"
                                                                         crown-event="CSK_MultiIOLinkSMI/OnNewStatusProcessDataVariable"
@@ -617,8 +620,8 @@
                                                                     style="align-items: stretch">
                                                                     <davinci-callout id="C_ByteArrayInfo1" type="info">
                                                                         <span>
-												The data is represented as byte array of decimal numbers. The elements of the array are separated by comma. E.g.  1,23,123
-												</span>
+                                                                            The data is represented as byte array of decimal numbers. The elements of the array are separated by comma. E.g.  1,23,123
+                                                                        </span>
                                                                     </davinci-callout>
                                                                     <layout-row id="RowLayout54"
                                                                         style="align-items: center">
@@ -915,13 +918,16 @@
                                                                                 style="align-items: stretch">
                                                                                 <curie-table id="DT_ProcessDataIn"
                                                                                     selectable title="Process data">
-                                                                                    <curie-table-column id="readIOLink_colPD1"
+                                                                                    <curie-table-column
+                                                                                        id="readIOLink_colPD1"
                                                                                         header="Subindex">
                                                                                     </curie-table-column>
-                                                                                    <curie-table-column id="readIOLink_colPD2"
+                                                                                    <curie-table-column
+                                                                                        id="readIOLink_colPD2"
                                                                                         header="Name">
                                                                                     </curie-table-column>
-                                                                                    <curie-table-column id="readIOLink_colPD3"
+                                                                                    <curie-table-column
+                                                                                        id="readIOLink_colPD3"
                                                                                         header="Data type, Range, Single value description">
                                                                                     </curie-table-column>
                                                                                     <crown-binding event="row-selected"
@@ -942,25 +948,32 @@
                                                                                 style="align-items: stretch">
                                                                                 <curie-table id="DT_ReadParameters"
                                                                                     selectable title="Read parameters">
-                                                                                    <curie-table-column id="readIOLink_colSD1"
+                                                                                    <curie-table-column
+                                                                                        id="readIOLink_colSD1"
                                                                                         header="Index">
                                                                                     </curie-table-column>
-                                                                                    <curie-table-column id="readIOLink_colSD2"
+                                                                                    <curie-table-column
+                                                                                        id="readIOLink_colSD2"
                                                                                         header="Subindex">
                                                                                     </curie-table-column>
-                                                                                    <curie-table-column id="readIOLink_colSD3"
+                                                                                    <curie-table-column
+                                                                                        id="readIOLink_colSD3"
                                                                                         header="ID">
                                                                                     </curie-table-column>
-                                                                                    <curie-table-column id="readIOLink_colSD4"
+                                                                                    <curie-table-column
+                                                                                        id="readIOLink_colSD4"
                                                                                         header="Name">
                                                                                     </curie-table-column>
-                                                                                    <curie-table-column id="readIOLink_colSD5"
+                                                                                    <curie-table-column
+                                                                                        id="readIOLink_colSD5"
                                                                                         header="Data type, Range, Single value description">
                                                                                     </curie-table-column>
-                                                                                    <curie-table-column id="readIOLink_colSD6"
+                                                                                    <curie-table-column
+                                                                                        id="readIOLink_colSD6"
                                                                                         header="Read/Write">
                                                                                     </curie-table-column>
-                                                                                    <curie-table-column id="readIOLink_colSD7"
+                                                                                    <curie-table-column
+                                                                                        id="readIOLink_colSD7"
                                                                                         header="Description">
                                                                                     </curie-table-column>
                                                                                     <crown-binding event="row-selected"
@@ -1332,7 +1345,8 @@
                                                                                         header="Subindex">
                                                                                     </curie-table-column>
                                                                                     <curie-table-column
-                                                                                        id="writeIOLink_colPD2" header="Name">
+                                                                                        id="writeIOLink_colPD2"
+                                                                                        header="Name">
                                                                                     </curie-table-column>
                                                                                     <curie-table-column
                                                                                         id="writeIOLink_colPD3"
@@ -1365,10 +1379,12 @@
                                                                                         header="Subindex">
                                                                                     </curie-table-column>
                                                                                     <curie-table-column
-                                                                                        id="writeIOLink_colSD3" header="ID">
+                                                                                        id="writeIOLink_colSD3"
+                                                                                        header="ID">
                                                                                     </curie-table-column>
                                                                                     <curie-table-column
-                                                                                        id="writeIOLink_colSD4" header="Name">
+                                                                                        id="writeIOLink_colSD4"
+                                                                                        header="Name">
                                                                                     </curie-table-column>
                                                                                     <curie-table-column
                                                                                         id="writeIOLink_colSD5"
