@@ -1174,6 +1174,9 @@ local function addInstance()
   table.insert(multiIOLinkSMI_Instances, multiIOLinkSMI_Model.create(#multiIOLinkSMI_Instances+1))
   Script.deregister("CSK_MultiIOLinkSMI.OnNewValueToForward" .. tostring(#multiIOLinkSMI_Instances) , handleOnNewValueToForward)
   Script.register("CSK_MultiIOLinkSMI.OnNewValueToForward" .. tostring(#multiIOLinkSMI_Instances) , handleOnNewValueToForward)
+  
+  Script.deregister("CSK_MultiIOLink.OnNewValueUpdate" .. tostring(#multiIOLink_Instances) , handleOnNewValueUpdate)
+  Script.register("CSK_MultiIOLink.OnNewValueUpdate" .. tostring(#multiIOLink_Instances) , handleOnNewValueUpdate)
   setSelectedInstance(#multiIOLinkSMI_Instances)
 end
 Script.serveFunction('CSK_MultiIOLinkSMI.addInstance', addInstance)
