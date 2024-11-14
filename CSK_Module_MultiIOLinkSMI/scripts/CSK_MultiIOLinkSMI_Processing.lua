@@ -503,7 +503,10 @@ Script.serveFunction('CSK_MultiIOLinkSMI.getReadDataResult'.. multiIOLinkSMIInst
 ---@return bool success Success of writing.
 ---@return string? details Detailed error if writing is not successful.
 local function writeIODDMessage(messageName, jsonDataToWrite)
-  local dataToWrite = json.decode(jsonDataToWrite)
+  local decodeSuccess, dataToWrite = pcall(json.decode, jsonDataToWrite)
+  if not decodeSuccess then
+    return false, 'The payload is not in required JSON format'
+  end
   local errorMessage
   local messageWriteSuccess = true
   if ioddWriteMessages[messageName].dataInfo.ProcessData and ioddWriteMessages[messageName].dataInfo.Parameters == nil then

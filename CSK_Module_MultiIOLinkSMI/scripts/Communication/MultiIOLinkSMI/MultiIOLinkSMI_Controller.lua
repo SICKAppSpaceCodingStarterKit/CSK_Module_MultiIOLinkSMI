@@ -1175,8 +1175,8 @@ local function addInstance()
   Script.deregister("CSK_MultiIOLinkSMI.OnNewValueToForward" .. tostring(#multiIOLinkSMI_Instances) , handleOnNewValueToForward)
   Script.register("CSK_MultiIOLinkSMI.OnNewValueToForward" .. tostring(#multiIOLinkSMI_Instances) , handleOnNewValueToForward)
   
-  Script.deregister("CSK_MultiIOLink.OnNewValueUpdate" .. tostring(#multiIOLink_Instances) , handleOnNewValueUpdate)
-  Script.register("CSK_MultiIOLink.OnNewValueUpdate" .. tostring(#multiIOLink_Instances) , handleOnNewValueUpdate)
+  Script.deregister("CSK_MultiIOLinkSMI.OnNewValueUpdate" .. tostring(#multiIOLinkSMI_Instances) , handleOnNewValueUpdate)
+  Script.register("CSK_MultiIOLinkSMI.OnNewValueUpdate" .. tostring(#multiIOLinkSMI_Instances) , handleOnNewValueUpdate)
   setSelectedInstance(#multiIOLinkSMI_Instances)
 end
 Script.serveFunction('CSK_MultiIOLinkSMI.addInstance', addInstance)
