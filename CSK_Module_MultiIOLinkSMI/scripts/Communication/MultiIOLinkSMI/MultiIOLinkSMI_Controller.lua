@@ -135,6 +135,7 @@ Script.serveEvent('CSK_MultiIOLinkSMI.OnNewStatusIODDReadMessageSelected',    'M
 Script.serveEvent('CSK_MultiIOLinkSMI.OnNewSelectedIODDReadMessage',          'MultiIOLinkSMI_OnNewSelectedIODDReadMessage')
 Script.serveEvent('CSK_MultiIOLinkSMI.OnNewTriggerType',                      'MultiIOLinkSMI_OnNewTriggerType')
 Script.serveEvent('CSK_MultiIOLinkSMI.OnNewTriggerValue',                     'MultiIOLinkSMI_OnNewTriggerValue')
+Script.serveEvent('CSK_MultiIOLinkSMI.OnNewStatusReadMessageTimerActive',     'MultiIOLinkSMI_OnNewStatusReadMessageTimerActive')
 
 Script.serveEvent('CSK_MultiIOLinkSMI.OnNewListIODDWriteMessages',            'MultiIOLinkSMI_OnNewListIODDWriteMessages')
 Script.serveEvent('CSK_MultiIOLinkSMI.OnNewStatusIODDWriteMessageSelected',   'MultiIOLinkSMI_OnNewStatusIODDWriteMessageSelected')
@@ -387,6 +388,8 @@ local function handleOnExpiredTmrMultiIOLinkSMI()
         local processDataTableContent, parameterTableContent = CSK_IODDInterpreter.getReadDataTableContents('readIOLink_')
         Script.notifyEvent('MultiIOLinkSMI_OnNewProcessDataInTableContentCSKIODDInterpreter', processDataTableContent)
         Script.notifyEvent('MultiIOLinkSMI_OnNewReadParametersTableContentCSKIODDInterpreter', parameterTableContent)
+        Script.notifyEvent('MultiIOLinkSMI_OnNewStatusReadMessageTimerActive', multiIOLinkSMI_Model.timerActive)
+        
       end
     elseif selectedTab == 2 then
       local nameList = {}
@@ -478,6 +481,7 @@ local function activateInstance(status)
     multiIOLinkSMI_Instances[selectedInstance].status = 'PORT_NOT_ACTIVE'
   end
   Script.notifyEvent('MultiIOLinkSMI_OnNewProcessingParameter', selectedInstance, 'active', status)
+  Script.notifyEvent('MultiIOLinkSMI_OnNewStatusInstanceActive', status)
 end
 Script.serveFunction('CSK_MultiIOLinkSMI.activateInstance', activateInstance)
 
@@ -873,6 +877,24 @@ local function setTriggerValue(newTriggerValue)
 end
 Script.serveFunction('CSK_MultiIOLinkSMI.setTriggerValue', setTriggerValue)
 
+local function setReadMessageTimerActive(status)
+  _G.logger:info(nameOfModule .. ": Set read message timer status to " .. tostring(status))
+  multiIOLinkSMI_Model.timerActive = status
+  Script.notifyEvent('MultiIOLinkSMI_OnNewProcessingParameter', selectedInstance, 'readMessageTimers', status )
+  Script.notifyEvent('MultiIOLinkSMI_OnNewStatusReadMessageTimerActive', multiIOLinkSMI_Model.timerActive)
+end
+Script.serveFunction('CSK_MultiIOLinkSMI.setReadMessageTimerActive', setReadMessageTimerActive)
+
+local function pauseReadMessageTimer()
+  setReadMessageTimerActive(false)
+end
+Script.serveFunction('CSK_MultiIOLinkSMI.pauseReadMessageTimer', pauseReadMessageTimer)
+
+local function startReadMessageTimer()
+  setReadMessageTimerActive(true)
+end
+Script.serveFunction('CSK_MultiIOLinkSMI.startReadMessageTimer', startReadMessageTimer)
+
 local function refreshReadDataResult()
   if selectedIODDReadMessage == '' then
     return
@@ -1174,7 +1196,7 @@ local function addInstance()
   table.insert(multiIOLinkSMI_Instances, multiIOLinkSMI_Model.create(#multiIOLinkSMI_Instances+1))
   Script.deregister("CSK_MultiIOLinkSMI.OnNewValueToForward" .. tostring(#multiIOLinkSMI_Instances) , handleOnNewValueToForward)
   Script.register("CSK_MultiIOLinkSMI.OnNewValueToForward" .. tostring(#multiIOLinkSMI_Instances) , handleOnNewValueToForward)
-  
+
   Script.deregister("CSK_MultiIOLinkSMI.OnNewValueUpdate" .. tostring(#multiIOLinkSMI_Instances) , handleOnNewValueUpdate)
   Script.register("CSK_MultiIOLinkSMI.OnNewValueUpdate" .. tostring(#multiIOLinkSMI_Instances) , handleOnNewValueUpdate)
   setSelectedInstance(#multiIOLinkSMI_Instances)

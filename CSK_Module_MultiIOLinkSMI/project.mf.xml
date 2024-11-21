@@ -451,6 +451,10 @@ INFO: Other modules can check via "Script.isServedAsEvent" if event exists.</des
                     <param desc="JSON object containing the interpreted data." multiplicity="?" name="data" type="string"/>
                     <param desc="Error message, if any." multiplicity="?" name="detailedErrorMessage" type="string"/>
                 </event>
+                <event name="OnNewStatusReadMessageTimerActive">
+                    <desc>Notify status if timer for readMessages are active.</desc>
+                    <param desc="Status" multiplicity="1" name="status" type="bool"/>
+                </event>
                 <function name="setParameterName">
                     <desc>Function to set the name of the parameters if saved/loaded via the CSK_PersistentData module.</desc>
                     <param desc="Name of the parameter" multiplicity="1" name="name" type="string"/>
@@ -1001,6 +1005,16 @@ pasteWriteDataMessage.</desc>
                     <return desc="Size of the queue calls in the thread responsible for communication with this IOLink device. If the queue builds up, this can lead to memory overflow. That's why the queue is recet to 0 in case there are more than 10 calls." multiplicity="1" name="queueSize" type="int"/>
                     <return desc="Time in milliseconds spent for getting and parsing the data." multiplicity="1" name="time" type="int"/>
                     <return desc="Error message, if any." multiplicity="1" name="errorMessage" type="string"/>
+                </function>
+                <function name="setReadMessageTimerActive">
+                    <desc>Function to set if all read message timers should be active.</desc>
+                    <param desc="Status" multiplicity="1" name="status" type="bool"/>
+                </function>
+                <function name="pauseReadMessageTimer">
+                    <desc>Function to pause timers for all read messages,</desc>
+                </function>
+                <function name="startReadMessageTimer">
+                    <desc>Function to start timers for all read messages,</desc>
                 </function>
             </serves>
         </crown>

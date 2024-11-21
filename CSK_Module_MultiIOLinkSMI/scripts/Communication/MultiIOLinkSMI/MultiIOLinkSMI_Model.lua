@@ -16,6 +16,7 @@ multiIOLinkSMI.__index = multiIOLinkSMI
 
 multiIOLinkSMI.styleForUI = 'None' -- Optional parameter to set UI style
 multiIOLinkSMI.version = Engine.getCurrentAppVersion() -- Version of module
+multiIOLinkSMI.timerActive = true -- Status if read Message timers should run
 
 -- IO-Link SMI handle used by all instances
 if _G.availableAPIs.specific then

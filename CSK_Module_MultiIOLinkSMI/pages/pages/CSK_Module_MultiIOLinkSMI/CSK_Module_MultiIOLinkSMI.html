@@ -255,6 +255,10 @@
                                                                 name="CSK_MultiIOLinkSMI/setPort" path="param/args/port"
                                                                 auto-commit>
                                                             </crown-binding>
+                                                            <crown-edpws-binding property="disabled"
+                                                                name="CSK_MultiIOLinkSMI/OnNewStatusInstanceActive"
+                                                                update-on-resume>
+                                                            </crown-edpws-binding>
                                                         </davinci-drop-down>
                                                     </layout-column>
                                                     <layout-column id="ColumnLayout18" style="align-items: center">
@@ -449,7 +453,8 @@
                                                                     </stacked-pane>
                                                                     <stacked-pane id="SP_ProcessDataisNOTVariable"
                                                                         value="false">
-                                                                        <davinci-callout id="Callout_NoIODDProcessData" type="info">
+                                                                        <davinci-callout id="Callout_NoIODDProcessData"
+                                                                            type="info">
                                                                             <span>No process data format selection available.</span>
                                                                         </davinci-callout>
                                                                     </stacked-pane>
@@ -831,7 +836,7 @@
                                                                 value="true">
                                                                 <layout-row id="RowLayout224">
                                                                     <layout-column id="ColumnLayout54"
-                                                                        style="align-items: stretch">
+                                                                        style="align-items: stretch; flex-grow: 3">
                                                                         <davinci-drop-down id="DD_TriggerType" data=""
                                                                             label="Trigger type">
                                                                             <crown-on property="value"
@@ -853,7 +858,7 @@
                                                                         </davinci-drop-down>
                                                                     </layout-column>
                                                                     <layout-column id="ColumnLayout55"
-                                                                        style="align-items: stretch">
+                                                                        style="align-items: stretch; flex-grow: 3">
                                                                         <davinci-text-field id="TF_TriggerValue"
                                                                             type="text" label="Trigger value">
                                                                             <crown-on property="value"
@@ -865,6 +870,48 @@
                                                                                 crown-path="newTriggerValue">
                                                                             </crown-set>
                                                                         </davinci-text-field>
+                                                                    </layout-column>
+                                                                    <layout-column id="ColumnLayout19"
+                                                                        style="align-items: center">
+                                                                        <stacked-view id="SV_ReadMsgTimerActive">
+                                                                            <stacked-pane id="SP_ReadMsgTimerActive"
+                                                                                value="true">
+                                                                                <davinci-button
+                                                                                    id="Button_PauseReadMsgTimer"
+                                                                                    class="myCustomButton_CSK_Module_MultiIOLinkSMI"
+                                                                                    type="outline"
+                                                                                    icon-position="append"
+                                                                                    icon="av/pause"
+                                                                                    title="Pause timers of all instances and readMessages.">
+                                                                                    <span></span>
+                                                                                    <crown-binding event="submit"
+                                                                                        name="CSK_MultiIOLinkSMI/pauseReadMessageTimer"
+                                                                                        auto-commit>
+                                                                                    </crown-binding>
+                                                                                </davinci-button>
+                                                                            </stacked-pane>
+                                                                            <stacked-pane id="SP_ReadMsgTimerNotActive"
+                                                                                value="false">
+                                                                                <davinci-button
+                                                                                    id="Button_StartReadMsgTimer"
+                                                                                    class="myCustomButton_CSK_Module_MultiIOLinkSMI"
+                                                                                    type="outline"
+                                                                                    icon-position="append"
+                                                                                    icon="av/play_arrow"
+                                                                                    title="Start timers of all instances and readMessages.">
+                                                                                    <span></span>
+                                                                                    <crown-binding event="submit"
+                                                                                        name="CSK_MultiIOLinkSMI/startReadMessageTimer"
+                                                                                        auto-commit>
+                                                                                    </crown-binding>
+                                                                                </davinci-button>
+                                                                            </stacked-pane>
+                                                                            <crown-edpws-binding property="value"
+                                                                                name="CSK_MultiIOLinkSMI/OnNewStatusReadMessageTimerActive"
+                                                                                update-on-resume
+                                                                                converter="function(value) {return value.toString();}">
+                                                                            </crown-edpws-binding>
+                                                                        </stacked-view>
                                                                     </layout-column>
                                                                 </layout-row>
                                                             </stacked-pane>

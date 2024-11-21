@@ -50,6 +50,7 @@ local ioddLatesWriteMessages = {} -- table with latest write messages
 local ioddWriteMessagesResults = {} -- table with latest results of writing messages
 
 local portStatus = 'PORT_NOT_ACTIVE' -- Status of port
+local readMessageTimerActive = true -- -- Status if read Message timers should run
 
 -------------------------------------------------------------------------------------
 -- Reading process data -------------------------------------------------------------
@@ -468,7 +469,9 @@ local function updateIODDReadMessages()
       ioddReadMessagesTimers[messageName]:setPeriodic(true)
       ioddReadMessagesTimers[messageName]:setExpirationTime(messageInfo.triggerValue)
       ioddReadMessagesTimers[messageName]:register("OnExpired", readTheMessage)
-      ioddReadMessagesTimers[messageName]:start()
+      if readMessageTimerActive then
+        ioddReadMessagesTimers[messageName]:start()
+      end
     elseif messageInfo.triggerType == "On event" then
       Script.register(messageInfo.triggerValue, readTheMessage)
       if not ioddReadMessagesRegistrations[messageName] then
@@ -623,7 +626,16 @@ end
 ---@param internalObjectNo int? Number of object
 local function handleOnNewProcessingParameter(multiIOLinkSMINo, parameter, value, internalObjectNo)
 
-  if multiIOLinkSMINo == multiIOLinkSMIInstanceNumber then -- set parameter only in selected script
+  if parameter == 'readMessageTimers' then
+    readMessageTimerActive = value
+    for readMessageName in pairs(ioddReadMessagesTimers) do
+      if value == false then
+        ioddReadMessagesTimers[readMessageName]:stop()
+      else
+        ioddReadMessagesTimers[readMessageName]:start()
+      end
+    end
+  elseif multiIOLinkSMINo == multiIOLinkSMIInstanceNumber then -- set parameter only in selected script
     _G.logger:fine(nameOfModule .. ": Update parameter '" .. parameter .. "' of multiIOLinkSMIInstanceNo." .. tostring(multiIOLinkSMINo) .. " to value = " .. tostring(value))
     if parameter == "readMessages" then
       ioddReadMessages = json.decode(value)

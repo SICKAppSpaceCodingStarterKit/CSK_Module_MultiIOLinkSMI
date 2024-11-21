@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 ### New features
 - Supports FlowConfig feature to provide data of IO-Link ReadMessage
 - Changed event name of readMessages from 'readMessage[PORT][MESSAGENAME] to 'OnNewReadMessage_[PORT]_[MESSAGENAME]
+- Possible to pause timers for readMessages
 - Function 'getPort' for currently selected instance
 - Provide version of module via 'OnNewStatusModuleVersion'
 - Function 'getParameters' to provide PersistentData parameters
@@ -15,6 +16,7 @@ All notable changes to this project will be documented in this file.
 ### Improvements
 - Better interaction with CSK_IODDInterpreter (version 2.0.0 needed)
 - Check status of port within instance thread (prevent to get data if sensor is not in operating mode)
+- Port only changeable if currently inactive
 - New UI design available (e.g. selectable via CSK_Module_PersistentData v4.1.0 or higher), see 'OnNewStatusCSKStyle'
 - Preset names for ReadMessages / WriteMessages instead of renaming them after creation
 - check if instance exists if selected
