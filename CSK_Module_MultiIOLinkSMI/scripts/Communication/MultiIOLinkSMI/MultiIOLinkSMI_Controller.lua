@@ -980,6 +980,7 @@ local function deleteIODDWriteMessage()
   multiIOLinkSMI_Instances[selectedInstance]:deleteIODDWriteMessage(selectedIODDWriteMessage)
   Script.notifyEvent('MultiIOLinkSMI_OnNewProcessingParameter', selectedInstance, 'writeMessages', json.encode(multiIOLinkSMI_Instances[selectedInstance].parameters.ioddWriteMessages))
   setSelectedIODDWriteMessage('')
+  handleOnExpiredTmrMultiIOLinkSMI()
 end
 Script.serveFunction('CSK_MultiIOLinkSMI.deleteIODDWriteMessage', deleteIODDWriteMessage)
 
