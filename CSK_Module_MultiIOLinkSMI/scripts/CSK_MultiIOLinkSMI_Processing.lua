@@ -49,6 +49,9 @@ local ioddWriteMessagesQueue = Script.Queue.create() -- Queue of write messages 
 local ioddLatesWriteMessages = {} -- table with latest write messages
 local ioddWriteMessagesResults = {} -- table with latest results of writing messages
 
+local portStatus = 'PORT_NOT_ACTIVE' -- Status of port
+local readMessageTimerActive = true -- -- Status if read Message timers should run
+
 -------------------------------------------------------------------------------------
 -- Reading process data -------------------------------------------------------------
 -------------------------------------------------------------------------------------
@@ -56,43 +59,48 @@ local ioddWriteMessagesResults = {} -- table with latest results of writing mess
 --- Read process data and check it's validity
 ---@return binary? Raw received process data
 local function readBinaryProcessData()
-  local processData = IOLink.SMI.getPDIn(processingParams.SMIhandle, processingParams.port)
-  -- Port qualifier definition
-  -- Bit0 = Signal status Pin4
-  -- Bit1 = Signal status Pin2
-  -- Bit2-4 = Reserved
-  -- Bit5 = Device available
-  -- Bit6 = Device error
-  -- Bit7 = Data valid
-  if processData == nil then
+  if portStatus ~= 'NO_DEVICE' and portStatus ~= 'DEACTIVATED' and portStatus ~= 'PORT_NOT_ACTIVE' and portStatus ~= 'PORT_POWER_OFF' and portStatus ~= 'NOT_AVAILABLE' then
+    local processData = IOLink.SMI.getPDIn(processingParams.SMIhandle, processingParams.port)
+    -- Port qualifier definition
+    -- Bit0 = Signal status Pin4
+    -- Bit1 = Signal status Pin2
+    -- Bit2-4 = Reserved
+    -- Bit5 = Device available
+    -- Bit6 = Device error
+    -- Bit7 = Data valid
+    if processData == nil then
+      return nil
+    end
+    local portQualifier = string.byte(processData, 1)
+    if portQualifier == nil then
+      return nil
+    end
+    local dataValid = ((portQualifier & 0x80) or (portQualifier & 0xA0)) > 0
+    if not dataValid then
+      _G.logger:warning(nameOfModule..': failed to read process data on port ' .. tostring(processingParams.port) .. ' instancenumber ' .. multiIOLinkSMIInstanceNumberString)
+      return nil
+    end
+    return string.sub(processData, 3)
+  else
     return nil
   end
-  local portQualifier = string.byte(processData, 1)
-  if portQualifier == nil then
-    return nil
-  end
-  --local dataValid = ((portQualifier & 0x80) or (portQualifier & 0xA0)) > 0
-  --if not dataValid then
-  --  _G.logger:warning(nameOfModule..': failed to read process data on port ' .. tostring(processingParams.port) .. ' instancenumber ' .. multiIOLinkSMIInstanceNumberString)
-  --  return nil
-  --end
-  return string.sub(processData, 3)
 end
 
 --- Read process data with provided info from IODD interpreter (as Lua table) and convert it to a meaningful Lua table
 ---@param dataPointInfo table Table containing process data info from IODD file
+---@return bool success Read success
 ---@return table? convertedResult Interpted read data
 local function readProcessData(dataPointInfo)
   local rawData = readBinaryProcessData()
   if rawData == nil then
-    return nil
+    return false, converter.getFailedReadProcessDataResult(dataPointInfo)
   end
   local success, convertedResult = pcall(converter.getReadProcessDataResult, rawData, dataPointInfo)
   if not success then
     _G.logger:warning(nameOfModule..': failed to convert process data after reading on port ' .. tostring(processingParams.port) .. ' instancenumber ' .. multiIOLinkSMIInstanceNumberString)
-    return nil
+    return false, converter.getFailedReadProcessDataResult(dataPointInfo)
   end
-  return convertedResult
+  return success, convertedResult
 end
 
 --- Read process data with provided info from IODD interpreter (as JSON table) and convert it to a meaningful JSON table.
@@ -100,8 +108,8 @@ end
 ---@return string? convertedResult JSON table with interpted read data
 local function readProcessDataIODD(jsonDataPointInfo)
   local dataPointInfo = converter.renameDatatype(json.decode(jsonDataPointInfo))
-  local readData = readProcessData(dataPointInfo)
-  if readData == nil then
+  local success, readData = readProcessData(dataPointInfo)
+  if not success then
     return nil
   end
   return json.encode(readData)
@@ -217,18 +225,19 @@ end
 
 --- Read parameter with provided info from IODD interpreter (as Lua table) and convert it to a meaningful Lua table
 ---@param dataPointInfo table Table containing parameter info from IODD file
+---@return bool success Read success
 ---@return table? convertedResult Interpted parameter value
 local function readParameter(dataPointInfo)
   local rawData = readBinaryServiceData(tonumber(dataPointInfo.index), tonumber(dataPointInfo.subindex))
   if rawData == nil then
-    return nil
+    return false, converter.getFailedReadServiceDataResult(dataPointInfo)
   end
   local success, convertedResult = pcall(converter.getReadServiceDataResult, rawData, dataPointInfo)
   if not success then
     _G.logger:warning(nameOfModule..': failed to convert parameter after reading on port ' .. tostring(processingParams.port) .. ' instancenumber ' .. multiIOLinkSMIInstanceNumberString ..'; datapoint info: ' .. tostring(json.encode(dataPointInfo)))
-    return nil
+    return false, converter.getFailedReadServiceDataResult(dataPointInfo)
   end
-  return convertedResult
+  return true, convertedResult
 end
 
 --Read parameter with provided info from IODD interpreter (as JSON table) and convert it to a meaningful JSON table
@@ -240,8 +249,8 @@ local function readParameterIODD(index, subindex, jsonDataPointInfo)
   local dataPointInfo = converter.renameDatatype(json.decode(jsonDataPointInfo))
   dataPointInfo.index = index
   dataPointInfo.subindex = subindex
-  local readData = readParameter(dataPointInfo)
-  if readData == nil then
+  local success, readData = readParameter(dataPointInfo)
+  if not success then
     return nil
   end
   return json.encode(readData)
@@ -355,24 +364,21 @@ Script.serveFunction('CSK_MultiIOLinkSMI.writeParameterByteArray_' .. multiIOLin
 ---@return bool success Success of reading.
 ---@return string? jsonMessageContent JSON table with received message content.
 local function readIODDMessage(messageName)
+  if not ioddReadMessages[messageName] or not ioddReadMessages[messageName].dataInfo then
+    return false, "No data selected for read"
+  end
   local success = true
   local messageContent = {}
   local includeDataMode = (ioddReadMessages[messageName].dataInfo.ProcessData and ioddReadMessages[messageName].dataInfo.Parameters)
   if ioddReadMessages[messageName].dataInfo.ProcessData then
-    if includeDataMode then
-      messageContent.ProcessData = {}
+    local readSuccess, receivedData = readProcessData(ioddReadMessages[messageName].dataInfo.ProcessData)
+    if not readSuccess then
+      success = false
     end
-    for dataPointID, dataPointInfo in pairs(ioddReadMessages[messageName].dataInfo.ProcessData) do
-      local receivedData = readProcessData(dataPointInfo)
-      if includeDataMode then
-        messageContent.ProcessData[dataPointID] = receivedData
-      else
-        messageContent[dataPointID] = receivedData
-      end
-      if not receivedData then
-        messageContent[dataPointID] = "nil"
-        success = false
-      end
+    if includeDataMode then
+      messageContent.ProcessData = receivedData
+    else
+      messageContent = receivedData
     end
   end
   if ioddReadMessages[messageName].dataInfo.Parameters then
@@ -380,15 +386,14 @@ local function readIODDMessage(messageName)
       messageContent.Parameters = {}
     end
     for dataPointID, dataPointInfo in pairs(ioddReadMessages[messageName].dataInfo.Parameters) do
-      local receivedData = readParameter(dataPointInfo)
+      local readSuccess, receivedData = readParameter(dataPointInfo)
+      if not readSuccess then
+        success = false
+      end
       if includeDataMode then
         messageContent.Parameters[dataPointID] = receivedData
       else
         messageContent[dataPointID] = receivedData
-      end
-      if not receivedData then
-        messageContent[dataPointID] = "nil"
-        success = false
       end
     end
   end
@@ -432,25 +437,30 @@ local function updateIODDReadMessages()
     if helperFuncs.getTableSize(messageInfo.dataInfo) == 0 then
       goto nextMessage
     end
-    local localEventName = "readMessage" .. processingParams.port .. messageName
+    local localEventName = "OnNewReadMessage_" .. processingParams.port .. '_' .. messageName
     local crownEventName = "CSK_MultiIOLinkSMI." .. localEventName
+
     local function readTheMessage()
       if not processingParams.active then
-        Script.notifyEvent(localEventName, false, ioddReadMessagesQueue:getSize(), 0,  nil)
+        Script.notifyEvent(localEventName, false, ioddReadMessagesQueue:getSize(), 0,  nil, 'IOLink port is not active')
         return
       end
       local timestamp1 = DateTime.getTimestamp()
       local success, jsonMessageContent = readIODDMessage(messageName)
-      local errorMessage
+      local errorMessage = ''
       local queueSize = ioddReadMessagesQueue:getSize()
+      if not success then
+        errorMessage = errorMessage .. ' Failed to read data from device;'
+      end
       if queueSize > 10 then
-        _G.logger:warning(nameOfModule..': reading queue is building up, clearing the queue, port ' .. tostring(processingParams.portNumber) .. ' instancenumber ' .. multiIOLinkSMIInstanceNumberString .. '; current queue: ' .. tostring(queueSize))
-        errorMessage = 'Queue is building up: ' .. tostring(queueSize) ..' clearing the queue'
+        _G.logger:warning(nameOfModule..': reading queue is building up, clearing the queue, port ' .. tostring(processingParams.port) .. ' instancenumber ' .. multiIOLinkSMIInstanceNumberString .. '; current queue: ' .. tostring(queueSize))
+        errorMessage = errorMessage .. 'Queue is building up: ' .. tostring(queueSize) ..' clearing the queue'
         ioddReadMessagesQueue:clear()
       end
       local timestamp2 = DateTime.getTimestamp()
-      Script.notifyEvent(localEventName, success, queueSize, timestamp2-timestamp1,  jsonMessageContent, errorMessage)
+      Script.notifyEvent(localEventName, success, queueSize, timestamp2-timestamp1, jsonMessageContent, errorMessage)
     end
+
     if not Script.isServedAsEvent(crownEventName) then
       Script.serveEvent(crownEventName, localEventName, 'bool:1:,int:1:,int:1:,string:?:,string:?:')
     end
@@ -459,7 +469,9 @@ local function updateIODDReadMessages()
       ioddReadMessagesTimers[messageName]:setPeriodic(true)
       ioddReadMessagesTimers[messageName]:setExpirationTime(messageInfo.triggerValue)
       ioddReadMessagesTimers[messageName]:register("OnExpired", readTheMessage)
-      ioddReadMessagesTimers[messageName]:start()
+      if readMessageTimerActive then
+        ioddReadMessagesTimers[messageName]:start()
+      end
     elseif messageInfo.triggerType == "On event" then
       Script.register(messageInfo.triggerValue, readTheMessage)
       if not ioddReadMessagesRegistrations[messageName] then
@@ -467,7 +479,7 @@ local function updateIODDReadMessages()
       end
       ioddReadMessagesRegistrations[messageName][messageInfo.triggerValue] = readTheMessage
     end
-    table.insert(queueFunctions, readSources)
+    table.insert(queueFunctions, readTheMessage)
     ::nextMessage::
   end
   ioddReadMessagesQueue:setFunction(queueFunctions)
@@ -494,7 +506,10 @@ Script.serveFunction('CSK_MultiIOLinkSMI.getReadDataResult'.. multiIOLinkSMIInst
 ---@return bool success Success of writing.
 ---@return string? details Detailed error if writing is not successful.
 local function writeIODDMessage(messageName, jsonDataToWrite)
-  local dataToWrite = json.decode(jsonDataToWrite)
+  local decodeSuccess, dataToWrite = pcall(json.decode, jsonDataToWrite)
+  if not decodeSuccess then
+    return false, 'The payload is not in required JSON format'
+  end
   local errorMessage
   local messageWriteSuccess = true
   if ioddWriteMessages[messageName].dataInfo.ProcessData and ioddWriteMessages[messageName].dataInfo.Parameters == nil then
@@ -511,11 +526,8 @@ local function writeIODDMessage(messageName, jsonDataToWrite)
       elseif dataMode == 'Parameters' then
         success, errorCode = writeParameter(ioddWriteMessages[messageName].dataInfo.Parameters[dataPointID], dataPointDataToWrite)
       end
-      if errorCode then
-        if not errorMessage then
-          errorMessage = 'Error codes:'
-        end
-        errorMessage = errorMessage.. '; ' .. errorCode
+      if not success and not errorMessage and errorCode then
+        errorMessage = 'Error code:' .. errorCode .. ';'
       end
       messageWriteSuccess = messageWriteSuccess and success
     end
@@ -550,10 +562,18 @@ local function updateIODDWriteMessages()
         return false, ioddWriteMessagesQueue:getSize(), 0
       end
       local timestamp1 = DateTime.getTimestamp()
-      local messageWriteSuccess, errorMessage = writeIODDMessage(messageName, jsonDataToWrite)
+      local errorMessage = ''
+      local messageWriteSuccess, messageWriteErrorMessage = writeIODDMessage(messageName, jsonDataToWrite)
       local queueSize = ioddWriteMessagesQueue:getSize()
+      if not messageWriteSuccess then
+        errorMessage = errorMessage .. 'Failed to write data to device;'
+      end
+      if messageWriteErrorMessage then
+        errorMessage = errorMessage .. messageWriteErrorMessage
+      end
+
       if queueSize > 10 then
-        _G.logger:warning(nameOfModule..': writing queue is building up, clearing the queue, port ' .. tostring(processingParams.portNumber) .. ' instancenumber ' .. multiIOLinkSMIInstanceNumberString .. '; current queue: ' .. tostring(queueSize))
+        _G.logger:warning(nameOfModule..': writing queue is building up, clearing the queue, port ' .. tostring(processingParams.port) .. ' instancenumber ' .. multiIOLinkSMIInstanceNumberString .. '; current queue: ' .. tostring(queueSize))
         errorMessage = 'Queue is building up: ' .. tostring(queueSize) ..' clearing the queue'
         ioddWriteMessagesQueue:clear()
       end
@@ -606,7 +626,16 @@ end
 ---@param internalObjectNo int? Number of object
 local function handleOnNewProcessingParameter(multiIOLinkSMINo, parameter, value, internalObjectNo)
 
-  if multiIOLinkSMINo == multiIOLinkSMIInstanceNumber then -- set parameter only in selected script
+  if parameter == 'readMessageTimers' then
+    readMessageTimerActive = value
+    for readMessageName in pairs(ioddReadMessagesTimers) do
+      if value == false then
+        ioddReadMessagesTimers[readMessageName]:stop()
+      else
+        ioddReadMessagesTimers[readMessageName]:start()
+      end
+    end
+  elseif multiIOLinkSMINo == multiIOLinkSMIInstanceNumber then -- set parameter only in selected script
     _G.logger:fine(nameOfModule .. ": Update parameter '" .. parameter .. "' of multiIOLinkSMIInstanceNo." .. tostring(multiIOLinkSMINo) .. " to value = " .. tostring(value))
     if parameter == "readMessages" then
       ioddReadMessages = json.decode(value)
@@ -625,3 +654,13 @@ local function handleOnNewProcessingParameter(multiIOLinkSMINo, parameter, value
   end
 end
 Script.register("CSK_MultiIOLinkSMI.OnNewProcessingParameter", handleOnNewProcessingParameter)
+
+--- Function to react on change of port status
+---@param instance int Instance ID.
+---@param status string Port status.
+local function handleOnNewIOLinkPortStatus(instance, status)
+  if instance == multiIOLinkSMIInstanceNumber then
+    portStatus = status
+  end
+end
+Script.register('CSK_MultiIOLinkSMI.OnNewIOLinkPortStatus', handleOnNewIOLinkPortStatus)

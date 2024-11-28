@@ -12,15 +12,15 @@ The app includes an intuitive GUI to setup communication with IOLink device.
 1. After powering the used port, select it in UI
 2. Activate the port
 3. If there is an IO-Link device connected to activated port, you will see all available information about its identification
-4. You can send and receive values to/from device as decimal byte arrays for testing purposes (no IODD needed)
+4. You can send and receive values to/from device as decimal byte arrays for testing purposes (no IODD needed, see upper part of ReadMessage/WriteMessage UI)
 ![plot](./docu/media/mainPage.png)
 
 If there is available [IODD interpreter](https://github.com/SICKAppSpaceCodingStarterKit/CSK_Module_IODDInterpreter) with loaded IODD file for the connected device, it is possible to create customized IODD read and write messages:
 
 ### Read data
 
-1. Create a new Read Message
-2. Rename it if necessary
+1. Set name for new ReadMessage
+2. Create new ReadMessage
 3. Select when you want to read data, periodically (period in ms) or on some CROWN event
 4. Select process data you want to read from device
 5. Select parameters you want to read from device
@@ -29,8 +29,8 @@ If there is available [IODD interpreter](https://github.com/SICKAppSpaceCodingSt
 
 ### Write data
 
-1. Create a new Write Message
-2. Rename it if necessary
+1. Set name for new WriteMessage
+2. Create new WriteMessage
 3. Select process data you want to write to device
 4. Select parameters you want to write to device
 5. See the latest message written to the device
@@ -41,12 +41,12 @@ If there is available [IODD interpreter](https://github.com/SICKAppSpaceCodingSt
 ## Dependencies
 
 Following CSK modules are mostly necessary to make use of the features of this module:
-|Module|Version|Remark
+|Module|Version|Remark|
 |--|--|--|
-|CSK_Module_PowerManager|[V2.5.0](https://github.com/SICKAppSpaceCodingStarterKit/CSK_Module_PowerManager/releases/tag/v2.5.0)|To power ports|
-|CSK_Module_IODDInterpreter|[V1.0.0](https://github.com/SICKAppSpaceCodingStarterKit/CSK_Module_IODDInterpreter)|To set read and write messages|
-|CSK_1stModule_Logger|[V4.0.0](https://github.com/SICKAppSpaceCodingStarterKit/CSK_1stModule_Logger/releases/tag/v4.0.0)|To log problems with data interpretation|
-|CSK_Module_PersistentData|[V4.0.0](https://github.com/SICKAppSpaceCodingStarterKit/CSK_Module_PersistentData)|To persist data|
+|CSK_Module_PowerManager|[>=V2.5.0](https://github.com/SICKAppSpaceCodingStarterKit/CSK_Module_PowerManager)|To power ports|
+|CSK_Module_IODDInterpreter|[>=V2.0.0](https://github.com/SICKAppSpaceCodingStarterKit/CSK_Module_IODDInterpreter)|To set read and write messages|
+|CSK_1stModule_Logger|[>=V4.0.0](https://github.com/SICKAppSpaceCodingStarterKit/CSK_1stModule_Logger)|To log problems with data interpretation|
+|CSK_Module_PersistentData|[>=V4.0.0](https://github.com/SICKAppSpaceCodingStarterKit/CSK_Module_PersistentData)|To persist data|
 
 ## Known issues
 
@@ -55,13 +55,15 @@ Following CSK modules are mostly necessary to make use of the features of this m
 
 ## Information
 
-### Tested on
+Tested on  
 
 |Device|Firmware version|Module version|
 |--|--|--|
+|SIM1012|V2.4.2|V2.0.0|
+|SICK AppEngine|V1.7.0|V2.0.0|
 |SIM1012|V2.3.0|v1.0.0|
 
-NOTE! Writing process data to IO-Link device works after firmware version 2.3.0
+NOTE! Writing process data to IO-Link device works after SIM1012 firmware version 2.3.0
 
 This application / module is part of the SICK AppSpace Coding Starter Kit developing approach.  
 It is programmed in an object-oriented way. Some of the modules use kind of "classes" in Lua to make it possible to reuse code / classes in other projects.  

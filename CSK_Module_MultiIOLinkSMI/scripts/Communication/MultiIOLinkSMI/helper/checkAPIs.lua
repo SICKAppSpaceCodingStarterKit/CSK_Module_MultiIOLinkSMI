@@ -4,16 +4,18 @@
 
 local availableAPIs = {}
 
+-- Function to load all default APIs
 local function loadAPIs()
   CSK_MultiIOLinkSMI = require 'API.CSK_MultiIOLinkSMI'
+
+  Log = require 'API.Log'
+  Log.Handler = require 'API.Log.Handler'
+  Log.SharedLogger = require 'API.Log.SharedLogger'
 
   Container = require 'API.Container'
   DateTime = require 'API.DateTime'
   Engine = require 'API.Engine'
   File = require 'API.File'
-  Log = require 'API.Log'
-  Log.Handler = require 'API.Log.Handler'
-  Log.SharedLogger = require 'API.Log.SharedLogger'
   Object = require 'API.Object'
   Timer = require 'API.Timer'
 
@@ -23,16 +25,21 @@ local function loadAPIs()
     if appList[i] == 'CSK_Module_PersistentData' then
       CSK_PersistentData = require 'API.CSK_PersistentData'
     elseif appList[i] == 'CSK_Module_IODDInterpreter' then
-      CSK_IODDInterpreter = require 'API.CSK_IODDInterpreter'
+      local checkVersion = Script.isServedAsFunction('CSK_IODDInterpreter.sendInstancesListParameters')
+      if checkVersion then
+        CSK_IODDInterpreter = require 'API.CSK_IODDInterpreter'
+      end      
     elseif appList[i] == 'CSK_Module_UserManagement' then
       CSK_UserManagement = require 'API.CSK_UserManagement'
+    elseif appList[i] == 'CSK_Module_FlowConfig' then
+      CSK_FlowConfig = require 'API.CSK_FlowConfig'
     end
   end
 end
 
-local function loadIoLinkSmiApi()
+-- Function to load specific APIs
+local function loadSpecificAPIs()
   -- If you want to check for specific APIs/functions supported on the device the module is running, place relevant APIs here
-
   IOLink = {}
   IOLink.SMI = require 'API.IOLink.SMI'
   IOLink.SMI.PortConfigList = require 'API.IOLink.SMI.PortConfigList'
@@ -40,7 +47,7 @@ local function loadIoLinkSmiApi()
 end
 
 availableAPIs.default = xpcall(loadAPIs, debug.traceback)
-availableAPIs.ioLinkSmi = xpcall(loadIoLinkSmiApi, debug.traceback)
+availableAPIs.specific = xpcall(loadSpecificAPIs, debug.traceback)
 
 return availableAPIs
 --**************************************************************************
