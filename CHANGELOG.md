@@ -1,6 +1,14 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## Release 2.1.0
+
+### New features
+Now it is possible to read subindexes (even if the subindex access is not supported). Requires IODD interpreter v2.1.0 or more
+
+### Improvements
+- Speeding up of data parsing when reading from IO-Link device
+
 ## Release 2.0.0
 
 ### New features

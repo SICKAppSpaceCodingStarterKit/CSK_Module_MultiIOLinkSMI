@@ -127,20 +127,9 @@ end
 converter.toBinaryString = toBinaryString
 
 -------------------------------------------------------------------------------------
--- Reverse the byteorder
-local function reverseBinaryString(binString)
-  local l_result = ""
-  for l_index = #binString, 1, -1 do
-    l_result = l_result .. string.sub(binString, l_index, l_index)
-  end
-
-  return l_result
-end
-converter.reverseBinaryString = reverseBinaryString
-
--------------------------------------------------------------------------------------
 -- Disassemble data
 
+-- Gets necessary bits out of the bytes
 local function extract(n, field, width)
     -- Shift right by 'field' to get the bits starting at 'field' in the least significant bits
     local shifted = n >> field
@@ -150,17 +139,99 @@ local function extract(n, field, width)
     return shifted & mask
 end
 
-local function disassembleData(data, startBit, bitLength)
-  local l_startByte = math.floor(startBit / 8) + 1
-  local l_startBitInByte = startBit % 8
+-- Bitwise processing of the incoming binary string
+local function disassembleData(data, bitOffset, bitLength)
+  local byteLength = string.len(data)
+  local l_startBit = byteLength*8 - bitLength - bitOffset + 1
+  local l_startByte = math.ceil(l_startBit / 8)
+  local l_startBitInByte = l_startBit % 8 - 1
   local l_byteLengthItem = math.ceil(bitLength / 8)
-  local l_revRawData = reverseBinaryString(data)
-  local l_dataAsNumber = string.unpack("<I" .. tostring(l_byteLengthItem), l_revRawData, l_startByte)
+  local l_dataAsNumber = string.unpack(">I" .. tostring(l_byteLengthItem), data, l_startByte)
   local l_extractedValue = extract(l_dataAsNumber, l_startBitInByte, bitLength)
   local l_asBinaryString = toBinaryString(l_extractedValue, l_byteLengthItem)
   return l_asBinaryString
 end
 converter.disassembleData = disassembleData
+
+-- Read functions for each simple use case
+local readConverters = {
+  BooleanT = function(data)
+    if string.unpack("B", data) == 0 then
+      return false
+    else
+      return true
+    end
+  end,
+  IntegerT = function(data)
+    return string.unpack(">i" .. #data, data)
+  end,
+  UIntegerT = function(data)
+    return string.unpack(">I" .. #data, data)
+  end,
+  Float32T = function(data)
+    return string.unpack(">f", data)
+  end,
+  StringT = function(data)
+    local l_zeroTermination = string.find(data, utf8.char(0))
+    if l_zeroTermination then
+      return string.sub(data, 1, l_zeroTermination - 1)
+    else
+      return data
+    end
+  end,
+  OctetStringT = function(data)
+    local l_zeroTermination = string.find(data, utf8.char(0))
+    if l_zeroTermination then
+      return string.sub(data, 1, l_zeroTermination - 1)
+    else
+      return data
+    end
+  end
+}
+
+-- Function for reading a subindex
+local function getSimpleSubindexReadFunction(dataPointInfo, bitLength)
+  local functionToReturn
+  if tonumber(dataPointInfo.bitOffset) % 8 == 0 and getDatatypeBitlength(dataPointInfo) % 8 == 0 and bitLength % 8 == 0 then
+    local startByteNew = bitLength / 8 - dataPointInfo.bitOffset/8 - getDatatypeBitlength(dataPointInfo)/8 + 1
+    local endByteNew = bitLength / 8 - dataPointInfo.bitOffset/8
+    functionToReturn = function(binData)
+      return readConverters[dataPointInfo.type](string.sub(binData, startByteNew, endByteNew))
+    end
+  else
+    local bitOffset = tonumber(dataPointInfo.bitOffset)
+    local bitLength = getDatatypeBitlength(dataPointInfo)
+    functionToReturn = function(binData)
+      return readConverters[dataPointInfo.type](disassembleData(binData, bitOffset, bitLength))
+    end
+  end
+  return functionToReturn
+end
+
+-- Function with no bitwise operations in case the type is simple
+local function getSimpleIndexReadFunction(dataPointInfo)
+  local functionToReturn = function(binData)
+    return readConverters[dataPointInfo.type](binData)
+  end
+  return functionToReturn
+end
+
+-- Gets the fastest and simpliest function for each selected parameter
+local function getParameterReadFunctions(parameterInfo)
+  local parameterReadFunctions = {}
+  if parameterInfo.info.type == 'ArrayT' or parameterInfo.info.type == 'RecordT' then
+    for subindexId, subindexinfo in pairs(parameterInfo.subindeces) do
+      parameterReadFunctions[subindexId] = {
+        value = getSimpleSubindexReadFunction(subindexinfo.info, parameterInfo.info.BitLength)
+      }
+    end
+  else
+    parameterReadFunctions.value = getSimpleIndexReadFunction(parameterInfo.info)
+  end
+  return parameterReadFunctions
+end
+converter.getParameterReadFunctions = getParameterReadFunctions
+
 
 -------------------------------------------------------------------------------------
 -- Convert a raw binary data from IO-Link device to a meaningful Lua table
@@ -179,6 +250,7 @@ local function getReadServiceDataResult(binData, parameterInfo)
   elseif parameterInfo.Datatype.type == 'RecordT' then
     for _, SingleItem in ipairs(parameterInfo.Datatype.RecordItem) do
       local binaryData = disassembleData(binData, tonumber(SingleItem.bitOffset), getDatatypeBitlength(SingleItem.Datatype))
+
       Result[SingleItem.Name] = {
         value = toDataType(binaryData, SingleItem.Datatype.type)
       }
@@ -205,7 +277,6 @@ local function getReadProcessDataResult(binData, processDataInfo)
   return resultData
 end
 converter.getReadProcessDataResult = getReadProcessDataResult
-
 
 --Return a JSON payload of expacted format filled with null values in case reading of a Parameter has failed 
 local function getFailedReadServiceDataResult(parameterInfo)
@@ -316,7 +387,7 @@ local function getComplexServiceDataToWrite(parameterInfo, data)
     local byteLength = math.ceil(getDatatypeBitlength(parameterInfo.Datatype) / 8)
     if parameterInfo.Datatype.type == 'ArrayT' then
       bitArray = makeEmptyBitArray(getDatatypeBitlength(parameterInfo.Datatype))
-      
+
       local simpleDataBitLength = getDatatypeBitlength(parameterInfo.Datatype.Datatype)
       local bitIndexer = 0
       for i = 1, tonumber(parameterInfo.Datatype.count) do
@@ -340,7 +411,7 @@ local function getComplexServiceDataToWrite(parameterInfo, data)
           getDatatypeBitlength(SingleItem.Datatype)
         )
       end
-      local json = require('Communication/MultiIOLinkSMI/helper/Json')
+
     end
     local bin = ''
     for i = 1, byteLength do
