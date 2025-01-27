@@ -16,19 +16,37 @@ multiIOLinkSMI.__index = multiIOLinkSMI
 
 multiIOLinkSMI.styleForUI = 'None' -- Optional parameter to set UI style
 multiIOLinkSMI.version = Engine.getCurrentAppVersion() -- Version of module
-multiIOLinkSMI.timerActive = true -- Status if read Message timers should run
+multiIOLinkSMI.timerActive = false -- Status if read Message timers should run
 
 -- IO-Link SMI handle used by all instances
-if _G.availableAPIs.specific then
+if _G.availableAPIs.specificSGI and _G.availableAPIs.specificSMI then
+  -- WITH extended SMI API
+  multiIOLinkSMI.IOLinkSMIhandle = IOLink.SMI.create('IOLM1')
+elseif _G.availableAPIs.specificSMI then
+  -- WITHOUT extended SMI API
   multiIOLinkSMI.IOLinkSMIhandle = IOLink.SMI.create()
 end
+
 -- Registering function to be called when any port event occurs 
+----------------------------------------------------------------
+local function handleOnNewPortEventWithEventQualifier(port, qualifier, eventCode)
+  CSK_MultiIOLinkSMI.handleOnNewPortEventWithEventQualifier(port, qualifier, eventCode)
+end
+
 local function handleOnNewPortEvent(port, eventType, eventCode)
   CSK_MultiIOLinkSMI.handleOnNewPortEvent(port, eventType, eventCode)
 end
+
 if multiIOLinkSMI.IOLinkSMIhandle then
-  multiIOLinkSMI.IOLinkSMIhandle:register('OnPortEvent', handleOnNewPortEvent)
+  if _G.availableAPIs.specificSGI then
+    -- WITH extended SMI API
+    multiIOLinkSMI.IOLinkSMIhandle:register('OnPortEvent', handleOnNewPortEventWithEventQualifier)
+  elseif _G.availableAPIs.specificSMI then
+    -- WITHOUT extended SMI API
+    multiIOLinkSMI.IOLinkSMIhandle:register('OnPortEvent', handleOnNewPortEvent)
+  end
 end
+----------------------------------------------------------------
 
 --**************************************************************************
 --********************** End Global Scope **********************************
@@ -118,6 +136,7 @@ function multiIOLinkSMI.create(multiIOLinkSMIInstanceNo)
 
   self.status = 'PORT_NOT_ACTIVE' -- Latest port status to show in UI
   self.activeInUi = false -- Check if this instance is currently active in UI
+  self.readMessageMode = 'IODD' -- Mode if new readMessages should use IODD ('IODD') or not ('NO_IODD')
 
   -- Default values for persistent data
   -- If available, following values will be updated from data of CSK_PersistentData module (check CSK_PersistentData module for this)
@@ -139,7 +158,9 @@ function multiIOLinkSMI.create(multiIOLinkSMIInstanceNo)
   -- Parameters to give to the processing script
   self.multiIOLinkSMIProcessingParams = Container.create()
   self.multiIOLinkSMIProcessingParams:add('multiIOLinkSMIInstanceNumber', multiIOLinkSMIInstanceNo, "INT")
-  self.multiIOLinkSMIProcessingParams:add('SMIhandle', multiIOLinkSMI.IOLinkSMIhandle, 'OBJECT')
+  if multiIOLinkSMI.IOLinkSMIhandle then
+    self.multiIOLinkSMIProcessingParams:add('SMIhandle', multiIOLinkSMI.IOLinkSMIhandle, 'OBJECT')
+  end
   self.multiIOLinkSMIProcessingParams:add('name', self.parameters.name, 'STRING')
   self.multiIOLinkSMIProcessingParams:add('active', self.parameters.active, 'BOOL')
   self.multiIOLinkSMIProcessingParams:add('port', self.parameters.port, 'STRING')
@@ -327,22 +348,39 @@ end
 
 --- Function to create a read message and instance for the message in CSK_Module_IODDInterpreter
 ---@param messageName string Name of message to create
-function multiIOLinkSMI:createIODDReadMessage(messageName)
+---@param noIODD boolean Status if IODD should be used
+function multiIOLinkSMI:createIODDReadMessage(messageName, noIODD)
+  local useIODD = true
+  local tempIODDInstanceId = ''
+  if noIODD then
+    useIODD = false
+  end
+  if self.parameters.ioddInfo then
+    tempIODDInstanceId = self.parameters.ioddInfo.ioddInstanceId .. '_ReadMessage_' .. messageName
+  end
   self.parameters.ioddReadMessages[messageName] = {
     triggerType = 'Periodic',
     triggerValue = 1000,
-    ioddInstanceId = self.parameters.ioddInfo.ioddInstanceId .. '_ReadMessage_' .. messageName
+    searchBegin = '',
+    searchEnd = '',
+    ioddActive = useIODD,
+    processDataStartByte = 0,
+    processDataEndByte = 1,
+    processDataUnpackFormat = '>I1',
+    ioddInstanceId = tempIODDInstanceId
   }
-  CSK_IODDInterpreter.addInstance()
-  CSK_IODDInterpreter.setInstanceName(self.parameters.ioddReadMessages[messageName].ioddInstanceId)
-  CSK_IODDInterpreter.setSelectedIODD(self.parameters.ioddInfo.ioddName)
-  CSK_IODDInterpreter.setSelectedInstance(self.parameters.ioddReadMessages[messageName].ioddInstanceId)
-  if self.parameters.ioddInfo.isProcessDataVariable then
-    CSK_IODDInterpreter.changeProcessDataStructureOptionName(
-      self.parameters.ioddInfo.currentCondition
-    )
+  if useIODD then
+    CSK_IODDInterpreter.addInstance()
+    CSK_IODDInterpreter.setInstanceName(self.parameters.ioddReadMessages[messageName].ioddInstanceId)
+    CSK_IODDInterpreter.setSelectedIODD(self.parameters.ioddInfo.ioddName)
+    CSK_IODDInterpreter.setSelectedInstance(self.parameters.ioddReadMessages[messageName].ioddInstanceId)
+    if self.parameters.ioddInfo.isProcessDataVariable then
+      CSK_IODDInterpreter.changeProcessDataStructureOptionName(
+        self.parameters.ioddInfo.currentCondition
+      )
+    end
+    CSK_IODDInterpreter.setSelectedInstance(self.parameters.ioddReadMessages[messageName].ioddInstanceId)
   end
-  CSK_IODDInterpreter.setSelectedInstance(self.parameters.ioddReadMessages[messageName].ioddInstanceId)
 end
 
 --- Function to delete an IODD message and instance in CSK_Module_IODDInterpreter
