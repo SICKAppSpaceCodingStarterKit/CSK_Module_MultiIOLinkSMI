@@ -359,6 +359,61 @@ Script.serveFunction('CSK_MultiIOLinkSMI.writeParameterByteArray_' .. multiIOLin
 -- Read Messages --------------------------------------------------------------------
 -------------------------------------------------------------------------------------
 
+
+local ioddReadMessagesFunctions = {}
+
+local function updateFunctions()
+  ioddReadMessagesFunctions = {}
+  for messageName, messageInfo in pairs(ioddReadMessages) do
+    ioddReadMessagesFunctions[messageName] = {}
+    if not messageInfo.dataInfo then
+      goto nextMessage
+    end
+    local includeDataMode = (messageInfo.dataInfo.ProcessData and messageInfo.dataInfo.Parameters)
+    if includeDataMode then
+      ioddReadMessagesFunctions[messageName] = {
+        ProcessData = {},
+        Parameters = {}
+      }
+      for dataMode, dataModeInfo in pairs(messageInfo.dataInfo) do
+        if dataMode == "ProcessData" then
+          for dataPointID, dataPointInfo in pairs(dataModeInfo) do
+            ioddReadMessagesFunctions[messageName][dataMode][dataPointID] = {
+              getDataFunction = readBinaryProcessData,
+              processFunctions = converter.getParameterReadFunctions(dataPointInfo)
+            }
+          end
+        elseif dataMode == "Parameters" then
+          for dataPointID, dataPointInfo in pairs(dataModeInfo) do
+            ioddReadMessagesFunctions[messageName][dataMode][dataPointID] = {
+              getDataFunction = function() return readBinaryServiceData(tonumber(dataPointInfo.info.index), 0) end,
+              processFunctions = converter.getParameterReadFunctions(dataPointInfo)
+            }
+          end
+        end
+      end
+    else
+      if messageInfo.dataInfo.ProcessData then
+        for dataPointID, dataPointInfo in pairs(messageInfo.dataInfo.ProcessData) do
+          ioddReadMessagesFunctions[messageName][dataPointID] = {
+            getDataFunction = readBinaryProcessData,
+            processFunctions = converter.getParameterReadFunctions(dataPointInfo)
+          }
+        end
+      elseif messageInfo.dataInfo.Parameters then
+        for dataPointID, dataPointInfo in pairs(messageInfo.dataInfo.Parameters) do
+          ioddReadMessagesFunctions[messageName][dataPointID] = {
+            getDataFunction = function() return readBinaryServiceData(tonumber(dataPointInfo.info.index), 0) end,
+            processFunctions = converter.getParameterReadFunctions(dataPointInfo)
+          }
+        end
+      end
+    end
+    ::nextMessage::
+  end
+end
+
+
 -- Read preconfigured message
 ---@param messageName string Name of the message to read.
 ---@return bool success Success of reading.
@@ -367,42 +422,65 @@ local function readIODDMessage(messageName)
   if not ioddReadMessages[messageName] or not ioddReadMessages[messageName].dataInfo then
     return false, "No data selected for read"
   end
+  local message = {}
+  local ts1 = DateTime.getTimestamp()
   local success = true
-  local messageContent = {}
-  local includeDataMode = (ioddReadMessages[messageName].dataInfo.ProcessData and ioddReadMessages[messageName].dataInfo.Parameters)
-  if ioddReadMessages[messageName].dataInfo.ProcessData then
-    local readSuccess, receivedData = readProcessData(ioddReadMessages[messageName].dataInfo.ProcessData)
-    if not readSuccess then
-      success = false
+  if ioddReadMessagesFunctions[messageName].ProcessData and ioddReadMessagesFunctions[messageName].Parameters then
+    message = {
+      ProcessData = {},
+      Parameters = {}
+    }
+    for dataMode, dataModeInfo in pairs(ioddReadMessagesFunctions[messageName]) do
+      for datapointId, datapointInfo in pairs(dataModeInfo) do
+        message[dataMode][datapointId] = {}
+        local binData = datapointInfo.getDataFunction()
+        if not binData then
+          success = false
+          for k, v in pairs(datapointInfo.processFunctions) do
+            if type(v) == "function" then
+              message[dataMode][datapointId][k] = "null"
+            else
+              message[dataMode][datapointId][k] = {value = "null"}
+            end
+          end
+        else
+          for k, v in pairs(datapointInfo.processFunctions) do
+            if type(v) == "function" then
+              message[dataMode][datapointId][k] = v(binData)
+            else
+              message[dataMode][datapointId][k] = {value = v.value(binData)}
+            end
+          end
+        end
+      end
     end
-    if includeDataMode then
-      messageContent.ProcessData = receivedData
-    else
-      messageContent = receivedData
-    end
-  end
-  if ioddReadMessages[messageName].dataInfo.Parameters then
-    if includeDataMode then
-      messageContent.Parameters = {}
-    end
-    for dataPointID, dataPointInfo in pairs(ioddReadMessages[messageName].dataInfo.Parameters) do
-      local readSuccess, receivedData = readParameter(dataPointInfo)
-      if not readSuccess then
+  else
+    for datapointId, datapointInfo in pairs(ioddReadMessagesFunctions[messageName]) do
+      message[datapointId] = {}
+      local binData = datapointInfo.getDataFunction()
+      if not binData then
         success = false
-      end
-      if includeDataMode then
-        messageContent.Parameters[dataPointID] = receivedData
+        for k, v in pairs(datapointInfo.processFunctions) do
+          if type(v) == "function" then
+            message[datapointId][k] = "null"
+          else
+            message[datapointId][k] = {value = "null"}
+          end
+        end
       else
-        messageContent[dataPointID] = receivedData
+        for k, v in pairs(datapointInfo.processFunctions) do
+          if type(v) == "function" then
+            message[datapointId][k] = v(binData)
+          else
+            message[datapointId][k] = {value = v.value(binData)}
+          end
+        end
       end
     end
   end
-  local jsonMessageContent = json.encode(messageContent)
-  ioddReadMessagesResults[messageName] = success
-  ioddLatestReadMessages[messageName] = jsonMessageContent
-  return success, jsonMessageContent
+  return success, json.encode(message)
 end
-Script.serveFunction('CSK_MultiIOLinkSMI.readIODDMessage' .. multiIOLinkSMIInstanceNumberString, readIODDMessage, 'string:1:', 'bool:1:,string:?:')
+Script.serveFunction('CSK_MultiIOLinkSMI.readIODDMessage' .. multiIOLinkSMIInstanceNumberString, readIODDMessage, 'string:1:', 'bool:1,string:?:')
 
 --- Update configuration of read messages
 local function updateIODDReadMessages()
@@ -419,19 +497,7 @@ local function updateIODDReadMessages()
   end
   ioddReadMessagesTimers = {}
   ioddReadMessagesRegistrations = {}
-  for messageName, messageInfo in pairs(ioddReadMessages) do
-    if helperFuncs.getTableSize(messageInfo.dataInfo) == 0 then
-      goto nextMessage
-    end
-    for dataMode, dataModeInfo in pairs(messageInfo.dataInfo) do
-      if dataMode == "ProcessData" or dataMode == "Parameters" then
-        for dataPointID, dataPointInfo in pairs(dataModeInfo) do
-          ioddReadMessages[messageName].dataInfo[dataMode][dataPointID] = converter.renameDatatype(dataPointInfo)
-        end
-      end
-    end
-    ::nextMessage::
-  end
+  updateFunctions()
   local queueFunctions = {}
   for messageName, messageInfo in pairs(ioddReadMessages) do
     if helperFuncs.getTableSize(messageInfo.dataInfo) == 0 then
@@ -447,6 +513,8 @@ local function updateIODDReadMessages()
       end
       local timestamp1 = DateTime.getTimestamp()
       local success, jsonMessageContent = readIODDMessage(messageName)
+      ioddReadMessagesResults[messageName] = success
+      ioddLatestReadMessages[messageName] = jsonMessageContent
       local errorMessage = ''
       local queueSize = ioddReadMessagesQueue:getSize()
       if not success then
