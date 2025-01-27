@@ -15,11 +15,12 @@ The app includes an intuitive GUI to setup communication with IOLink device.
 4. You can send and receive values to/from device as decimal byte arrays for testing purposes (no IODD needed, see upper part of ReadMessage/WriteMessage UI)
 ![plot](./docu/media/mainPage.png)
 
-If there is available [IODD interpreter](https://github.com/SICKAppSpaceCodingStarterKit/CSK_Module_IODDInterpreter) with loaded IODD file for the connected device, it is possible to create customized IODD read and write messages:
+If there is available [IODD interpreter](https://github.com/SICKAppSpaceCodingStarterKit/CSK_Module_IODDInterpreter) with loaded IODD file for the connected device, it is possible to create customized IODD read and write messages.
+Without the IODDInterpreter, still it is possible to create custom read messages:
 
 ### Read data
 
-1. Set name for new ReadMessage
+1. Set name for new ReadMessage and type of read message
 2. Create new ReadMessage
 3. Select when you want to read data, periodically (period in ms) or on some CROWN event
 4. Select process data you want to read from device
@@ -59,6 +60,7 @@ Tested on
 
 |Device|Firmware version|Module version|
 |--|--|--|
+|SIM1012|V2.4.2|V3.0.0|
 |SIM1012|V2.4.2|V2.1.0|
 |SIM1012|V2.4.2|V2.0.0|
 |SICK AppEngine|V1.7.0|V2.0.0|

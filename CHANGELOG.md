@@ -1,10 +1,32 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## Release 3.0.0
+
+### New features
+- Provide features even without CSK_IODDInterpreter
+- Possibility to create readMessages without IODD information, by setting start-/endByte and unpack format
+- Possibility to search and cut relevant part out of created JSON within readMessage
+- New FlowConfig block 'OnNewDataAuto' which automatically creates readMessages and optionally checks to power selected port (WARNING: Do NOT mix with manual readMessage setup)
+- React on "OnStopFlowConfigProviders" event of FlowConfig modul to stop pulling IO-Link data
+- Check and handle different kind of IOLink.SMI APIs
+- Function to delete all existing readMessages
+
+### Improvements
+- Changed event name "OnNewReadMessage_PORT_MESSAGENAME" to "OnNewReadMessage_INSTANCE_PORT_MESSAGENAME" to make it possible to switch between ports during runtime
+- Do not start readMessage timers automatically with creation of readMessage
+- Use new event 'OnNewRawReadMessage_INSTANCE_PORT_MESSAGENAME" within FlowConfig (only providing data content as first parameter)
+- If using FlowConfig, start readMessage timers after 5 seconds
+- Add info about port within "OnNewIOLinkPortStatus" event
+- Add list of ports related to instances within "getInstancePortMap" function
+
+### Bugfix
+- Issue with CSK_UserManagement support
+
 ## Release 2.1.0
 
 ### New features
-Now it is possible to read subindexes (even if the subindex access is not supported). Requires IODD interpreter v2.1.0 or more
+- Now it is possible to read subindexes (even if the subindex access is not supported). Requires IODD interpreter v2.1.0 or more
 
 ### Improvements
 - Speeding up of data parsing when reading from IO-Link device

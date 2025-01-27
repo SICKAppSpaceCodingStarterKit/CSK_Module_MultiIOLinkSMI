@@ -154,6 +154,16 @@ local function convertContainer2Table(cont)
 end
 funcs.convertContainer2Table = convertContainer2Table
 
+local function unpack(fmt, data)
+  local suc = string.unpack(fmt, data)
+  if suc then
+    return suc
+  else
+    return false
+  end
+end
+funcs.unpack = unpack
+
 return funcs
 
 --**************************************************************************
