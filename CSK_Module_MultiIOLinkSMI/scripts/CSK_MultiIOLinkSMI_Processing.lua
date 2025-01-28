@@ -107,7 +107,7 @@ end
 ---@param jsonDataPointInfo string JSON table containing process data info from IODD file
 ---@return string? convertedResult JSON table with interpted read data
 local function readProcessDataIODD(jsonDataPointInfo)
-  local dataPointInfo = converter.renameDatatype(json.decode(jsonDataPointInfo))
+  local dataPointInfo = json.decode(jsonDataPointInfo)
   local success, readData = readProcessData(dataPointInfo)
   if not success then
     return nil
@@ -179,7 +179,7 @@ end
 ---@return bool success Success of writing.
 ---@return string? details Detailed error if writing is not successful.
 local function writeProcessDataIODD(jsonDataPointInfo, jsonData)
-  local dataPointInfo = converter.renameDatatype(json.decode(jsonDataPointInfo))
+  local dataPointInfo = json.decode(jsonDataPointInfo)
   return writeProcessData(dataPointInfo, json.decode(jsonData))
 end
 Script.serveFunction('CSK_MultiIOLinkSMI.writeProcessDataIODD_' .. multiIOLinkSMIInstanceNumberString, writeProcessDataIODD, 'string:1:,string:1:', 'bool:1:,string:?:')
@@ -246,7 +246,7 @@ end
 ---@param jsonDataPointInfo string JSON table containing parameter info from IODD file.
 ---@return string? jsonData JSON table with interpted parameter value.
 local function readParameterIODD(index, subindex, jsonDataPointInfo)
-  local dataPointInfo = converter.renameDatatype(json.decode(jsonDataPointInfo))
+  local dataPointInfo = json.decode(jsonDataPointInfo)
   dataPointInfo.index = index
   dataPointInfo.subindex = subindex
   local success, readData = readParameter(dataPointInfo)
@@ -316,7 +316,11 @@ local function writeParameter(dataPointInfo, dataToWrite)
     _G.logger:warning(nameOfModule..': failed to convert parameter for writing on port ' .. tostring(processingParams.port) .. ' instancenumber ' .. multiIOLinkSMIInstanceNumberString ..'; datapoint info: ' .. tostring(json.encode(dataPointInfo)) .. '; data: ' .. tostring(json.encode(dataToWrite)))
     return false, 'failed to convert data'
   end
-  return writeBinaryServiceData(tonumber(dataPointInfo.index), tonumber(dataPointInfo.subindex), binDataToWrite)
+  if not dataPointInfo.info.subindex then
+    return writeBinaryServiceData(tonumber(dataPointInfo.info.index), 0, binDataToWrite)
+  else
+    return writeBinaryServiceData(tonumber(dataPointInfo.info.index), tonumber(dataPointInfo.subindex), binDataToWrite)
+  end
 end
 
 --Write parameter with provided info from IODD interpreter and data to write (as JSON tables).
@@ -327,7 +331,7 @@ end
 ---@return bool success Success of writing.
 ---@return string? details Detailed error if writing is not successful.
 local function writeParameterIODD(index, subindex, jsonDataPointInfo, jsonDataToWrite)
-  local dataPointInfo = converter.renameDatatype(json.decode(jsonDataPointInfo))
+  local dataPointInfo = json.decode(jsonDataPointInfo)
   dataPointInfo.index = index
   dataPointInfo.subindex = subindex
   return writeParameter(dataPointInfo, json.decode(jsonDataToWrite))
@@ -610,19 +614,6 @@ Script.serveFunction('CSK_MultiIOLinkSMI.writeIODDMessage' .. multiIOLinkSMIInst
 local function updateIODDWriteMessages()
   ioddWriteMessagesResults = {}
   ioddLatesWriteMessages = {}
-  for messageName, messageInfo in pairs(ioddWriteMessages) do
-    if helperFuncs.getTableSize(messageInfo.dataInfo) == 0 then
-      goto nextMessage
-    end
-    for dataMode, dataModeInfo in pairs(messageInfo.dataInfo) do
-      if dataMode == "ProcessData" or dataMode == "Parameters" then
-        for dataPointID, dataPointInfo in pairs(dataModeInfo) do
-          ioddWriteMessages[messageName].dataInfo[dataMode][dataPointID] = converter.renameDatatype(dataPointInfo)
-        end
-      end
-    end
-    ::nextMessage::
-  end
   local queueFunctions = {}
   for messageName, messageInfo in pairs(ioddWriteMessages) do
     local function writeDestinations(jsonDataToWrite)

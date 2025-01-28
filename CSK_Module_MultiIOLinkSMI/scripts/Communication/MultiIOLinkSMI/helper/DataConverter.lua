@@ -237,26 +237,15 @@ converter.getParameterReadFunctions = getParameterReadFunctions
 -- Convert a raw binary data from IO-Link device to a meaningful Lua table
 local function getReadServiceDataResult(binData, parameterInfo)
   local Result = {}
-  if parameterInfo.Datatype.type == 'ArrayT' then
-    local simpleDataBitLength = getDatatypeBitlength(parameterInfo.Datatype.Datatype)
-    local bitIndexer = 0
-    for i = 1, parameterInfo.Datatype.count do
-      local simpleBinaryData = disassembleData(binData, bitIndexer, simpleDataBitLength)
-      bitIndexer = bitIndexer + simpleDataBitLength
-      Result["element_" .. tostring(i)] = {
-        value = toDataType(simpleBinaryData, parameterInfo.Datatype.Datatype.type)
+  if parameterInfo.info.type == 'ArrayT' or parameterInfo.info.type == 'RecordT' then
+    for _, SingleItem in pairs(parameterInfo.subindeces) do
+      local binaryData = disassembleData(binData, tonumber(SingleItem.info.bitOffset), getDatatypeBitlength(SingleItem.info))
+      Result[SingleItem.info.Name] = {
+        value = toDataType(binaryData, SingleItem.info.type)
       }
     end
-  elseif parameterInfo.Datatype.type == 'RecordT' then
-    for _, SingleItem in ipairs(parameterInfo.Datatype.RecordItem) do
-      local binaryData = disassembleData(binData, tonumber(SingleItem.bitOffset), getDatatypeBitlength(SingleItem.Datatype))
-
-      Result[SingleItem.Name] = {
-        value = toDataType(binaryData, SingleItem.Datatype.type)
-      }
-    end
-  elseif parameterInfo.Datatype then
-    Result.value = toDataType(binData, parameterInfo.Datatype.type)
+  elseif parameterInfo.info then
+    Result.value = toDataType(binData, parameterInfo.info.type)
   end
   return Result
 end
@@ -267,11 +256,11 @@ converter.getReadServiceDataResult = getReadServiceDataResult
 local function getReadProcessDataResult(binData, processDataInfo)
   local resultData = {}
   for dataPointID, dataPointInfo in pairs(processDataInfo) do
-    if dataPointInfo.Datatype.type == 'RecordT' or dataPointInfo.Datatype.type == 'ArrayT' then
+    if dataPointInfo.info.type == 'RecordT' or dataPointInfo.info.type == 'ArrayT' then
       resultData[dataPointID] = getReadServiceDataResult(binData, dataPointInfo)
     else
-      local offsetData = disassembleData(binData, tonumber(dataPointInfo.bitOffset), getDatatypeBitlength(dataPointInfo.Datatype))
-      resultData[dataPointID] = {value = toDataType(offsetData, dataPointInfo.Datatype.type)}
+      local offsetData = disassembleData(binData, tonumber(dataPointInfo.info.bitOffset), getDatatypeBitlength(dataPointInfo.info))
+      resultData[dataPointID] = {value = toDataType(offsetData, dataPointInfo.info.type)}
     end
   end
   return resultData
@@ -281,15 +270,9 @@ converter.getReadProcessDataResult = getReadProcessDataResult
 --Return a JSON payload of expacted format filled with null values in case reading of a Parameter has failed 
 local function getFailedReadServiceDataResult(parameterInfo)
   local Result = {}
-  if parameterInfo.Datatype.type == 'ArrayT' then
-    for i = 1, parameterInfo.Datatype.count do
-      Result["element_" .. tostring(i)] = {
-        value = "null"
-      }
-    end
-  elseif parameterInfo.Datatype.type == 'RecordT' then
-    for _, SingleItem in ipairs(parameterInfo.Datatype.RecordItem) do
-      Result[SingleItem.Name] = {
+  if parameterInfo.info.type == 'ArrayT' or parameterInfo.info.type == 'RecordT' then
+    for _, SingleItem in pairs(parameterInfo.subindeces) do
+      Result[SingleItem.info.Name] = {
         value = "null"
       }
     end
@@ -384,34 +367,18 @@ end
 -- Conver Lua table of a complex type (array or record) to a binary data for writing to IO-Link device
 local function getComplexServiceDataToWrite(parameterInfo, data)
     local bitArray
-    local byteLength = math.ceil(getDatatypeBitlength(parameterInfo.Datatype) / 8)
-    if parameterInfo.Datatype.type == 'ArrayT' then
-      bitArray = makeEmptyBitArray(getDatatypeBitlength(parameterInfo.Datatype))
-
-      local simpleDataBitLength = getDatatypeBitlength(parameterInfo.Datatype.Datatype)
-      local bitIndexer = 0
-      for i = 1, tonumber(parameterInfo.Datatype.count) do
+    local byteLength = math.ceil(getDatatypeBitlength(parameterInfo.info) / 8)
+    if parameterInfo.info.type == 'ArrayT' or parameterInfo.info.type == 'RecordT' then
+      bitArray = makeEmptyBitArray(getDatatypeBitlength(parameterInfo.info))
+      for _, SingleItem in pairs(parameterInfo.subindeces) do
         insertIntoBitArray(
           bitArray,
-          data[i].value,
-          parameterInfo.Datatype.Datatype.type,
-          bitIndexer*simpleDataBitLength,
-          simpleDataBitLength
-        )
-        bitIndexer = bitIndexer + 1
-      end
-    elseif parameterInfo.Datatype.type == 'RecordT' then
-      bitArray = makeEmptyBitArray(getDatatypeBitlength(parameterInfo.Datatype))
-      for _, SingleItem in ipairs(parameterInfo.Datatype.RecordItem) do
-        insertIntoBitArray(
-          bitArray,
-          data[SingleItem.Name].value,
-          SingleItem.Datatype.type,
-          tonumber(SingleItem.bitOffset),
-          getDatatypeBitlength(SingleItem.Datatype)
+          data[SingleItem.info.Name].value,
+          SingleItem.info.type,
+          tonumber(SingleItem.info.bitOffset),
+          getDatatypeBitlength(SingleItem.info)
         )
       end
-
     end
     local bin = ''
     for i = 1, byteLength do
@@ -422,58 +389,16 @@ local function getComplexServiceDataToWrite(parameterInfo, data)
 end
 converter.getComplexServiceDataToWrite = getComplexServiceDataToWrite
 
-
-
 -------------------------------------------------------------------------------------
--- Conver Lua table to a binary data for writing to IO-Link device
+-- Convert Lua table to a binary data for writing to IO-Link device
 local function getBinaryDataToWrite(dataPointInfoInfo, data)
-  if dataPointInfoInfo.Datatype.type == 'ArrayT' or dataPointInfoInfo.Datatype.type == 'RecordT' then
+  if dataPointInfoInfo.info.type == 'ArrayT' or dataPointInfoInfo.info.type == 'RecordT' then
     return getComplexServiceDataToWrite(dataPointInfoInfo, data)
   else
-    return toBinaryData(dataPointInfoInfo.Datatype.type, math.ceil(getDatatypeBitlength(dataPointInfoInfo.Datatype)/8), data.value)
+    local test = toBinaryData(dataPointInfoInfo.info.type, math.ceil(getDatatypeBitlength(dataPointInfoInfo.info)/8), data.value)
+    return test
   end
 end
 converter.getBinaryDataToWrite = getBinaryDataToWrite
-
---changing ["xsi:type"] to more convenient .type key
-local function renameDatatype(dataPointInfo)
-  if dataPointInfo.SimpleDatatype then
-    dataPointInfo.Datatype = helperFuncs.copy(dataPointInfo.SimpleDatatype)
-    dataPointInfo.SimpleDatatype = nil
-  elseif dataPointInfo.Datatype.SimpleDatatype then
-    dataPointInfo.Datatype.Datatype = helperFuncs.copy(dataPointInfo.Datatype.SimpleDatatype)
-    dataPointInfo.Datatype.SimpleDatatype = nil
-    if dataPointInfo.Datatype.Datatype["xsi:type"] then
-      dataPointInfo.Datatype.Datatype.type = dataPointInfo.Datatype.Datatype["xsi:type"]
-      dataPointInfo.Datatype.Datatype["xsi:type"] = nil
-    end
-  elseif dataPointInfo.Datatype.RecordItem then
-    for recordItemID, recordItemInfo in ipairs(dataPointInfo.Datatype.RecordItem) do
-      if recordItemInfo.SimpleDatatype then
-        dataPointInfo.Datatype.RecordItem[recordItemID].Datatype = helperFuncs.copy(recordItemInfo.SimpleDatatype)
-        dataPointInfo.Datatype.RecordItem[recordItemID].SimpleDatatype = nil
-        if recordItemInfo.Datatype["xsi:type"] then
-          dataPointInfo.Datatype.RecordItem[recordItemID].Datatype.type = recordItemInfo.Datatype["xsi:type"]
-          dataPointInfo.Datatype.RecordItem[recordItemID].Datatype["xsi:type"] = nil
-        end
-      end
-    end
-  end
-  if dataPointInfo.Datatype["xsi:type"] then
-    dataPointInfo.Datatype.type = dataPointInfo.Datatype["xsi:type"]
-    dataPointInfo.Datatype["xsi:type"] = nil
-  end
-  return dataPointInfo
-end
-converter.renameDatatype = renameDatatype
-
---changing ["xsi:type"] to more convenient .type key
-local function renameDatamode(dataModeTable)
-  for dataPointID, dataPointInfo in ipairs(dataModeTable) do
-    dataModeTable[dataPointID] = renameDatatype(dataPointInfo)
-  end
-  return dataModeTable
-end
-converter.renameDatamode = renameDatamode
 
 return converter
