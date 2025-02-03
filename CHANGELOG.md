@@ -23,6 +23,11 @@ All notable changes to this project will be documented in this file.
 ### Bugfix
 - Issue with CSK_UserManagement support
 
+## Release 2.1.1
+
+### Bugfixes
+- writing of process data and parameters is available again
+
 ## Release 2.1.0
 
 ### New features

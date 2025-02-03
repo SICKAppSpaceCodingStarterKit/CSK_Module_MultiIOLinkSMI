@@ -124,7 +124,7 @@ end
 ---@param jsonDataPointInfo string JSON table containing process data info from IODD file
 ---@return string? convertedResult JSON table with interpted read data
 local function readProcessDataIODD(jsonDataPointInfo)
-  local dataPointInfo = converter.renameDatatype(json.decode(jsonDataPointInfo))
+  local dataPointInfo = json.decode(jsonDataPointInfo)
   local success, readData = readProcessData(dataPointInfo)
   if not success then
     return nil
@@ -164,15 +164,16 @@ Script.serveFunction('CSK_MultiIOLinkSMI.readProcessDataByteArray_' .. multiIOLi
 ---@return bool success Success of writing
 ---@return string? details Detailed error if writing is not successful
 local function writeBinaryProcessData(data)
-  -- Byte 1= Process data valid
-  -- Byte 2= Byte length of data
-  -- Byte 3= Data
-  local l_data = string.char(0x01, #data+1) .. data
+
   local l_returnCode, detailErrorCode
 
   if availableAPIs.specificSGI then
-    l_returnCode = IOLink.SMI.setPDOut(processingParams.SMIhandle, processingParams.port, l_data)
+    l_returnCode = IOLink.SMI.setPDOut(processingParams.SMIhandle, processingParams.port, data)
   elseif availableAPIs.specificSMI then
+    -- Byte 1= Process data valid
+    -- Byte 2= Byte length of data
+    -- Byte 3= Data
+    local l_data = string.char(0x01, #data+1) .. data
     l_returnCode, detailErrorCode = IOLink.SMI.setPDOut(processingParams.SMIhandle, processingParams.port, l_data)
   end
 
@@ -209,7 +210,7 @@ end
 ---@return bool success Success of writing.
 ---@return string? details Detailed error if writing is not successful.
 local function writeProcessDataIODD(jsonDataPointInfo, jsonData)
-  local dataPointInfo = converter.renameDatatype(json.decode(jsonDataPointInfo))
+  local dataPointInfo = json.decode(jsonDataPointInfo)
   return writeProcessData(dataPointInfo, json.decode(jsonData))
 end
 Script.serveFunction('CSK_MultiIOLinkSMI.writeProcessDataIODD_' .. multiIOLinkSMIInstanceNumberString, writeProcessDataIODD, 'string:1:,string:1:', 'bool:1:,string:?:')
@@ -276,7 +277,7 @@ end
 ---@param jsonDataPointInfo string JSON table containing parameter info from IODD file.
 ---@return string? jsonData JSON table with interpted parameter value.
 local function readParameterIODD(index, subindex, jsonDataPointInfo)
-  local dataPointInfo = converter.renameDatatype(json.decode(jsonDataPointInfo))
+  local dataPointInfo = json.decode(jsonDataPointInfo)
   dataPointInfo.index = index
   dataPointInfo.subindex = subindex
   local success, readData = readParameter(dataPointInfo)
@@ -346,7 +347,11 @@ local function writeParameter(dataPointInfo, dataToWrite)
     _G.logger:warning(nameOfModule..': failed to convert parameter for writing on port ' .. tostring(processingParams.port) .. ' instancenumber ' .. multiIOLinkSMIInstanceNumberString ..'; datapoint info: ' .. tostring(json.encode(dataPointInfo)) .. '; data: ' .. tostring(json.encode(dataToWrite)))
     return false, 'failed to convert data'
   end
-  return writeBinaryServiceData(tonumber(dataPointInfo.index), tonumber(dataPointInfo.subindex), binDataToWrite)
+  if not dataPointInfo.info.subindex then
+    return writeBinaryServiceData(tonumber(dataPointInfo.info.index), 0, binDataToWrite)
+  else
+    return writeBinaryServiceData(tonumber(dataPointInfo.info.index), tonumber(dataPointInfo.subindex), binDataToWrite)
+  end
 end
 
 --Write parameter with provided info from IODD interpreter and data to write (as JSON tables).
@@ -357,7 +362,7 @@ end
 ---@return bool success Success of writing.
 ---@return string? details Detailed error if writing is not successful.
 local function writeParameterIODD(index, subindex, jsonDataPointInfo, jsonDataToWrite)
-  local dataPointInfo = converter.renameDatatype(json.decode(jsonDataPointInfo))
+  local dataPointInfo = json.decode(jsonDataPointInfo)
   dataPointInfo.index = index
   dataPointInfo.subindex = subindex
   return writeParameter(dataPointInfo, json.decode(jsonDataToWrite))
@@ -695,25 +700,33 @@ local function writeIODDMessage(messageName, jsonDataToWrite)
   end
   local errorMessage
   local messageWriteSuccess = true
-  if ioddWriteMessages[messageName].dataInfo.ProcessData and ioddWriteMessages[messageName].dataInfo.Parameters == nil then
-    dataToWrite = {ProcessData = dataToWrite}
-  elseif ioddWriteMessages[messageName].dataInfo.ProcessData == nil and ioddWriteMessages[messageName].dataInfo.Parameters then
-    dataToWrite = {Parameters = dataToWrite}
-  end
-  for dataMode, dataModeInfo in pairs(dataToWrite) do
-    for dataPointID, dataPointDataToWrite in pairs(dataModeInfo) do
-      local success = true
-      local errorCode
-      if dataMode == 'ProcessData' then
-        success, errorCode = writeProcessData(ioddWriteMessages[messageName].dataInfo.ProcessData[dataPointID], dataPointDataToWrite)
-      elseif dataMode == 'Parameters' then
-        success, errorCode = writeParameter(ioddWriteMessages[messageName].dataInfo.Parameters[dataPointID], dataPointDataToWrite)
+  if ioddWriteMessages[messageName] then
+    if ioddWriteMessages[messageName].dataInfo.ProcessData then
+      if ioddWriteMessages[messageName].dataInfo.ProcessData and ioddWriteMessages[messageName].dataInfo.Parameters == nil then
+        dataToWrite = {ProcessData = dataToWrite}
+      elseif ioddWriteMessages[messageName].dataInfo.ProcessData == nil and ioddWriteMessages[messageName].dataInfo.Parameters then
+        dataToWrite = {Parameters = dataToWrite}
       end
-      if not success and not errorMessage and errorCode then
-        errorMessage = 'Error code:' .. errorCode .. ';'
+      for dataMode, dataModeInfo in pairs(dataToWrite) do
+        for dataPointID, dataPointDataToWrite in pairs(dataModeInfo) do
+          local success = true
+          local errorCode
+          if dataMode == 'ProcessData' then
+            success, errorCode = writeProcessData(ioddWriteMessages[messageName].dataInfo.ProcessData[dataPointID], dataPointDataToWrite)
+          elseif dataMode == 'Parameters' then
+            success, errorCode = writeParameter(ioddWriteMessages[messageName].dataInfo.Parameters[dataPointID], dataPointDataToWrite)
+          end
+          if not success and not errorMessage and errorCode then
+            errorMessage = 'Error code:' .. errorCode .. ';'
+          end
+          messageWriteSuccess = messageWriteSuccess and success
+        end
       end
-      messageWriteSuccess = messageWriteSuccess and success
+    else
+      _G.logger:warning(nameOfModule..': No data selected.')
     end
+  else
+    _G.logger:warning(nameOfModule..': Initially no data selected.')
   end
   ioddLatesWriteMessages[messageName] = jsonDataToWrite
   ioddWriteMessagesResults[messageName] = messageWriteSuccess
@@ -725,19 +738,6 @@ Script.serveFunction('CSK_MultiIOLinkSMI.writeIODDMessage' .. multiIOLinkSMIInst
 local function updateIODDWriteMessages()
   ioddWriteMessagesResults = {}
   ioddLatesWriteMessages = {}
-  for messageName, messageInfo in pairs(ioddWriteMessages) do
-    if helperFuncs.getTableSize(messageInfo.dataInfo) == 0 then
-      goto nextMessage
-    end
-    for dataMode, dataModeInfo in pairs(messageInfo.dataInfo) do
-      if dataMode == "ProcessData" or dataMode == "Parameters" then
-        for dataPointID, dataPointInfo in pairs(dataModeInfo) do
-          ioddWriteMessages[messageName].dataInfo[dataMode][dataPointID] = converter.renameDatatype(dataPointInfo)
-        end
-      end
-    end
-    ::nextMessage::
-  end
   local queueFunctions = {}
   for messageName, messageInfo in pairs(ioddWriteMessages) do
     local function writeDestinations(jsonDataToWrite)
