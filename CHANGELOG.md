@@ -22,6 +22,7 @@ All notable changes to this project will be documented in this file.
 
 ### Bugfix
 - Issue with CSK_UserManagement support
+- Error if sending process data without any selection
 
 ## Release 2.1.1
 
