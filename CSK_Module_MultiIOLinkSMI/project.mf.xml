@@ -1187,7 +1187,6 @@ Provide IO-Link data.</desc>
         </crown>
         <meta key="author">SICK AG</meta>
         <meta key="version">3.0.0</meta>
-        <meta key="version">2.1.1</meta>
         <meta key="priority">low</meta>
         <meta key="copy-protected">false</meta>
         <meta key="read-protected">false</meta>
