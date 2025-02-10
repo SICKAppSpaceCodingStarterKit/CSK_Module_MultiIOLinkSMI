@@ -49,6 +49,7 @@ local ioddWriteMessagesQueue = Script.Queue.create() -- Queue of write messages 
 
 local ioddLatesWriteMessages = {} -- table with latest write messages
 local ioddWriteMessagesResults = {} -- table with latest results of writing messages
+local registeredIODDWriteFunctions = {} -- table with local functions registrations for write message to be able to deregister the events
 
 local portStatus = 'PORT_NOT_ACTIVE' -- Status of port
 local readMessageTimerActive = false -- -- Status if read Message timers should run
@@ -738,8 +739,6 @@ local function writeIODDMessage(messageName, jsonDataToWrite)
   return messageWriteSuccess, errorMessage
 end
 Script.serveFunction('CSK_MultiIOLinkSMI.writeIODDMessage' .. multiIOLinkSMIInstanceNumberString, writeIODDMessage, 'string:1:,string:1:',  'bool:1:,string:?:')
-
-local registeredIODDWriteFunctions = {}
 
 --- Update configuration of write messages
 local function updateIODDWriteMessages()
