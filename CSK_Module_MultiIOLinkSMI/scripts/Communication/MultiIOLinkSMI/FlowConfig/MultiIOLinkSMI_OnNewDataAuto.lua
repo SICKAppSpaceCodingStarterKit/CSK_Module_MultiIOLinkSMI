@@ -29,6 +29,17 @@ Timer.register(tmrReadMessage, 'OnExpired', handleOnExpired)
 
 --- Function to automatically setup IO-Link configuration
 local function handleIOLinkSetup()
+
+  local amount = CSK_MultiIOLinkSMI.getInstancesAmount()
+
+  -- First reset setup if it was configured before
+  for i = 1, amount do
+    CSK_MultiIOLinkSMI.setSelectedInstance(i)
+    CSK_MultiIOLinkSMI.deleteAllReadMessages()
+    CSK_MultiIOLinkSMI.activateInstance(false)
+    CSK_MultiIOLinkSMI.setPort('')
+  end
+
   if CSK_PowerManager then
     local moduleActive = CSK_PowerManager.getStatusModuleActive()
     if moduleActive then
@@ -113,17 +124,17 @@ local function register(handle, _ , callback)
 
   if not portExists then
     -- Create new table for port configuration
-    local instanceTable = {}
-    instanceTable.port = port
-    instanceTable.portActive = false
-    instanceTable.messageInfos = {}
-    instanceTable.messageInfos.names = {}
-    instanceTable.messageInfos.cycleTimes = {}
-    instanceTable.messageInfos.startBytes = {}
-    instanceTable.messageInfos.endBytes = {}
-    instanceTable.messageInfos.unpackFormats = {}
+    local instanceSetup = {}
+    instanceSetup.port = port
+    instanceSetup.portActive = false
+    instanceSetup.messageInfos = {}
+    instanceSetup.messageInfos.names = {}
+    instanceSetup.messageInfos.cycleTimes = {}
+    instanceSetup.messageInfos.startBytes = {}
+    instanceSetup.messageInfos.endBytes = {}
+    instanceSetup.messageInfos.unpackFormats = {}
 
-    table.insert(portInfos, instanceTable)
+    table.insert(portInfos, instanceSetup)
     portPosition = #portInfos
   end
 
@@ -177,20 +188,8 @@ local function create(port, cycleTime, startByte, endByte, unpackFormat)
 end
 Script.serveFunction(BLOCK_NAMESPACE .. ".create", create)
 
---- Function to reset automatically made IO-Link setup
-local function resetIOLinkSetup()
-  for key, value in ipairs(portInfos) do
-    CSK_MultiIOLinkSMI.setSelectedInstance(key)
-    CSK_MultiIOLinkSMI.deleteAllReadMessages()
-    CSK_MultiIOLinkSMI.activateInstance(false)
-    CSK_MultiIOLinkSMI.setPort('')
-  end
-end
-
 --- Function to reset instances if FlowConfig was cleared
 local function handleOnClearOldFlow()
-
-  resetIOLinkSetup()
 
   Script.releaseObject(instanceTable)
   instanceTable = {}

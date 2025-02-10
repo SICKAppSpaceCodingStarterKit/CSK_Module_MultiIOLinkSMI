@@ -5,7 +5,7 @@
 
 require('Communication.MultiIOLinkSMI.FlowConfig.MultiIOLinkSMI_OnNewData')
 require('Communication.MultiIOLinkSMI.FlowConfig.MultiIOLinkSMI_OnNewDataAuto')
---require('Communication.MultiIOLinkSMI.FlowConfig.MultiIOLinkSMI_SendRequest')
+require('Communication.MultiIOLinkSMI.FlowConfig.MultiIOLinkSMI_WriteProcessData')
 
 -- Reference to the multiIOLinkSMI_Instances handle
 local multiIOLinkSMI_Instances

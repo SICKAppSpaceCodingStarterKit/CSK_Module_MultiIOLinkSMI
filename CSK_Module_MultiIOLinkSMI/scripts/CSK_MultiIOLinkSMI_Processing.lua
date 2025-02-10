@@ -536,7 +536,12 @@ local function readMessageNoIODD(messageName)
 
     local dataPart
     if availableAPIs.specificSGI then
-      dataPart = string.sub(processData, ioddReadMessages[messageName]['processDataStartByte']+1, ioddReadMessages[messageName]['processDataEndByte']+1)
+      if ioddReadMessages[messageName]['processDataUnpackFormat'] == 'bit' then
+        -- Only cut single byte
+        dataPart = string.sub(processData, ioddReadMessages[messageName]['processDataStartByte']+1, ioddReadMessages[messageName]['processDataStartByte']+1)
+      else
+        dataPart = string.sub(processData, ioddReadMessages[messageName]['processDataStartByte']+1, ioddReadMessages[messageName]['processDataEndByte']+1)
+      end
     elseif availableAPIs.specificSMI then
 
       local portQualifier = string.byte(processData, 1)
@@ -559,7 +564,7 @@ local function readMessageNoIODD(messageName)
       end
     end
 
-    local subSuc, dataContent = pcall(helperFuncs.unpack, ioddReadMessages[messageName]['processDataUnpackFormat'], dataPart)
+    local subSuc, dataContent = pcall(helperFuncs.unpack, ioddReadMessages[messageName]['processDataUnpackFormat'], dataPart, ioddReadMessages[messageName]['processDataEndByte'])
     if subSuc then
       return true, dataContent
     else
@@ -734,8 +739,15 @@ local function writeIODDMessage(messageName, jsonDataToWrite)
 end
 Script.serveFunction('CSK_MultiIOLinkSMI.writeIODDMessage' .. multiIOLinkSMIInstanceNumberString, writeIODDMessage, 'string:1:,string:1:',  'bool:1:,string:?:')
 
+local registeredIODDWriteFunctions = {}
+
 --- Update configuration of write messages
 local function updateIODDWriteMessages()
+  -- Deregister from all events
+  for messageName, eventInfo in pairs(registeredIODDWriteFunctions) do
+    Script.deregister(eventInfo.eventName, eventInfo.registeredFunction)
+  end
+  registeredIODDWriteFunctions = {}
   ioddWriteMessagesResults = {}
   ioddLatesWriteMessages = {}
   local queueFunctions = {}
@@ -762,6 +774,15 @@ local function updateIODDWriteMessages()
       end
       local timestamp2 = DateTime.getTimestamp()
       return messageWriteSuccess, queueSize, timestamp2-timestamp1, errorMessage
+    end
+    if messageInfo.writeMessageEventName and messageInfo.writeMessageEventName ~= "" then
+      local registerSuccess = Script.register(messageInfo.writeMessageEventName, writeDestinations)
+      if registerSuccess then
+        registeredIODDWriteFunctions[messageName] = {
+          eventName = messageInfo.writeMessageEventName,
+          registeredFunction = writeDestinations
+        }
+      end
     end
     local functionName = "CSK_MultiIOLinkSMI.writeMessage" .. processingParams.port .. messageName
     if not Script.isServedAsFunction(functionName) then

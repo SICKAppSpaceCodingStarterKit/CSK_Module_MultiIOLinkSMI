@@ -154,12 +154,23 @@ local function convertContainer2Table(cont)
 end
 funcs.convertContainer2Table = convertContainer2Table
 
-local function unpack(fmt, data)
-  local suc = string.unpack(fmt, data)
-  if suc then
-    return suc
+--- Function to unpack data out binary
+---@param fmt string Format to use to unpack binary data
+---@param data binary Binary data
+---@param bitPosition int Position of bit within byte if fmt is 'bit'
+---@return auto data Unpacked data
+local function unpack(fmt, data, bitPosition)
+  if fmt == 'bit' then
+    local byteData = string.unpack('B', data)
+    local status = byteData >> bitPosition & 1
+    return status
   else
-    return false
+    local suc = string.unpack(fmt, data)
+    if suc then
+      return suc
+    else
+      return false
+    end
   end
 end
 funcs.unpack = unpack

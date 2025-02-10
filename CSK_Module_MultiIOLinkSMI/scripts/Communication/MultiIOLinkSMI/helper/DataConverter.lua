@@ -127,14 +127,13 @@ end
 converter.toBinaryString = toBinaryString
 
 -------------------------------------------------------------------------------------
--- Disassemble data
-
 -- Gets necessary bits out of the bytes
-local function extract(n, field, width)
+local function extract(n, field, width, byteLengthItem)
     -- Shift right by 'field' to get the bits starting at 'field' in the least significant bits
-    local shifted = n >> field
+    local shifted = n << field
     -- Create a mask with 'width' bits set to 1
     local mask = (1 << width) - 1
+    mask = mask << (byteLengthItem*8 - width)
     -- Apply the mask to isolate 'width' bits
     return shifted & mask
 end
@@ -144,11 +143,12 @@ local function disassembleData(data, bitOffset, bitLength)
   local byteLength = string.len(data)
   local l_startBit = byteLength*8 - bitLength - bitOffset + 1
   local l_startByte = math.ceil(l_startBit / 8)
-  local l_startBitInByte = l_startBit % 8 - 1
+  local l_startBitInByte = (l_startBit-1) % 8
   local l_byteLengthItem = math.ceil(bitLength / 8)
   local l_dataAsNumber = string.unpack(">I" .. tostring(l_byteLengthItem), data, l_startByte)
-  local l_extractedValue = extract(l_dataAsNumber, l_startBitInByte, bitLength)
+  local l_extractedValue = extract(l_dataAsNumber, l_startBitInByte, bitLength, l_byteLengthItem)
   local l_asBinaryString = toBinaryString(l_extractedValue, l_byteLengthItem)
+
   return l_asBinaryString
 end
 converter.disassembleData = disassembleData

@@ -370,16 +370,20 @@ function multiIOLinkSMI:createIODDReadMessage(messageName, noIODD)
     ioddInstanceId = tempIODDInstanceId
   }
   if useIODD then
-    CSK_IODDInterpreter.addInstance()
-    CSK_IODDInterpreter.setInstanceName(self.parameters.ioddReadMessages[messageName].ioddInstanceId)
-    CSK_IODDInterpreter.setSelectedIODD(self.parameters.ioddInfo.ioddName)
-    CSK_IODDInterpreter.setSelectedInstance(self.parameters.ioddReadMessages[messageName].ioddInstanceId)
-    if self.parameters.ioddInfo.isProcessDataVariable then
-      CSK_IODDInterpreter.changeProcessDataStructureOptionName(
-        self.parameters.ioddInfo.currentCondition
-      )
+    if CSK_IODDInterpreter then
+      CSK_IODDInterpreter.addInstance()
+      CSK_IODDInterpreter.setInstanceName(self.parameters.ioddReadMessages[messageName].ioddInstanceId)
+      CSK_IODDInterpreter.setSelectedIODD(self.parameters.ioddInfo.ioddName)
+      CSK_IODDInterpreter.setSelectedInstance(self.parameters.ioddReadMessages[messageName].ioddInstanceId)
+      if self.parameters.ioddInfo.isProcessDataVariable then
+        CSK_IODDInterpreter.changeProcessDataStructureOptionName(
+          self.parameters.ioddInfo.currentCondition
+        )
+      end
+      CSK_IODDInterpreter.setSelectedInstance(self.parameters.ioddReadMessages[messageName].ioddInstanceId)
+    else
+      _G.logger:info(nameOfModule .. ": CSK_IODDInterpreter not available.")
     end
-    CSK_IODDInterpreter.setSelectedInstance(self.parameters.ioddReadMessages[messageName].ioddInstanceId)
   end
 end
 
@@ -387,8 +391,10 @@ end
 ---@param messageToDelete string Message to delete
 function multiIOLinkSMI:deleteIODDReadMessage(messageToDelete)
   if self.parameters.ioddReadMessages[messageToDelete] then
-    CSK_IODDInterpreter.setSelectedInstance(self.parameters.ioddReadMessages[messageToDelete].ioddInstanceId)
-    CSK_IODDInterpreter.deleteInstance()
+    if CSK_IODDInterpreter then
+      CSK_IODDInterpreter.setSelectedInstance(self.parameters.ioddReadMessages[messageToDelete].ioddInstanceId)
+      CSK_IODDInterpreter.deleteInstance()
+    end
     self.parameters.ioddReadMessages[messageToDelete] = nil
     if not self.parameters.ioddReadMessages then
       self.parameters.ioddReadMessages = {}
@@ -403,29 +409,38 @@ end
 --- Function to create a write message and instance for the message in CSK_Module_IODDInterpreter
 ---@param messageName string Name of message to create
 function multiIOLinkSMI:createIODDWriteMessage(messageName)
-  self.parameters.ioddWriteMessages[messageName] = {
-    ioddInstanceId = self.parameters.ioddInfo.ioddInstanceId .. '_WriteMessage_' .. messageName
-  }
-  CSK_IODDInterpreter.addInstance()
-  CSK_IODDInterpreter.setInstanceName(self.parameters.ioddWriteMessages[messageName].ioddInstanceId)
-  CSK_IODDInterpreter.setSelectedIODD(self.parameters.ioddInfo.ioddName)
-  CSK_IODDInterpreter.setSelectedInstance(self.parameters.ioddWriteMessages[messageName].ioddInstanceId)
-  if self.parameters.ioddInfo.isProcessDataVariable then
-    CSK_IODDInterpreter.changeProcessDataStructureOptionName(
-      self.parameters.ioddInfo.currentCondition
-    )
+if CSK_IODDInterpreter then
+    self.parameters.ioddWriteMessages[messageName] = {
+      writeMessageEventName = "",
+      ioddInstanceId = self.parameters.ioddInfo.ioddInstanceId .. '_WriteMessage_' .. messageName
+    }
+    CSK_IODDInterpreter.addInstance()
+    CSK_IODDInterpreter.setInstanceName(self.parameters.ioddWriteMessages[messageName].ioddInstanceId)
+    CSK_IODDInterpreter.setSelectedIODD(self.parameters.ioddInfo.ioddName)
+    CSK_IODDInterpreter.setSelectedInstance(self.parameters.ioddWriteMessages[messageName].ioddInstanceId)
+    if self.parameters.ioddInfo.isProcessDataVariable then
+      CSK_IODDInterpreter.changeProcessDataStructureOptionName(
+        self.parameters.ioddInfo.currentCondition
+      )
+    end
+    CSK_IODDInterpreter.setSelectedInstance(self.parameters.ioddWriteMessages[messageName].ioddInstanceId)
+  else
+    _G.logger:info(nameOfModule .. ": CSK_IODDInterpreter not available.")
   end
-  CSK_IODDInterpreter.setSelectedInstance(self.parameters.ioddWriteMessages[messageName].ioddInstanceId)
 end
 
 --- Function to delete an IODD message and instance in CSK_Module_IODDInterpreter
 ---@param messageToDelete string Message to delete
 function multiIOLinkSMI:deleteIODDWriteMessage(messageToDelete)
-  CSK_IODDInterpreter.setSelectedInstance(self.parameters.ioddWriteMessages[messageToDelete].ioddInstanceId)
-  CSK_IODDInterpreter.deleteInstance()
-  self.parameters.ioddWriteMessages[messageToDelete] = nil
-  if not self.parameters.ioddWriteMessages then
-    self.parameters.ioddWriteMessages = {}
+  if CSK_IODDInterpreter then
+    CSK_IODDInterpreter.setSelectedInstance(self.parameters.ioddWriteMessages[messageToDelete].ioddInstanceId)
+    CSK_IODDInterpreter.deleteInstance()
+    self.parameters.ioddWriteMessages[messageToDelete] = nil
+    if not self.parameters.ioddWriteMessages then
+      self.parameters.ioddWriteMessages = {}
+    end
+  else
+    _G.logger:info(nameOfModule .. ": CSK_IODDInterpreter not available.")
   end
 end
 

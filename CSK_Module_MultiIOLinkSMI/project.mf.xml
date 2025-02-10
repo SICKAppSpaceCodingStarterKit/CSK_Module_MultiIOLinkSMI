@@ -500,6 +500,11 @@ INSTANCE and PORT will be replaced by the instanceIdentifier and sensor port the
 INFO: Other modules can check via "Script.isServedAsEvent" if event exists.</desc>
                     <param desc="Manually unpacked part of process data (no IODD Interpreter used)." multiplicity="?" name="data" type="auto"/>
                 </event>
+                <event name="OnNewWriteMessageEventName">
+                    <trait>released</trait>
+                    <desc>Event to notify the name of the write data event that was preconfigured and is registered to.</desc>
+                    <param desc="" multiplicity="1" name="eventName" type="string"/>
+                </event>
                 <function name="setParameterName">
                     <desc>Function to set the name of the parameters if saved/loaded via the CSK_PersistentData module.</desc>
                     <param desc="Name of the parameter" multiplicity="1" name="name" type="string"/>
@@ -1110,6 +1115,11 @@ NUM will be replaced by the number of instance (e.g. "readProcessDataBinary_1").
                 <function name="deleteAllReadMessages">
                     <desc>Function to delete all readMessages of currently selected instance.</desc>
                 </function>
+                <function name="setIODDWriteMessageEventName">
+                    <trait>released</trait>
+                    <desc>Set event name to register to and write the parameter of the event as data to IOLink sensor.</desc>
+                    <param desc="Event name." multiplicity="1" name="newWriteMessageEventName" type="string"/>
+                </function>
             </serves>
         </crown>
         <crown name="MultiIOLinkSMI_FC">
@@ -1121,13 +1131,13 @@ NUM will be replaced by the number of instance (e.g. "readProcessDataBinary_1").
             <serves/>
             <crown name="OnNewData">
                 <trait>released</trait>
-                <desc>IMPORTANT: First activate ports in IOLinkSMI module and create readMessage!
+                <desc>IMPORTANT: First activate ports in IOLinkSMI module and create readMessage! Do not mix with "OnNewDataAuto" blocks!
 
 Provide IO-Link data of created readMessages.</desc>
                 <serves>
                     <event name="OnNewData">
                         <include>data-flow</include>
-                        <desc>IMPORTANT: First activate ports in IOLinkSMI module and create readMessage!
+                        <desc>IMPORTANT: First activate ports in IOLinkSMI module and create readMessage! Do not mix with "OnNewDataAuto" blocks!
 
 Provide IO-Link data of created readMessages.</desc>
                         <param desc="Handle to internally used FlowConfig instance." multiplicity="1" name="handle" type="handle"/>
@@ -1152,13 +1162,13 @@ Provide IO-Link data of created readMessages.</desc>
             </crown>
             <crown name="OnNewDataAuto">
                 <trait>released</trait>
-                <desc>WARNING: Will automatically setup the CSK_MultiIOLinkSMI and CSK_PowerManager (if it exists) configuration. Might get in conflict with parallel done configurations!
+                <desc>WARNING: Do not mix with "OnNewData" blocks! Will automatically setup the CSK_MultiIOLinkSMI and CSK_PowerManager (if it exists) configuration. Might get in conflict with parallel done configurations!
 
 Provide IO-Link data.</desc>
                 <serves>
                     <event name="OnNewDataAuto">
                         <include>data-flow</include>
-                        <desc>WARNING: Will automatically setup the CSK_MultiIOLinkSMI and CSK_PowerManager (if it exists) configuration. Might get in conflict with parallel done configurations!
+                        <desc>WARNING: Do not mix with "OnNewData" blocks! Will automatically setup the CSK_MultiIOLinkSMI and CSK_PowerManager (if it exists) configuration. Might get in conflict with parallel done configurations!
 
 Provide IO-Link data.</desc>
                         <param desc="Handle to internally used FlowConfig instance." multiplicity="1" name="handle" type="handle"/>
@@ -1169,9 +1179,9 @@ Provide IO-Link data.</desc>
                         <desc>Internally used CSK_FlowConfig create function.</desc>
                         <param desc="IO-Link port." multiplicity="1" name="Port" ref="MultiIOLinkSMI_FC.IOLinkMasterPorts" type="enum"/>
                         <param desc="Cycle time to read process data." multiplicity="1" name="CycleTime" type="int"/>
-                        <param desc="Start byte of relevant process data to crop." multiplicity="1" name="StartByte" type="int"/>
-                        <param desc="End byte of relevant process data to crop." multiplicity="1" name="EndByte" type="int"/>
-                        <param desc="Format to unpack cropped data." multiplicity="1" name="UnpackFormat" type="string"/>
+                        <param desc="Start byte of relevant process data to crop (starts at 0)" multiplicity="1" name="StartByte" type="int"/>
+                        <param desc="End byte of relevant process data to crop or position of bit to read if unpack format is 'bit'." multiplicity="1" name="EndByteOrBitPosition" type="int"/>
+                        <param desc="Format to interpret raw data.&#10;E.g. &quot;&gt;I4&quot; to unpack 4 Bytes unsigned INT, big endian byte order&#10;&#10;&lt; = little endian&#10;&gt; = big endian&#10;I[n] = unsigned INT of n Bytes&#10;i[n] = signed INT of n Bytes&#10;bit = read single bit within selected startByte (custom format)&#10;...&#10;Check further formats within the documentation of the string.unpack LUA function." multiplicity="1" name="UnpackFormat" type="string"/>
                         <return desc="Handle to internally used FlowConfig instance." multiplicity="1" name="handle" type="handle"/>
                     </function>
                     <function name="register">
@@ -1181,6 +1191,29 @@ Provide IO-Link data.</desc>
                         <param desc="Internal parameter (not used)." multiplicity="1" name="eventname" type="string"/>
                         <param desc="Internally used callback function." multiplicity="1" name="callback" type="string"/>
                         <return desc="Success of register process." multiplicity="1" name="success" type="bool"/>
+                    </function>
+                </serves>
+            </crown>
+            <crown name="WriteProcessData">
+                <trait>released</trait>
+                <desc>IMPORTANT: First activate ports in IOLinkSMI module and create writeMessage!
+
+Set source event of incoming data to use for writeMessage.</desc>
+                <serves>
+                    <function name="create">
+                        <trait>released</trait>
+                        <desc>Internally used CSK_FlowConfig create function.</desc>
+                        <param constraint="1-99" desc="IO-Link port." multiplicity="1" name="Port" ref="MultiIOLinkSMI_FC.IOLinkMasterPorts" type="enum"/>
+                        <param desc="Name of writeMessage to write data.&#10;IMPORTANT: Please make sure that related writeMessage already exists." multiplicity="1" name="WriteMessageName" type="string"/>
+                        <return desc="Handle to internally used FlowConfig instance." multiplicity="1" name="handle" type="handle"/>
+                    </function>
+                    <function name="writeProcessData">
+                        <include>data-flow</include>
+                        <desc>IMPORTANT: First activate ports in IOLinkSMI module and create writeMessage!
+
+Set source event of incoming data to use for writeMessage.</desc>
+                        <param desc="Handle to internally used FlowConfig instance." multiplicity="1" name="handle" type="handle"/>
+                        <param desc="Event to get data to use for writeMessage.&#10;&#10;Parameter:&#10;1: data (STRING)" multiplicity="1" name="source" type="string"/>
                     </function>
                 </serves>
             </crown>

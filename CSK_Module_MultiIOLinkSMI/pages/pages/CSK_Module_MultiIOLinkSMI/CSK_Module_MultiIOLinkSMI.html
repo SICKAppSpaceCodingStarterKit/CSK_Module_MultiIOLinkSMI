@@ -985,6 +985,13 @@
                                                                         <layout-row id="RowLayout43">
                                                                             <layout-column id="ColumnLayout44"
                                                                                 style="align-items: stretch">
+                                                                                <layout-row id="RowLayout89"
+                                                                                    class="myCustomSpacerVert10_CSK_Module_MultiIOLinkSMI"
+                                                                                    style="flex-grow: 0; flex-shrink: 0">
+                                                                                </layout-row>
+                                                                                <davinci-value-display id="VD_IODD"
+                                                                                    label="IODD Message">
+                                                                                </davinci-value-display>
                                                                                 <davinci-tabs
                                                                                     id="Tabs_ProcessDataParametersLiveJSON"
                                                                                     type="modern">
@@ -1279,7 +1286,7 @@
                                                                                         style="align-items: stretch">
                                                                                         <davinci-value-display
                                                                                             id="VD_ProcessData"
-                                                                                            label="Process data">
+                                                                                            label="Process data (NO IODD)">
                                                                                         </davinci-value-display>
                                                                                         <layout-row id="RowLayout38"
                                                                                             style="justify-content: space-between">
@@ -1296,7 +1303,8 @@
                                                                                                 style="align-items: stretch; flex-grow: 3">
                                                                                                 <davinci-value-display
                                                                                                     id="VD_ReadMessageProcessDataEndByte"
-                                                                                                    value="End Byte">
+                                                                                                    value="End Byte (or bit position)"
+                                                                                                    title="Set end byte to cut out of process data or position of bit to read if unpack format is 'bit'.">
                                                                                                 </davinci-value-display>
                                                                                             </layout-column>
                                                                                             <layout-column
@@ -1304,7 +1312,8 @@
                                                                                                 style="align-items: stretch; flex-grow: 3">
                                                                                                 <davinci-value-display
                                                                                                     id="VD_ReadMessageProcessDataUnpackFormat"
-                                                                                                    value="Unpack format">
+                                                                                                    value="Unpack format"
+                                                                                                    title="Set unpack format to interpret raw data and to unpack via internal LUA function 'string.unpack' (e.g. '>I4' to unpack 4 Bytes unsigned INT, big endian byte order or use custom format 'bit' to read the status of a specific bit).">
                                                                                                 </davinci-value-display>
                                                                                             </layout-column>
                                                                                             <layout-column
@@ -1345,12 +1354,12 @@
                                                                                                 <davinci-numeric-field
                                                                                                     id="NF_ReadMessageEndByte"
                                                                                                     type="outline"
-                                                                                                    min="1" max="10000"
+                                                                                                    min="0" max="10000"
                                                                                                     ticks="1"
                                                                                                     group-separator=","
                                                                                                     decimal-separator="."
                                                                                                     format-pattern="0"
-                                                                                                    title="Set end byte to cut out of process data.">
+                                                                                                    title="Set end byte to cut out of process data or position of bit to read if unpack format is 'bit'.">
                                                                                                     <crown-edpws-binding
                                                                                                         property="value"
                                                                                                         name="CSK_MultiIOLinkSMI/OnNewStatusReadMessageProcessDataEndByte"
@@ -1370,7 +1379,7 @@
                                                                                                 <davinci-text-field
                                                                                                     id="TF_ReadMessageUnpackFormat"
                                                                                                     type="text"
-                                                                                                    title="Set unpack format to interpret raw data and to unpack via internal LUA function 'string.unpack'.">
+                                                                                                    title="Set unpack format to interpret raw data and to unpack via internal LUA function 'string.unpack' (e.g. '>I4' to unpack 4 Bytes unsigned INT, big endian byte order or use custom format 'bit' to read the status of a specific bit).">
                                                                                                     <crown-edpws-binding
                                                                                                         property="value"
                                                                                                         name="CSK_MultiIOLinkSMI/OnNewStatusReadMessageProcessDataUnpackFormat"
@@ -1656,6 +1665,18 @@
                                                         <layout-row id="RowLayout446">
                                                             <layout-column id="ColumnLayout66"
                                                                 style="align-items: stretch">
+                                                                <davinci-text-field id="TF_WriteMessageEventName"
+                                                                    type="text" label="Event name to register to"
+                                                                    placeholder="like 'CSK_Module.OnNewEvent'. The first event parameter will be used to write to the IOLink device. The JSON format should match the selected message format.">
+                                                                    <crown-set event="change"
+                                                                        crown-function="CSK_MultiIOLinkSMI/setIODDWriteMessageEventName"
+                                                                        protocol="crownMSGPACK"
+                                                                        crown-path="newWriteMessageEventName">
+                                                                    </crown-set>
+                                                                    <crown-on property="value"
+                                                                        crown-event="CSK_MultiIOLinkSMI/OnNewWriteMessageEventName">
+                                                                    </crown-on>
+                                                                </davinci-text-field>
                                                                 <davinci-collapse id="Collapse_WriteMessageInfo"
                                                                     collapsed-title="Show Function call infos"
                                                                     expanded-title="Hide">
