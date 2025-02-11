@@ -1162,13 +1162,17 @@ Provide IO-Link data of created readMessages.</desc>
             </crown>
             <crown name="OnNewDataAuto">
                 <trait>released</trait>
-                <desc>WARNING: Do not mix with "OnNewData" blocks! Will automatically setup the CSK_MultiIOLinkSMI and CSK_PowerManager (if it exists) configuration. Might get in conflict with parallel done configurations!
+                <desc>WARNING: Do not use together with "OnNewData" or "WriteProcessData" blocks!
+Will automatically setup the CSK_MultiIOLinkSMI and CSK_PowerManager (if it exists) configuration.
+Might get in conflict with parallel done configurations!
 
 Provide IO-Link data.</desc>
                 <serves>
                     <event name="OnNewDataAuto">
                         <include>data-flow</include>
-                        <desc>WARNING: Do not mix with "OnNewData" blocks! Will automatically setup the CSK_MultiIOLinkSMI and CSK_PowerManager (if it exists) configuration. Might get in conflict with parallel done configurations!
+                        <desc>WARNING: Do not use together with "OnNewData" or "WriteProcessData" blocks!
+Will automatically setup the CSK_MultiIOLinkSMI and CSK_PowerManager (if it exists) configuration.
+Might get in conflict with parallel done configurations!
 
 Provide IO-Link data.</desc>
                         <param desc="Handle to internally used FlowConfig instance." multiplicity="1" name="handle" type="handle"/>

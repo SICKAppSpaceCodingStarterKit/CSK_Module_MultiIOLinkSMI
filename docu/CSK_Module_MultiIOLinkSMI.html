@@ -10887,7 +10887,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <i class="fa icon-important" title="Important"></i>
 </td>
 <td class="content">
-First activate ports in IOLinkSMI module and create readMessage! Do not mix with "OnNewDataAuto" blocks!
+First activate ports in IOLinkSMI module and create readMessage! Do not use together with "OnNewDataAuto" blocks!
 Provide IO-Link data of created readMessages.
 </td>
 </tr>
@@ -11088,7 +11088,7 @@ IMPORTANT: Please make sure that related readMessage already exists.</p></td>
 <i class="fa icon-important" title="Important"></i>
 </td>
 <td class="content">
-First activate ports in IOLinkSMI module and create readMessage! Do not mix with "OnNewDataAuto" blocks!
+First activate ports in IOLinkSMI module and create readMessage! Do not use together with "OnNewDataAuto" blocks!
 Provide IO-Link data of created readMessages.
 </td>
 </tr>
@@ -11156,7 +11156,10 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <i class="fa icon-warning" title="Warning"></i>
 </td>
 <td class="content">
-Do not mix with "OnNewData" blocks! Will automatically setup the CSK_MultiIOLinkSMI and CSK_PowerManager (if it exists) configuration. Might get in conflict with parallel done configurations!
+WARNING: Do not use together with "OnNewData" or "WriteProcessData" blocks!
+Will automatically setup the CSK_MultiIOLinkSMI and CSK_PowerManager (if it exists) configuration.
+Might get in conflict with parallel done configurations!
+
 Provide IO-Link data.
 </td>
 </tr>
@@ -11382,7 +11385,10 @@ Check further formats within the documentation of the string.unpack LUA function
 <i class="fa icon-warning" title="Warning"></i>
 </td>
 <td class="content">
-Do not mix with "OnNewData" blocks! Will automatically setup the CSK_MultiIOLinkSMI and CSK_PowerManager (if it exists) configuration. Might get in conflict with parallel done configurations!
+WARNING: Do not use together with "OnNewData" or "WriteProcessData" blocks!
+Will automatically setup the CSK_MultiIOLinkSMI and CSK_PowerManager (if it exists) configuration.
+Might get in conflict with parallel done configurations!
+
 Provide IO-Link data.
 </td>
 </tr>

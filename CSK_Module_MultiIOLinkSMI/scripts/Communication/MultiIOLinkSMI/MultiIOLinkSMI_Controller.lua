@@ -475,7 +475,7 @@ local function setSelectedInstance(instance)
     testWriteParameterIndex = 0
     testWriteParameterSubindex = 0
     testIODDMessageToWrite = ''
-    if multiIOLinkSMI_Instances[selectedInstance].parameters.ioddInfo then
+    if multiIOLinkSMI_Instances[selectedInstance].parameters.ioddInfo and CSK_IODDInterpreter then
       CSK_IODDInterpreter.setSelectedInstance(multiIOLinkSMI_Instances[selectedInstance].parameters.ioddInfo.ioddInstanceId)
     end
     Script.notifyEvent('MultiIOLinkSMI_OnNewProcessingParameter', selectedInstance, 'activeInUi', true)
@@ -1109,9 +1109,11 @@ end
 Script.serveFunction('CSK_MultiIOLinkSMI.setIODDWriteMessageName', setIODDWriteMessageName)
 
 local function setIODDWriteMessageEventName(newWriteMessageEventName)
-  _G.logger:info(nameOfModule .. ": Set event to register write message = " .. tostring(newWriteMessageEventName))
-  multiIOLinkSMI_Instances[selectedInstance].parameters.ioddWriteMessages[selectedIODDWriteMessage].writeMessageEventName = newWriteMessageEventName
-  Script.notifyEvent('MultiIOLinkSMI_OnNewProcessingParameter', selectedInstance, 'writeMessages', json.encode(multiIOLinkSMI_Instances[selectedInstance].parameters.ioddWriteMessages))
+  if multiIOLinkSMI_Instances[selectedInstance].parameters.ioddWriteMessages[selectedIODDWriteMessage] then
+    _G.logger:info(nameOfModule .. ": Set event to register write message = " .. tostring(newWriteMessageEventName))
+    multiIOLinkSMI_Instances[selectedInstance].parameters.ioddWriteMessages[selectedIODDWriteMessage].writeMessageEventName = newWriteMessageEventName
+    Script.notifyEvent('MultiIOLinkSMI_OnNewProcessingParameter', selectedInstance, 'writeMessages', json.encode(multiIOLinkSMI_Instances[selectedInstance].parameters.ioddWriteMessages))
+  end
 end
 Script.serveFunction('CSK_MultiIOLinkSMI.setIODDWriteMessageEventName', setIODDWriteMessageEventName)
 
