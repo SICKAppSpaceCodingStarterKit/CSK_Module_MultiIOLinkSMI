@@ -147,6 +147,7 @@ Script.serveEvent('CSK_MultiIOLinkSMI.OnNewTriggerValue',                     'M
 Script.serveEvent('CSK_MultiIOLinkSMI.OnNewSearchBegin',                      'MultiIOLinkSMI_OnNewSearchBegin')
 Script.serveEvent('CSK_MultiIOLinkSMI.OnNewSearchEnd',                        'MultiIOLinkSMI_OnNewSearchEnd')
 
+Script.serveEvent('CSK_MultiIOLinkSMI.OnNewStatusAutoStartReadMessageTimer',  'MultiIOLinkSMI_OnNewStatusAutoStartReadMessageTimer')
 Script.serveEvent('CSK_MultiIOLinkSMI.OnNewStatusReadMessageTimerActive',     'MultiIOLinkSMI_OnNewStatusReadMessageTimerActive')
 Script.serveEvent('CSK_MultiIOLinkSMI.OnNewStatusReadMessageIODDActive',      'MultiIOLinkSMI_OnNewStatusReadMessageIODDActive')
 
@@ -419,6 +420,7 @@ local function handleOnExpiredTmrMultiIOLinkSMI()
           Script.notifyEvent('MultiIOLinkSMI_OnNewReadMessageEventName', "CSK_MultiIOLinkSMI.OnNewRawReadMessage_" .. tostring(selectedInstance) .. '_' .. multiIOLinkSMI_Instances[selectedInstance].parameters.port .. '_' .. selectedIODDReadMessage)
         end
         Script.notifyEvent('MultiIOLinkSMI_OnNewStatusReadMessageTimerActive', multiIOLinkSMI_Model.timerActive)
+        Script.notifyEvent('MultiIOLinkSMI_OnNewStatusAutoStartReadMessageTimer', multiIOLinkSMI_Instances[selectedInstance].parameters.autoStartTimer)
 
       end
     elseif selectedTab == 2 then
@@ -966,6 +968,14 @@ local function setSearchEnd(pattern)
   Script.notifyEvent('MultiIOLinkSMI_OnNewProcessingParameter', selectedInstance, 'readMessages', json.encode(multiIOLinkSMI_Instances[selectedInstance].parameters.ioddReadMessages))
 end
 Script.serveFunction('CSK_MultiIOLinkSMI.setSearchEnd', setSearchEnd)
+
+local function setAutoStartReadMessageTimer(status)
+  _G.logger:info(nameOfModule .. ": Set status of AutoStart of read message timer to " .. tostring(status))
+  for key in pairs(multiIOLinkSMI_Instances) do
+    multiIOLinkSMI_Instances[key].parameters.autoStartTimer = status
+  end
+end
+Script.serveFunction('CSK_MultiIOLinkSMI.setAutoStartReadMessageTimer', setAutoStartReadMessageTimer)
 
 local function setReadMessageTimerActive(status)
   _G.logger:info(nameOfModule .. ": Set read message timer status to " .. tostring(status))
@@ -1524,7 +1534,14 @@ local function loadParameters()
       end
       ---------------------------------------
       multiIOLinkSMI_Instances[selectedInstance].parameters = helperFuncs.convertContainer2Table(data)
+
+      multiIOLinkSMI_Instances[selectedInstance].parameters = helperFuncs.checkParameters(multiIOLinkSMI_Instances[selectedInstance].parameters, helperFuncs.defaultParameters)
+
       updateProcessingParameters()
+
+      if multiIOLinkSMI_Instances[selectedInstance].parameters.autoStartTimer then
+        startReadMessageTimer()
+      end
 
       tmrMultiIOLinkSMI:start()
       return true

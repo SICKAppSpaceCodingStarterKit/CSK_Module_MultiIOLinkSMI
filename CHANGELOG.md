@@ -13,6 +13,8 @@ All notable changes to this project will be documented in this file.
 - React on "OnStopFlowConfigProviders" event of FlowConfig modul to stop pulling IO-Link data
 - Check and handle different kind of IOLink.SMI APIs
 - Function to delete all existing readMessages
+- Check if persistent data to load provides all relevant parameters. Otherwise add default values
+- Selectable if timers for readMessages should start automatically after parameters were loaded
 
 ### Improvements
 - Changed event name "OnNewReadMessage_PORT_MESSAGENAME" to "OnNewReadMessage_INSTANCE_PORT_MESSAGENAME" to make it possible to switch between ports during runtime

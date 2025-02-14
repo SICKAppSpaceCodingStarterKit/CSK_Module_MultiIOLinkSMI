@@ -30,7 +30,7 @@ Script.serveEvent("CSK_MultiIOLinkSMI.OnNewValueUpdate" .. multiIOLinkSMIInstanc
 local processingParams = {}
 processingParams.SMIhandle = scriptParams:get('SMIhandle')
 processingParams.activeInUi = false
-processingParams.name = scriptParams:get('name')
+-- processingParams.name = scriptParams:get('name') -- future use
 processingParams.active = scriptParams:get('active')
 processingParams.port = scriptParams:get('port')
 processingParams.showLiveValue = false

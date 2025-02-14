@@ -505,6 +505,10 @@ INFO: Other modules can check via "Script.isServedAsEvent" if event exists.</des
                     <desc>Event to notify the name of the write data event that was preconfigured and is registered to.</desc>
                     <param desc="" multiplicity="1" name="eventName" type="string"/>
                 </event>
+                <event name="OnNewStatusAutoStartReadMessageTimer">
+                    <desc>Notify status if ALL readMessage timers should start automatically after parameters were loaded.</desc>
+                    <param desc="Status" multiplicity="1" name="status" type="bool"/>
+                </event>
                 <function name="setParameterName">
                     <desc>Function to set the name of the parameters if saved/loaded via the CSK_PersistentData module.</desc>
                     <param desc="Name of the parameter" multiplicity="1" name="name" type="string"/>
@@ -1119,6 +1123,10 @@ NUM will be replaced by the number of instance (e.g. "readProcessDataBinary_1").
                     <trait>released</trait>
                     <desc>Set event name to register to and write the parameter of the event as data to IOLink sensor.</desc>
                     <param desc="Event name." multiplicity="1" name="newWriteMessageEventName" type="string"/>
+                </function>
+                <function name="setAutoStartReadMessageTimer">
+                    <desc>Function to set status if ALL readMessage timers should be started automatically by loading parameters.</desc>
+                    <param desc="Status" multiplicity="1" name="status" type="bool"/>
                 </function>
             </serves>
         </crown>

@@ -860,7 +860,7 @@
                                                                 value="true">
                                                                 <layout-row id="RowLayout224">
                                                                     <layout-column id="ColumnLayout54"
-                                                                        style="align-items: stretch; flex-grow: 3">
+                                                                        style="align-items: stretch; flex-grow: 4">
                                                                         <davinci-drop-down id="DD_TriggerType" data=""
                                                                             label="Trigger type">
                                                                             <crown-on property="value"
@@ -882,7 +882,7 @@
                                                                         </davinci-drop-down>
                                                                     </layout-column>
                                                                     <layout-column id="ColumnLayout55"
-                                                                        style="align-items: stretch; flex-grow: 3">
+                                                                        style="align-items: stretch; flex-grow: 4">
                                                                         <davinci-text-field id="TF_TriggerValue"
                                                                             type="text" label="Trigger value">
                                                                             <crown-on property="value"
@@ -936,6 +936,23 @@
                                                                                 converter="function(value) {return value.toString();}">
                                                                             </crown-edpws-binding>
                                                                         </stacked-view>
+                                                                    </layout-column>
+                                                                    <layout-column id="ColumnLayout89"
+                                                                        style="align-items: center; justify-content: center">
+                                                                        <davinci-value-display id="ValueDisplay1"
+                                                                            value="Auto start">
+                                                                        </davinci-value-display>
+                                                                        <davinci-toggle-switch id="TS_AutoStart"
+                                                                            title="Automatically start readMessage timers after parameter were loaded (this is valid for ALL readMessage timers).">
+                                                                            <crown-edpws-binding property="checked"
+                                                                                name="CSK_MultiIOLinkSMI/OnNewStatusAutoStartReadMessageTimer"
+                                                                                update-on-resume>
+                                                                            </crown-edpws-binding>
+                                                                            <crown-binding event="change"
+                                                                                name="CSK_MultiIOLinkSMI/setAutoStartReadMessageTimer"
+                                                                                path="param/args/status" auto-commit>
+                                                                            </crown-binding>
+                                                                        </davinci-toggle-switch>
                                                                     </layout-column>
                                                                 </layout-row>
                                                             </stacked-pane>

@@ -145,15 +145,7 @@ function multiIOLinkSMI.create(multiIOLinkSMIInstanceNo)
 
   -- Parameters to be saved permanently if wanted
   self.parameters = {}
-  self.parameters.flowConfigPriority = CSK_FlowConfig ~= nil or false -- Status if FlowConfig should have priority for FlowConfig relevant configurations
-  self.parameters.name = 'Sensor'.. self.multiIOLinkSMIInstanceNoString -- for future use
-  self.parameters.processingFile = 'CSK_MultiIOLinkSMI_Processing'
-  self.parameters.port = '' -- IOLink port used
-  self.parameters.active = false -- Parameter showing if instance is activated or not
-  self.parameters.ioddInfo = nil -- Table containing IODD information
-  self.parameters.deviceIdentification = nil -- Table containing IODD information
-  self.parameters.ioddReadMessages = {} -- Table contatining information about read messages. Each read message has its own IODD Interpreter instance
-  self.parameters.ioddWriteMessages = {} -- Table contatining information about write messages. Each write message has its own IODD Interpreter instance
+  self.parameters = require('Communication/MultiIOLinkSMI/MultiIOLinkSMI_Parameters') -- Load default parameters
 
   -- Parameters to give to the processing script
   self.multiIOLinkSMIProcessingParams = Container.create()
@@ -161,7 +153,7 @@ function multiIOLinkSMI.create(multiIOLinkSMIInstanceNo)
   if multiIOLinkSMI.IOLinkSMIhandle then
     self.multiIOLinkSMIProcessingParams:add('SMIhandle', multiIOLinkSMI.IOLinkSMIhandle, 'OBJECT')
   end
-  self.multiIOLinkSMIProcessingParams:add('name', self.parameters.name, 'STRING')
+  --self.multiIOLinkSMIProcessingParams:add('name', self.parameters.name, 'STRING') -- future usage
   self.multiIOLinkSMIProcessingParams:add('active', self.parameters.active, 'BOOL')
   self.multiIOLinkSMIProcessingParams:add('port', self.parameters.port, 'STRING')
 
