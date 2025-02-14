@@ -1131,13 +1131,13 @@ NUM will be replaced by the number of instance (e.g. "readProcessDataBinary_1").
             <serves/>
             <crown name="OnNewData">
                 <trait>released</trait>
-                <desc>IMPORTANT: First activate ports in IOLinkSMI module and create readMessage! Do not mix with "OnNewDataAuto" blocks!
+                <desc>IMPORTANT: First activate ports in IOLinkSMI module and create readMessage! Do not use together with "OnNewDataAuto" blocks!
 
 Provide IO-Link data of created readMessages.</desc>
                 <serves>
                     <event name="OnNewData">
                         <include>data-flow</include>
-                        <desc>IMPORTANT: First activate ports in IOLinkSMI module and create readMessage! Do not mix with "OnNewDataAuto" blocks!
+                        <desc>IMPORTANT: First activate ports in IOLinkSMI module and create readMessage! Do not use together with "OnNewDataAuto" blocks!
 
 Provide IO-Link data of created readMessages.</desc>
                         <param desc="Handle to internally used FlowConfig instance." multiplicity="1" name="handle" type="handle"/>

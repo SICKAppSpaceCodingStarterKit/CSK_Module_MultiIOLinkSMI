@@ -561,7 +561,12 @@ local function readMessageNoIODD(messageName)
         _G.logger:warning(nameOfModule..': Failed to read process data on port ' .. tostring(processingParams.port) .. ' instancenumber ' .. multiIOLinkSMIInstanceNumberString)
         return false
       else
-        dataPart = string.sub(processData, ioddReadMessages[messageName]['processDataStartByte']+3, ioddReadMessages[messageName]['processDataEndByte']+3)
+        if ioddReadMessages[messageName]['processDataUnpackFormat'] == 'bit' then
+          -- Only cut single byte
+          dataPart = string.sub(processData, ioddReadMessages[messageName]['processDataStartByte']+3, ioddReadMessages[messageName]['processDataStartByte']+3)
+        else
+          dataPart = string.sub(processData, ioddReadMessages[messageName]['processDataStartByte']+3, ioddReadMessages[messageName]['processDataEndByte']+3)
+        end
       end
     end
 
@@ -617,7 +622,7 @@ local function updateIODDReadMessages()
       else
         success, messageContent = readIODDMessage(messageName)
         ioddReadMessagesResults[messageName] = success
-        ioddLatestReadMessages[messageName] = jsonMessageContent
+        ioddLatestReadMessages[messageName] = messageContent
       end
       local errorMessage = ''
       local queueSize = ioddReadMessagesQueue:getSize()
@@ -707,7 +712,7 @@ local function writeIODDMessage(messageName, jsonDataToWrite)
   local errorMessage
   local messageWriteSuccess = true
   if ioddWriteMessages[messageName] then
-    if ioddWriteMessages[messageName].dataInfo.ProcessData then
+    if ioddWriteMessages[messageName].dataInfo then
       if ioddWriteMessages[messageName].dataInfo.ProcessData and ioddWriteMessages[messageName].dataInfo.Parameters == nil then
         dataToWrite = {ProcessData = dataToWrite}
       elseif ioddWriteMessages[messageName].dataInfo.ProcessData == nil and ioddWriteMessages[messageName].dataInfo.Parameters then
