@@ -39,14 +39,16 @@ After message configuration, the JSON template is available in UI for the refere
 The structure of the write message must comply with the generated JSON template. +
 {empty} +
 Each read message has its own event to register to exteranlly. +
-The event name is **"CSK_MultiIOLinkSMI.OnNewReadMessage_" .. port .. _readMessageName** +
+The event name is **"CSK_MultiIOLinkSMI.OnNewReadMessage" .. _instance .. _port .. _readMessageName** +
+and **"CSK_MultiIOLinkSMI.OnNewRawReadMessage" .. _instance .. _port .. _readMessageName** +
 {empty} +
 Each write message has its own function to be called externally. +
 The function name is **"CSK_MultiIOLinkSMI.writeMessage" .. port .. writeMessageName** +
 {empty} +
 Use following functions to handle messages: +
+- "setIODDReadMessageName" and "setIODDWriteMessageName" - to set the name of the message +
+- "setReadMessageMode" to set type of readMessage (IODD or NO_IODD) +
 - "createIODDReadMessage" and "createIODDWriteMessage" - to create the message +
-- "setIODDReadMessageName" and "setIODDWriteMessageName" - to rename the message +
 - "setSelectedIODDReadMessage" and "setSelectedIODDWriteMessage" - to select the current message +
 - "deleteIODDReadMessage" and "deleteIODDWriteMessage" - to delete message +
 - "getIODDReadMessageJSONTemplate" and "getIODDWriteMessageJSONTemplate" - to get JSON structure (template) of the message to be received or sent +
@@ -58,6 +60,11 @@ The following functions can be used for reading or writing data by selected inst
 - "readProcessDataByteArray" and "writeProcessDataByteArray" - to read/write row byte arrays of process data (no IODD needed) +
 - "readParameterByteArray" and "writeParameterByteArray" - to read/write row byte arrays of parameter (no IODD needed) +
 - "readIODDMessage" and "writeIODDMessage" - to read/write preconfigured messages +</desc>
+            <enum name="MessageMode" trait="released">
+                <desc>Mode to create read/writeMessages.</desc>
+                <item desc="Use IODD data." name="IODD">IODD</item>
+                <item desc="No IODD usage." name="NO_IODD">NO_IODD</item>
+            </enum>
             <serves>
                 <event name="OnNewStatusLoadParameterOnReboot">
                     <desc>Notify status if parameters should be loaded on app-/device- boot up.</desc>
@@ -84,12 +91,6 @@ The following functions can be used for reading or writing data by selected inst
                 </event>
                 <event name="OnDataLoadedOnReboot">
                     <desc>Event to call if module tried to load parameters and should be ready.</desc>
-                </event>
-                <event name="OnNewResultNUM">
-                    <desc>Example of dynamically created event to provide result of instance. +
-NUM will be replaced by the number of instance (e.g. "OnNewResult1"). +
-INFO: Other modules can check via "Script.isServedAsEvent" if event of sepecific instance exists.</desc>
-                    <param desc="Result" multiplicity="1" name="result" type="bool"/>
                 </event>
                 <event name="OnNewParameterName">
                     <desc>Notify name of persistent data parameter.</desc>
@@ -311,6 +312,7 @@ NUM will be replaced by the number of instance (e.g. "OnNewValueToForward1"). +<
                     <desc>Notify new status of the IO-Link port.</desc>
                     <param desc="Instance ID." multiplicity="1" name="instance" type="int"/>
                     <param desc="Port status." multiplicity="1" name="status" type="string"/>
+                    <param desc="Port" multiplicity="1" name="port" type="string"/>
                 </event>
                 <event name="OnNewReadDataSuccess">
                     <trait>released</trait>
@@ -440,10 +442,10 @@ NUM will be replaced by the number of instance (e.g. "OnNewValueToForward1"). +<
                     <desc>Event to show the device ID of new discovered device.</desc>
                     <param desc="Device ID." multiplicity="1" name="deviceId" type="string"/>
                 </event>
-                <event name="OnNewReadMessage_PORT_MESSAGENAME">
+                <event name="OnNewReadMessage_INSTANCE_PORT_MESSAGENAME">
                     <trait>released</trait>
                     <desc>Example of dynamically created event to notify data received from IOLink device. +
-PORT will be replaced by the sensor port the device is connected to (S1,S2 ...) and MESSAGENAME by the configured name of the message (e.g. "OnNewReadMessage_S1_MyMessage"). +
+INSTANCE and PORT will be replaced by the instance identifier and sensor port the device is connected to (S1,S2 ...) and MESSAGENAME by the configured name of the message (e.g. "OnNewReadMessage_1_S1_MyMessage"). +
 INFO: Other modules can check via "Script.isServedAsEvent" if event exists.</desc>
                     <param desc="Success of reading data." multiplicity="1" name="success" type="bool"/>
                     <param desc="Size of the queue calls in the thread responsible for communication with this IOLink device. If the queue builds up, this can lead to memory overflow. That's why the queue is recet to 0 in case there are more than 10 calls." multiplicity="1" name="queueSize" type="int"/>
@@ -453,6 +455,58 @@ INFO: Other modules can check via "Script.isServedAsEvent" if event exists.</des
                 </event>
                 <event name="OnNewStatusReadMessageTimerActive">
                     <desc>Notify status if timer for readMessages are active.</desc>
+                    <param desc="Status" multiplicity="1" name="status" type="bool"/>
+                </event>
+                <event name="OnNewSearchBegin">
+                    <desc>Notify pattern to search for as starting position to cut JSON data.</desc>
+                    <param desc="Pattern" multiplicity="1" name="pattern" type="string"/>
+                </event>
+                <event name="OnNewSearchEnd">
+                    <desc>Notify pattern to search for as end position to cut JSON data.</desc>
+                    <param desc="Pattern" multiplicity="1" name="pattern" type="string"/>
+                </event>
+                <event name="OnNewStatusReadMessageMode">
+                    <desc>Notify mode if new readMessage to create should use IODD info or not.</desc>
+                    <param desc="Mode ('IODD' or 'NO_IODD')" multiplicity="1" name="mode" type="string"/>
+                </event>
+                <event name="OnNewStatusReadMessageIODDActive">
+                    <desc>Notify if IODD mode for currently selected readMessage is active.</desc>
+                    <param desc="Status" multiplicity="1" name="status" type="bool"/>
+                </event>
+                <event name="OnNewStatusReadMessageProcessDataStartByte">
+                    <desc>Notify startByte of data within the process data of currently selected readMessage.</desc>
+                    <param desc="Position" multiplicity="1" name="position" type="int"/>
+                </event>
+                <event name="OnNewStatusReadMessageProcessDataEndByte">
+                    <desc>Notify endByte of data within the process data of currently selected readMessage.</desc>
+                    <param desc="Position" multiplicity="1" name="position" type="int"/>
+                </event>
+                <event name="OnNewStatusReadMessageProcessDataUnpackFormat">
+                    <desc>Notify unpack format for processData of currently selected readMessage.</desc>
+                    <param desc="Format (for LUA string.unpack function)." multiplicity="1" name="format" type="string"/>
+                </event>
+                <event name="OnNewStatusUnpackDataTestResult">
+                    <desc>Notify result of test trigger to unpack processData.</desc>
+                    <param desc="Result" multiplicity="1" name="result" type="string"/>
+                </event>
+                <event name="OnNewStatusProcessDataTestResult">
+                    <desc>Notify result of test trigger of processData.</desc>
+                    <param desc="Result" multiplicity="1" name="result" type="string"/>
+                </event>
+                <event name="OnNewRawReadMessage_INSTANCE_PORT_MESSAGENAME">
+                    <trait>released</trait>
+                    <desc>Example of dynamically created event to notify data received from IO-Link device. +
+INSTANCE and PORT will be replaced by the instanceIdentifier and sensor port the device is connected to (S1,S2 ...) and MESSAGENAME by the configured name of the message (e.g. "OnNewRawReadMessage_1_S1_MyMessage"). +
+INFO: Other modules can check via "Script.isServedAsEvent" if event exists.</desc>
+                    <param desc="Manually unpacked part of process data (no IODD Interpreter used)." multiplicity="?" name="data" type="auto"/>
+                </event>
+                <event name="OnNewWriteMessageEventName">
+                    <trait>released</trait>
+                    <desc>Event to notify the name of the write data event that was preconfigured and is registered to.</desc>
+                    <param desc="" multiplicity="1" name="eventName" type="string"/>
+                </event>
+                <event name="OnNewStatusAutoStartReadMessageTimer">
+                    <desc>Notify status if ALL readMessage timers should start automatically after parameters were loaded.</desc>
                     <param desc="Status" multiplicity="1" name="status" type="bool"/>
                 </event>
                 <function name="setParameterName">
@@ -552,7 +606,7 @@ IMPORTANT: As instances start their own threads, the module needs to be restarte
                 <function name="handleOnNewPortEvent">
                     <desc>Internally used function triggered when the new event occurs in IO-Link port.</desc>
                     <param desc="Port where the event occured." multiplicity="1" name="port" ref="IOLinkMasterPorts" type="enum"/>
-                    <param desc="Type of the event." multiplicity="1" name="eventType" ref="IOLink.SMI.EventTypes" type="enum"/>
+                    <param alias="IOLink.SMI.EventTypes" desc="Type of the event." multiplicity="1" name="eventType" type="enum"/>
                     <param desc="Event code as described within IO-Link Interface specification annex C." multiplicity="1" name="eventCode" type="int"/>
                 </function>
                 <function name="getDeviceIdentification">
@@ -967,7 +1021,8 @@ NUM will be replaced by the number of instance (e.g. "getWriteDataResult1").
                 </function>
                 <function name="getInstancePortMap">
                     <desc>Function to get a map of what ports are controlled by instances.</desc>
-                    <return desc="JSON object with the map." multiplicity="1" name="jsonInstancePortMap" type="string"/>
+                    <return desc="JSON object with the map of active ports." multiplicity="1" name="jsonInstancePortMap" type="string"/>
+                    <return desc="List of ports related to instance." multiplicity="*" name="portList" type="string"/>
                 </function>
                 <function name="getDeviceConfig">
                     <desc>Function to get the device configuration that can be use to copy it and apply for another device if DeviceId and VendorId are matched.</desc>
@@ -1016,6 +1071,63 @@ pasteWriteDataMessage.</desc>
                 <function name="startReadMessageTimer">
                     <desc>Function to start timers for all read messages,</desc>
                 </function>
+                <function name="setSearchBegin">
+                    <desc>Function to set pattern to search for to cut specific part of JSON content.</desc>
+                    <param desc="Pattern" multiplicity="1" name="pattern" type="string"/>
+                </function>
+                <function name="setSearchEnd">
+                    <desc>Function to set pattern to search for the end to cut specific part of JSON content.</desc>
+                    <param desc="Pattern" multiplicity="1" name="pattern" type="string"/>
+                </function>
+                <function name="setReadMessageMode">
+                    <desc>Function to set if readMessage to create should use IODD info or not.</desc>
+                    <param desc="Mode ('IODD' or 'NO_IODD')" multiplicity="1" name="mode" ref="CSK_MultiIOLinkSMI.MessageMode" type="enum"/>
+                </function>
+                <function name="setReadMessageProcessDataStartByte">
+                    <desc>Function to set startByte to read processData of currently selected readMessage.</desc>
+                    <param desc="Start byte position." multiplicity="1" name="pos" type="int"/>
+                </function>
+                <function name="setReadMessageProcessDataEndByte">
+                    <desc>Function to set endByte to read processData of currently selected readMessage.</desc>
+                    <param desc="Byte position." multiplicity="1" name="pos" type="int"/>
+                </function>
+                <function name="setReadMessageProcessDataUnpackFormat">
+                    <desc>Function to set unpack format to read processData of currently selected readMessage.</desc>
+                    <param desc="Format (used for string.unpack LUA function)" multiplicity="1" name="format" type="string"/>
+                </function>
+                <function name="triggerUnpackDataTestViaUI">
+                    <desc>Function to trigger readMessage incl. unpacking data of currently selected readMessage.</desc>
+                </function>
+                <function name="handleOnNewPortEventWithEventQualifier">
+                    <desc>Internally used function triggered when the new event occurs in IO-Link port (supports extended IO-Link SMI).</desc>
+                    <param desc="Port where the event occured." multiplicity="1" name="port" ref="IOLinkMasterPorts" type="enum"/>
+                    <param alias="IOLink.SMI.EventQualifier" desc="Qualifier of the IO-Link event" multiplicity="1" name="qualifier" type="const object"/>
+                    <param desc="Event code as described within IO-Link Interface specification annex C." multiplicity="1" name="eventCode" type="int"/>
+                </function>
+                <function name="triggerProcessDataTestViaUI">
+                    <desc>Function to trigger readMessage of currently selected readMessage.</desc>
+                </function>
+                <function name="readProcessDataBinary_NUM">
+                    <trait>released</trait>
+                    <desc>Read process data as binary. +
+NUM will be replaced by the number of instance (e.g. "readProcessDataBinary_1").</desc>
+                    <return desc="Binary read data." multiplicity="?" name="binaryData" type="binary"/>
+                </function>
+                <function name="stopFlowConfigRelevantProvider">
+                    <desc>Function to stop FlowConfig relevant providers.</desc>
+                </function>
+                <function name="deleteAllReadMessages">
+                    <desc>Function to delete all readMessages of currently selected instance.</desc>
+                </function>
+                <function name="setIODDWriteMessageEventName">
+                    <trait>released</trait>
+                    <desc>Set event name to register to and write the parameter of the event as data to IOLink sensor.</desc>
+                    <param desc="Event name." multiplicity="1" name="newWriteMessageEventName" type="string"/>
+                </function>
+                <function name="setAutoStartReadMessageTimer">
+                    <desc>Function to set status if ALL readMessage timers should be started automatically by loading parameters.</desc>
+                    <param desc="Status" multiplicity="1" name="status" type="bool"/>
+                </function>
             </serves>
         </crown>
         <crown name="MultiIOLinkSMI_FC">
@@ -1027,15 +1139,17 @@ pasteWriteDataMessage.</desc>
             <serves/>
             <crown name="OnNewData">
                 <trait>released</trait>
-                <desc>IMPORTANT: First activate ports in IOLinkSMI module and create readMessage!
-Provide IOLink data via event.</desc>
+                <desc>IMPORTANT: First activate ports in IOLinkSMI module and create readMessage! Do not use together with "OnNewDataAuto" blocks!
+
+Provide IO-Link data of created readMessages.</desc>
                 <serves>
                     <event name="OnNewData">
                         <include>data-flow</include>
-                        <desc>IMPORTANT: First activate ports in IOLinkSMI module!
-Provide IOLink data via event.</desc>
+                        <desc>IMPORTANT: First activate ports in IOLinkSMI module and create readMessage! Do not use together with "OnNewDataAuto" blocks!
+
+Provide IO-Link data of created readMessages.</desc>
                         <param desc="Handle to internally used FlowConfig instance." multiplicity="1" name="handle" type="handle"/>
-                        <param desc="'CSK_MultiIOLinkSMI.readMessage[PORT][READMESSAGENAME]'&#10;&#10;Parameter:&#10;1: Success (BOOL)&#10;2: QueueSize (INT)&#10;3:Time (INT)&#10;4: JSON content (STRING)&#10;5: Opt.Error (STRING)" multiplicity="1" name="OnNewData" type="string"/>
+                        <param desc="'CSK_MultiIOLinkSMI.OnNewRawReadMessage_[PORT]_[READMESSAGENAME]'&#10;&#10;Parameter:&#10;1: Data (auto)" multiplicity="1" name="OnNewData" type="string"/>
                     </event>
                     <function name="create">
                         <trait>released</trait>
@@ -1054,9 +1168,70 @@ Provide IOLink data via event.</desc>
                     </function>
                 </serves>
             </crown>
+            <crown name="OnNewDataAuto">
+                <trait>released</trait>
+                <desc>WARNING: Do not use together with "OnNewData" or "WriteProcessData" blocks!
+Will automatically setup the CSK_MultiIOLinkSMI and CSK_PowerManager (if it exists) configuration.
+Might get in conflict with parallel done configurations!
+
+Provide IO-Link data.</desc>
+                <serves>
+                    <event name="OnNewDataAuto">
+                        <include>data-flow</include>
+                        <desc>WARNING: Do not use together with "OnNewData" or "WriteProcessData" blocks!
+Will automatically setup the CSK_MultiIOLinkSMI and CSK_PowerManager (if it exists) configuration.
+Might get in conflict with parallel done configurations!
+
+Provide IO-Link data.</desc>
+                        <param desc="Handle to internally used FlowConfig instance." multiplicity="1" name="handle" type="handle"/>
+                        <param desc="'CSK_MultiIOLinkSMI.OnNewRawReadMessage_[PORT]_[READMESSAGENAME]'&#10;&#10;Parameter:&#10;1: Data (auto)" multiplicity="1" name="OnNewData" type="string"/>
+                    </event>
+                    <function name="create">
+                        <trait>released</trait>
+                        <desc>Internally used CSK_FlowConfig create function.</desc>
+                        <param desc="IO-Link port." multiplicity="1" name="Port" ref="MultiIOLinkSMI_FC.IOLinkMasterPorts" type="enum"/>
+                        <param desc="Cycle time to read process data." multiplicity="1" name="CycleTime" type="int"/>
+                        <param desc="Start byte of relevant process data to crop (starts at 0)" multiplicity="1" name="StartByte" type="int"/>
+                        <param desc="End byte of relevant process data to crop or position of bit to read if unpack format is 'bit'." multiplicity="1" name="EndByteOrBitPosition" type="int"/>
+                        <param desc="Format to interpret raw data.&#10;E.g. &quot;&gt;I4&quot; to unpack 4 Bytes unsigned INT, big endian byte order&#10;&#10;&lt; = little endian&#10;&gt; = big endian&#10;I[n] = unsigned INT of n Bytes&#10;i[n] = signed INT of n Bytes&#10;bit = read single bit within selected startByte (custom format)&#10;...&#10;Check further formats within the documentation of the string.unpack LUA function." multiplicity="1" name="UnpackFormat" type="string"/>
+                        <return desc="Handle to internally used FlowConfig instance." multiplicity="1" name="handle" type="handle"/>
+                    </function>
+                    <function name="register">
+                        <trait>released</trait>
+                        <desc>Internally used CSK_FlowConfig register function.</desc>
+                        <param desc="Handle to internally used FlowConfig instance." multiplicity="1" name="handle" type="handle"/>
+                        <param desc="Internal parameter (not used)." multiplicity="1" name="eventname" type="string"/>
+                        <param desc="Internally used callback function." multiplicity="1" name="callback" type="string"/>
+                        <return desc="Success of register process." multiplicity="1" name="success" type="bool"/>
+                    </function>
+                </serves>
+            </crown>
+            <crown name="WriteProcessData">
+                <trait>released</trait>
+                <desc>IMPORTANT: First activate ports in IOLinkSMI module and create writeMessage!
+
+Set source event of incoming data to use for writeMessage.</desc>
+                <serves>
+                    <function name="create">
+                        <trait>released</trait>
+                        <desc>Internally used CSK_FlowConfig create function.</desc>
+                        <param constraint="1-99" desc="IO-Link port." multiplicity="1" name="Port" ref="MultiIOLinkSMI_FC.IOLinkMasterPorts" type="enum"/>
+                        <param desc="Name of writeMessage to write data.&#10;IMPORTANT: Please make sure that related writeMessage already exists." multiplicity="1" name="WriteMessageName" type="string"/>
+                        <return desc="Handle to internally used FlowConfig instance." multiplicity="1" name="handle" type="handle"/>
+                    </function>
+                    <function name="writeProcessData">
+                        <include>data-flow</include>
+                        <desc>IMPORTANT: First activate ports in IOLinkSMI module and create writeMessage!
+
+Set source event of incoming data to use for writeMessage.</desc>
+                        <param desc="Handle to internally used FlowConfig instance." multiplicity="1" name="handle" type="handle"/>
+                        <param desc="Event to get data to use for writeMessage.&#10;&#10;Parameter:&#10;1: data (STRING)" multiplicity="1" name="source" type="string"/>
+                    </function>
+                </serves>
+            </crown>
         </crown>
         <meta key="author">SICK AG</meta>
-        <meta key="version">2.1.1</meta>
+        <meta key="version">3.0.0</meta>
         <meta key="priority">low</meta>
         <meta key="copy-protected">false</meta>
         <meta key="read-protected">false</meta>

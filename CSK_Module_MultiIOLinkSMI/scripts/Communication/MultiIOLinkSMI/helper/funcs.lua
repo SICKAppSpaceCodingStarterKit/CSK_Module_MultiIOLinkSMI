@@ -7,9 +7,13 @@
 --**********************Start Global Scope *********************************
 --**************************************************************************
 
+local nameOfModule = 'CSK_MultiIOLinkSMI'
+
 local funcs = {}
 -- Providing standard JSON functions
 local json = require('Communication/MultiIOLinkSMI/helper/Json')
+-- Default parameters for instances of module
+funcs.defaultParameters = require('Communication/MultiIOLinkSMI/MultiIOLinkSMI_Parameters')
 
 --**************************************************************************
 --********************** End Global Scope **********************************
@@ -153,6 +157,51 @@ local function convertContainer2Table(cont)
   return tab
 end
 funcs.convertContainer2Table = convertContainer2Table
+
+--- Function to unpack data out binary
+---@param fmt string Format to use to unpack binary data
+---@param data binary Binary data
+---@param bitPosition int Position of bit within byte if fmt is 'bit'
+---@return auto data Unpacked data
+local function unpack(fmt, data, bitPosition)
+  if fmt == 'bit' then
+    local byteData = string.unpack('B', data)
+    local status = byteData >> bitPosition & 1
+    return status
+  else
+    local suc = string.unpack(fmt, data)
+    if suc then
+      return suc
+    else
+      return false
+    end
+  end
+end
+funcs.unpack = unpack
+
+--- Function to compare table content. Optionally will fill missing values within content table with values of defaultTable
+---@param content auto Data to check
+---@param defaultTable auto Reference data
+---@return auto[] content Update of data
+local function checkParameters(content, defaultTable)
+  for key, value in pairs(defaultTable) do
+    if type(value) == 'table' then
+      if content[key] == nil then
+        _G.logger:info(nameOfModule .. ": Created missing parameters table '" .. tostring(key) .. "'")
+        content[key] = {}
+      end
+      content[key] = checkParameters(content[key], defaultTable[key])
+    elseif content[key] == nil then
+      _G.logger:info(nameOfModule .. ": Missing parameter '" .. tostring(key) .. "'. Adding default value '" .. tostring(defaultTable[key]) .. "'")
+      content[key] = defaultTable[key]
+      if key == 'cameraNo' then
+        _G.logger:warning(nameOfModule .. ": '" .. tostring(key) .. "' is a major parameter! Default value might not work and needs to be edited!")
+      end
+    end
+  end
+  return content
+end
+funcs.checkParameters = checkParameters
 
 return funcs
 

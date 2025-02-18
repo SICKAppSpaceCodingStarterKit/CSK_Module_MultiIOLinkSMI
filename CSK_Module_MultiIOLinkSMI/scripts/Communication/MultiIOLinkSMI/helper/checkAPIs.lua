@@ -28,26 +28,35 @@ local function loadAPIs()
       local checkVersion = Script.isServedAsFunction('CSK_IODDInterpreter.sendInstancesListParameters')
       if checkVersion then
         CSK_IODDInterpreter = require 'API.CSK_IODDInterpreter'
-      end      
+      end
     elseif appList[i] == 'CSK_Module_UserManagement' then
       CSK_UserManagement = require 'API.CSK_UserManagement'
     elseif appList[i] == 'CSK_Module_FlowConfig' then
       CSK_FlowConfig = require 'API.CSK_FlowConfig'
+    elseif appList[i] == 'CSK_Module_PowerManager' then
+      CSK_PowerManager = require 'API.CSK_PowerManager'
     end
   end
 end
 
--- Function to load specific APIs
-local function loadSpecificAPIs()
-  -- If you want to check for specific APIs/functions supported on the device the module is running, place relevant APIs here
+-- Function to load IO-Link SMI specific APIs
+local function loadSMISpecificAPIs()
   IOLink = {}
   IOLink.SMI = require 'API.IOLink.SMI'
   IOLink.SMI.PortConfigList = require 'API.IOLink.SMI.PortConfigList'
   IOLink.SMI.PortStatus = require 'API.IOLink.SMI.PortStatus'
 end
 
+-- Function to load IO-Link SGI specific APIs
+local function loadSGISpecificAPIs()
+  IOLink.SMI.EventQualifier = require 'API.IOLink.SMI.EventQualifier'
+  IOLink.SGI = {}
+  IOLink.SGI.Client = require 'API.IOLink.SGI.Client'
+end
+
 availableAPIs.default = xpcall(loadAPIs, debug.traceback)
-availableAPIs.specific = xpcall(loadSpecificAPIs, debug.traceback)
+availableAPIs.specificSMI = xpcall(loadSMISpecificAPIs, debug.traceback)
+availableAPIs.specificSGI = xpcall(loadSGISpecificAPIs, debug.traceback)
 
 return availableAPIs
 --**************************************************************************

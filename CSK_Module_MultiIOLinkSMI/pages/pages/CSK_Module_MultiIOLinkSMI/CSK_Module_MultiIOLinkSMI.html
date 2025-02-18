@@ -769,7 +769,8 @@
                                                 </davinci-value-display>
                                                 <layout-row id="RowLayout6">
                                                     <layout-column id="ColumnLayout49" style="align-items: stretch">
-                                                        <layout-row id="RowLayout68">
+                                                        <layout-row id="RowLayout68"
+                                                            style="justify-content: space-between">
                                                             <layout-column id="ColumnLayout27"
                                                                 style="align-items: stretch; flex-grow: 3">
                                                                 <davinci-text-field id="TF_ReadMessageName" type="text"
@@ -801,8 +802,31 @@
                                                                     </crown-set>
                                                                 </davinci-drop-down>
                                                             </layout-column>
-                                                            <layout-column id="ColumnLayout1"
-                                                                style="align-items: stretch">
+                                                            <layout-column id="ColumnLayout83"
+                                                                style="align-items: stretch; flex-grow: 3">
+                                                                <davinci-drop-down id="DD_ReadMessageUseIODD"
+                                                                    label="Mode"
+                                                                    title="Mode to use for new create readMessage">
+                                                                    <davinci-option id="Option_IODD" value="IODD"
+                                                                        title="Use IODD data.">
+                                                                        <span>IODD</span>
+                                                                    </davinci-option>
+                                                                    <davinci-option id="Option_NoIODD" value="NO_IODD"
+                                                                        title="Manually definition of relevant bytes within process data.">
+                                                                        <span>NO_IODD</span>
+                                                                    </davinci-option>
+                                                                    <crown-binding event="change"
+                                                                        name="CSK_MultiIOLinkSMI/setReadMessageMode"
+                                                                        path="param/args/mode" auto-commit>
+                                                                    </crown-binding>
+                                                                    <crown-edpws-binding property="value"
+                                                                        name="CSK_MultiIOLinkSMI/OnNewStatusReadMessageMode"
+                                                                        update-on-resume>
+                                                                    </crown-edpws-binding>
+                                                                </davinci-drop-down>
+                                                            </layout-column>
+                                                            <layout-column id="ColumnLayout84"
+                                                                style="align-items: stretch; flex-grow: 2">
                                                                 <layout-row id="RowLayout51"
                                                                     style="justify-content: space-evenly">
                                                                     <davinci-button id="B_CreateReadMessage"
@@ -836,7 +860,7 @@
                                                                 value="true">
                                                                 <layout-row id="RowLayout224">
                                                                     <layout-column id="ColumnLayout54"
-                                                                        style="align-items: stretch; flex-grow: 3">
+                                                                        style="align-items: stretch; flex-grow: 4">
                                                                         <davinci-drop-down id="DD_TriggerType" data=""
                                                                             label="Trigger type">
                                                                             <crown-on property="value"
@@ -858,7 +882,7 @@
                                                                         </davinci-drop-down>
                                                                     </layout-column>
                                                                     <layout-column id="ColumnLayout55"
-                                                                        style="align-items: stretch; flex-grow: 3">
+                                                                        style="align-items: stretch; flex-grow: 4">
                                                                         <davinci-text-field id="TF_TriggerValue"
                                                                             type="text" label="Trigger value">
                                                                             <crown-on property="value"
@@ -913,6 +937,23 @@
                                                                             </crown-edpws-binding>
                                                                         </stacked-view>
                                                                     </layout-column>
+                                                                    <layout-column id="ColumnLayout89"
+                                                                        style="align-items: center; justify-content: center">
+                                                                        <davinci-value-display id="ValueDisplay1"
+                                                                            value="Auto start">
+                                                                        </davinci-value-display>
+                                                                        <davinci-toggle-switch id="TS_AutoStart"
+                                                                            title="Automatically start readMessage timers after parameter were loaded (this is valid for ALL readMessage timers).">
+                                                                            <crown-edpws-binding property="checked"
+                                                                                name="CSK_MultiIOLinkSMI/OnNewStatusAutoStartReadMessageTimer"
+                                                                                update-on-resume>
+                                                                            </crown-edpws-binding>
+                                                                            <crown-binding event="change"
+                                                                                name="CSK_MultiIOLinkSMI/setAutoStartReadMessageTimer"
+                                                                                path="param/args/status" auto-commit>
+                                                                            </crown-binding>
+                                                                        </davinci-toggle-switch>
+                                                                    </layout-column>
                                                                 </layout-row>
                                                             </stacked-pane>
                                                             <stacked-pane id="SP_ReadDataMessageIsNOTSelected1"
@@ -956,164 +997,459 @@
                                                                 <layout-row id="RowLayout71"
                                                                     class="myCustomBorderBottom_CSK_Module_MultiIOLinkSMI">
                                                                 </layout-row>
-                                                                <davinci-tabs id="Tabs_ProcessDataParametersLiveJSON"
-                                                                    type="modern">
-                                                                    <davinci-tab id="Tab_ProcessData"
-                                                                        label="Process Data">
-                                                                        <layout-row id="RowLayout40">
-                                                                            <layout-column id="ColumnLayout62"
+                                                                <stacked-view id="SV_ReadMessageMode">
+                                                                    <stacked-pane id="SP_ReadMessageIODD" value="true">
+                                                                        <layout-row id="RowLayout43">
+                                                                            <layout-column id="ColumnLayout44"
                                                                                 style="align-items: stretch">
-                                                                                <curie-table id="DT_ProcessDataIn"
-                                                                                    selectable title="Process data">
-                                                                                    <curie-table-column
-                                                                                        id="readIOLink_colPD1"
-                                                                                        header="Subindex">
-                                                                                    </curie-table-column>
-                                                                                    <curie-table-column
-                                                                                        id="readIOLink_colPD2"
-                                                                                        header="Name">
-                                                                                    </curie-table-column>
-                                                                                    <curie-table-column
-                                                                                        id="readIOLink_colPD3"
-                                                                                        header="Data type, Range, Single value description">
-                                                                                    </curie-table-column>
-                                                                                    <crown-binding event="row-selected"
-                                                                                        name="CSK_MultiIOLinkSMI/processDataInRowSelectedCSKIODDInterpreter"
-                                                                                        path="param/args/rowData"
-                                                                                        auto-commit>
-                                                                                    </crown-binding>
-                                                                                    <crown-on property="data"
-                                                                                        crown-event="CSK_MultiIOLinkSMI/OnNewProcessDataInTableContentCSKIODDInterpreter">
-                                                                                    </crown-on>
-                                                                                </curie-table>
-                                                                            </layout-column>
-                                                                        </layout-row>
-                                                                    </davinci-tab>
-                                                                    <davinci-tab id="Tab_Parameters" label="Parameters">
-                                                                        <layout-row id="RowLayout412">
-                                                                            <layout-column id="ColumnLayout63"
-                                                                                style="align-items: stretch">
-                                                                                <curie-table id="DT_ReadParameters"
-                                                                                    selectable title="Read parameters">
-                                                                                    <curie-table-column
-                                                                                        id="readIOLink_colSD1"
-                                                                                        header="Index">
-                                                                                    </curie-table-column>
-                                                                                    <curie-table-column
-                                                                                        id="readIOLink_colSD2"
-                                                                                        header="Subindex">
-                                                                                    </curie-table-column>
-                                                                                    <curie-table-column
-                                                                                        id="readIOLink_colSD3"
-                                                                                        header="ID">
-                                                                                    </curie-table-column>
-                                                                                    <curie-table-column
-                                                                                        id="readIOLink_colSD4"
-                                                                                        header="Name">
-                                                                                    </curie-table-column>
-                                                                                    <curie-table-column
-                                                                                        id="readIOLink_colSD5"
-                                                                                        header="Data type, Range, Single value description">
-                                                                                    </curie-table-column>
-                                                                                    <curie-table-column
-                                                                                        id="readIOLink_colSD6"
-                                                                                        header="Read/Write">
-                                                                                    </curie-table-column>
-                                                                                    <curie-table-column
-                                                                                        id="readIOLink_colSD7"
-                                                                                        header="Description">
-                                                                                    </curie-table-column>
-                                                                                    <crown-binding event="row-selected"
-                                                                                        name="CSK_MultiIOLinkSMI/readParameterRowSelectedCSKIODDInterpreter"
-                                                                                        path="param/args/rowData"
-                                                                                        auto-commit>
-                                                                                    </crown-binding>
-                                                                                    <crown-on property="data"
-                                                                                        crown-event="CSK_MultiIOLinkSMI/OnNewReadParametersTableContentCSKIODDInterpreter">
-                                                                                    </crown-on>
-                                                                                </curie-table>
-                                                                            </layout-column>
-                                                                        </layout-row>
-                                                                    </davinci-tab>
-                                                                    <davinci-tab id="Tab_LivePayload"
-                                                                        label="Live Payload">
-                                                                        <layout-row id="RowLayout35">
-                                                                            <layout-column id="ColumnLayout10"
-                                                                                style="align-items: stretch">
-                                                                                <layout-row id="RowLayout67"
-                                                                                    style="align-items: center">
-                                                                                    <davinci-status-indicator
-                                                                                        id="SI_ReadSuccess">
-                                                                                        <span>Success</span>
-                                                                                        <crown-on property="status"
-                                                                                            crown-event="CSK_MultiIOLinkSMI/OnNewReadDataSuccess">
-                                                                                        </crown-on>
-                                                                                    </davinci-status-indicator>
-                                                                                    <layout-column id="ColumnLayout28"
-                                                                                        style="align-items: stretch">
-                                                                                        <layout-row id="RowLayout69"
-                                                                                            style="justify-content: flex-end">
-                                                                                            <davinci-button
-                                                                                                id="B_RefreshLiveReadData"
-                                                                                                class="myCustomButton_CSK_Module_MultiIOLinkSMI"
-                                                                                                type="outline"
-                                                                                                icon-position="append"
-                                                                                                icon="navigation/refresh"
-                                                                                                title="Refresh live payload">
-                                                                                                <span></span>
-                                                                                                <crown-set
-                                                                                                    event="submit"
-                                                                                                    crown-function="CSK_MultiIOLinkSMI/refreshReadDataResult"
-                                                                                                    protocol="crownMSGPACK">
-                                                                                                </crown-set>
-                                                                                            </davinci-button>
-                                                                                            <davinci-button
-                                                                                                id="B_ReadPayload"
-                                                                                                class="myCustomButton_CSK_Module_MultiIOLinkSMI"
-                                                                                                type="outline"
-                                                                                                icon-position="append"
-                                                                                                icon="action/search"
-                                                                                                title="Read payload">
-                                                                                                <span></span>
-                                                                                                <crown-set
-                                                                                                    event="submit"
-                                                                                                    crown-function="CSK_MultiIOLinkSMI/readIODDMessageUI"
-                                                                                                    protocol="crownMSGPACK">
-                                                                                                </crown-set>
-                                                                                            </davinci-button>
+                                                                                <layout-row id="RowLayout89"
+                                                                                    class="myCustomSpacerVert10_CSK_Module_MultiIOLinkSMI"
+                                                                                    style="flex-grow: 0; flex-shrink: 0">
+                                                                                </layout-row>
+                                                                                <davinci-value-display id="VD_IODD"
+                                                                                    label="IODD Message">
+                                                                                </davinci-value-display>
+                                                                                <davinci-tabs
+                                                                                    id="Tabs_ProcessDataParametersLiveJSON"
+                                                                                    type="modern">
+                                                                                    <davinci-tab id="Tab_ProcessData"
+                                                                                        label="Process Data">
+                                                                                        <layout-row id="RowLayout40">
+                                                                                            <layout-column
+                                                                                                id="ColumnLayout62"
+                                                                                                style="align-items: stretch">
+                                                                                                <curie-table
+                                                                                                    id="DT_ProcessDataIn"
+                                                                                                    selectable
+                                                                                                    title="Process data">
+                                                                                                    <curie-table-column
+                                                                                                        id="readIOLink_colPD1"
+                                                                                                        header="Subindex">
+                                                                                                    </curie-table-column>
+                                                                                                    <curie-table-column
+                                                                                                        id="readIOLink_colPD2"
+                                                                                                        header="Name">
+                                                                                                    </curie-table-column>
+                                                                                                    <curie-table-column
+                                                                                                        id="readIOLink_colPD3"
+                                                                                                        header="Data type, Range, Single value description">
+                                                                                                    </curie-table-column>
+                                                                                                    <crown-binding
+                                                                                                        event="row-selected"
+                                                                                                        name="CSK_MultiIOLinkSMI/processDataInRowSelectedCSKIODDInterpreter"
+                                                                                                        path="param/args/rowData"
+                                                                                                        auto-commit>
+                                                                                                    </crown-binding>
+                                                                                                    <crown-on
+                                                                                                        property="data"
+                                                                                                        crown-event="CSK_MultiIOLinkSMI/OnNewProcessDataInTableContentCSKIODDInterpreter">
+                                                                                                    </crown-on>
+                                                                                                </curie-table>
+                                                                                                <layout-row
+                                                                                                    id="RowLayout86"
+                                                                                                    class="myCustomBorderBottom_CSK_Module_MultiIOLinkSMI">
+                                                                                                </layout-row>
+                                                                                                <layout-row
+                                                                                                    id="RowLayout87"
+                                                                                                    class="myCustomSpacerVert20_CSK_Module_MultiIOLinkSMI">
+                                                                                                </layout-row>
+                                                                                                <davinci-value-display
+                                                                                                    id="VD_OptionalPatternSearch"
+                                                                                                    value="Pattern search (optional)">
+                                                                                                </davinci-value-display>
+                                                                                                <layout-row
+                                                                                                    id="RowLayout26">
+                                                                                                    <layout-column
+                                                                                                        id="ColumnLayout23"
+                                                                                                        style="align-items: stretch">
+                                                                                                        <layout-row
+                                                                                                            id="RowLayout85">
+                                                                                                            <layout-column
+                                                                                                                id="ColumnLayout85"
+                                                                                                                style="align-items: stretch; flex-grow: 3">
+                                                                                                                <davinci-text-field
+                                                                                                                    id="TF_SearchStart"
+                                                                                                                    type="text"
+                                                                                                                    label="Start pattern to cut out of payload"
+                                                                                                                    title="Optional pattern to search for as start position to cut out within the process data payload.">
+                                                                                                                    <crown-edpws-binding
+                                                                                                                        property="value"
+                                                                                                                        name="CSK_MultiIOLinkSMI/OnNewSearchBegin"
+                                                                                                                        update-on-resume>
+                                                                                                                    </crown-edpws-binding>
+                                                                                                                    <crown-binding
+                                                                                                                        event="change"
+                                                                                                                        name="CSK_MultiIOLinkSMI/setSearchBegin"
+                                                                                                                        path="param/args/pattern"
+                                                                                                                        auto-commit>
+                                                                                                                    </crown-binding>
+                                                                                                                </davinci-text-field>
+                                                                                                            </layout-column>
+                                                                                                            <layout-column
+                                                                                                                id="ColumnLayout86"
+                                                                                                                style="align-items: stretch; flex-grow: 3">
+                                                                                                                <davinci-text-field
+                                                                                                                    id="TF_SearchEnd"
+                                                                                                                    type="text"
+                                                                                                                    label="End pattern to cut out of payload"
+                                                                                                                    title="Optional pattern to search for as end position to cut out within the process data payload.">
+                                                                                                                    <crown-edpws-binding
+                                                                                                                        property="value"
+                                                                                                                        name="CSK_MultiIOLinkSMI/OnNewSearchEnd"
+                                                                                                                        update-on-resume>
+                                                                                                                    </crown-edpws-binding>
+                                                                                                                    <crown-binding
+                                                                                                                        event="change"
+                                                                                                                        name="CSK_MultiIOLinkSMI/setSearchEnd"
+                                                                                                                        path="param/args/pattern"
+                                                                                                                        auto-commit>
+                                                                                                                    </crown-binding>
+                                                                                                                </davinci-text-field>
+                                                                                                            </layout-column>
+                                                                                                            <layout-column
+                                                                                                                id="ColumnLayout88"
+                                                                                                                style="align-items: center">
+                                                                                                                <davinci-button
+                                                                                                                    id="Button_TriggerProcessData"
+                                                                                                                    class="myCustomButton_CSK_Module_MultiIOLinkSMI"
+                                                                                                                    type="outline"
+                                                                                                                    icon-position="append"
+                                                                                                                    icon="action/search">
+                                                                                                                    <span></span>
+                                                                                                                    <crown-binding
+                                                                                                                        event="submit"
+                                                                                                                        name="CSK_MultiIOLinkSMI/triggerProcessDataTestViaUI"
+                                                                                                                        auto-commit>
+                                                                                                                    </crown-binding>
+                                                                                                                </davinci-button>
+                                                                                                            </layout-column>
+                                                                                                        </layout-row>
+                                                                                                        <davinci-value-display
+                                                                                                            id="VD_ProcessDataTest">
+                                                                                                            <crown-edpws-binding
+                                                                                                                property="value"
+                                                                                                                name="CSK_MultiIOLinkSMI/OnNewStatusProcessDataTestResult"
+                                                                                                                update-on-resume>
+                                                                                                            </crown-edpws-binding>
+                                                                                                        </davinci-value-display>
+                                                                                                    </layout-column>
+                                                                                                    <layout-column
+                                                                                                        id="ColumnLayout87"
+                                                                                                        style="align-items: stretch">
+                                                                                                    </layout-column>
+                                                                                                </layout-row>
+                                                                                                <layout-row
+                                                                                                    id="RowLayout88"
+                                                                                                    class="myCustomSpacerVert10_CSK_Module_MultiIOLinkSMI">
+                                                                                                </layout-row>
+                                                                                            </layout-column>
                                                                                         </layout-row>
+                                                                                    </davinci-tab>
+                                                                                    <davinci-tab id="Tab_Parameters"
+                                                                                        label="Parameters">
+                                                                                        <layout-row id="RowLayout412">
+                                                                                            <layout-column
+                                                                                                id="ColumnLayout63"
+                                                                                                style="align-items: stretch">
+                                                                                                <curie-table
+                                                                                                    id="DT_ReadParameters"
+                                                                                                    selectable
+                                                                                                    title="Read parameters">
+                                                                                                    <curie-table-column
+                                                                                                        id="readIOLink_colSD1"
+                                                                                                        header="Index">
+                                                                                                    </curie-table-column>
+                                                                                                    <curie-table-column
+                                                                                                        id="readIOLink_colSD2"
+                                                                                                        header="Subindex">
+                                                                                                    </curie-table-column>
+                                                                                                    <curie-table-column
+                                                                                                        id="readIOLink_colSD3"
+                                                                                                        header="ID">
+                                                                                                    </curie-table-column>
+                                                                                                    <curie-table-column
+                                                                                                        id="readIOLink_colSD4"
+                                                                                                        header="Name">
+                                                                                                    </curie-table-column>
+                                                                                                    <curie-table-column
+                                                                                                        id="readIOLink_colSD5"
+                                                                                                        header="Data type, Range, Single value description">
+                                                                                                    </curie-table-column>
+                                                                                                    <curie-table-column
+                                                                                                        id="readIOLink_colSD6"
+                                                                                                        header="Read/Write">
+                                                                                                    </curie-table-column>
+                                                                                                    <curie-table-column
+                                                                                                        id="readIOLink_colSD7"
+                                                                                                        header="Description">
+                                                                                                    </curie-table-column>
+                                                                                                    <crown-binding
+                                                                                                        event="row-selected"
+                                                                                                        name="CSK_MultiIOLinkSMI/readParameterRowSelectedCSKIODDInterpreter"
+                                                                                                        path="param/args/rowData"
+                                                                                                        auto-commit>
+                                                                                                    </crown-binding>
+                                                                                                    <crown-on
+                                                                                                        property="data"
+                                                                                                        crown-event="CSK_MultiIOLinkSMI/OnNewReadParametersTableContentCSKIODDInterpreter">
+                                                                                                    </crown-on>
+                                                                                                </curie-table>
+                                                                                            </layout-column>
+                                                                                        </layout-row>
+                                                                                    </davinci-tab>
+                                                                                    <davinci-tab id="Tab_LivePayload"
+                                                                                        label="Live Payload">
+                                                                                        <layout-row id="RowLayout35">
+                                                                                            <layout-column
+                                                                                                id="ColumnLayout10"
+                                                                                                style="align-items: stretch">
+                                                                                                <layout-row
+                                                                                                    id="RowLayout67"
+                                                                                                    style="align-items: center">
+                                                                                                    <davinci-status-indicator
+                                                                                                        id="SI_ReadSuccess">
+                                                                                                        <span>Success</span>
+                                                                                                        <crown-on
+                                                                                                            property="status"
+                                                                                                            crown-event="CSK_MultiIOLinkSMI/OnNewReadDataSuccess">
+                                                                                                        </crown-on>
+                                                                                                    </davinci-status-indicator>
+                                                                                                    <layout-column
+                                                                                                        id="ColumnLayout28"
+                                                                                                        style="align-items: stretch">
+                                                                                                        <layout-row
+                                                                                                            id="RowLayout69"
+                                                                                                            style="justify-content: flex-end">
+                                                                                                            <davinci-button
+                                                                                                                id="B_RefreshLiveReadData"
+                                                                                                                class="myCustomButton_CSK_Module_MultiIOLinkSMI"
+                                                                                                                type="outline"
+                                                                                                                icon-position="append"
+                                                                                                                icon="navigation/refresh"
+                                                                                                                title="Refresh live payload">
+                                                                                                                <span></span>
+                                                                                                                <crown-set
+                                                                                                                    event="submit"
+                                                                                                                    crown-function="CSK_MultiIOLinkSMI/refreshReadDataResult"
+                                                                                                                    protocol="crownMSGPACK">
+                                                                                                                </crown-set>
+                                                                                                            </davinci-button>
+                                                                                                            <davinci-button
+                                                                                                                id="B_ReadPayload"
+                                                                                                                class="myCustomButton_CSK_Module_MultiIOLinkSMI"
+                                                                                                                type="outline"
+                                                                                                                icon-position="append"
+                                                                                                                icon="action/search"
+                                                                                                                title="Read payload">
+                                                                                                                <span></span>
+                                                                                                                <crown-set
+                                                                                                                    event="submit"
+                                                                                                                    crown-function="CSK_MultiIOLinkSMI/readIODDMessageUI"
+                                                                                                                    protocol="crownMSGPACK">
+                                                                                                                </crown-set>
+                                                                                                            </davinci-button>
+                                                                                                        </layout-row>
+                                                                                                    </layout-column>
+                                                                                                </layout-row>
+                                                                                                <davinci-text-area
+                                                                                                    id="TA_ReadDataMessageResult"
+                                                                                                    label="Latest received payload"
+                                                                                                    readonly multiline
+                                                                                                    style="height: 300px">
+                                                                                                    <crown-on
+                                                                                                        property="value"
+                                                                                                        crown-event="CSK_MultiIOLinkSMI/OnNewReadDataMessage">
+                                                                                                    </crown-on>
+                                                                                                </davinci-text-area>
+                                                                                            </layout-column>
+                                                                                        </layout-row>
+                                                                                    </davinci-tab>
+                                                                                    <davinci-tab id="Tab_JSONTemplate"
+                                                                                        label="JSON Template">
+                                                                                        <layout-row id="RowLayout36">
+                                                                                            <layout-column
+                                                                                                id="ColumnLayout56"
+                                                                                                style="align-items: stretch">
+                                                                                                <davinci-text-area
+                                                                                                    id="TA_ReadMessageJsonTemplate"
+                                                                                                    readonly multiline
+                                                                                                    label="JSON template"
+                                                                                                    style="height: 300px">
+                                                                                                    <crown-on
+                                                                                                        property="value"
+                                                                                                        crown-event="CSK_MultiIOLinkSMI/OnNewReadJSONTemplate">
+                                                                                                    </crown-on>
+                                                                                                </davinci-text-area>
+                                                                                            </layout-column>
+                                                                                        </layout-row>
+                                                                                    </davinci-tab>
+                                                                                </davinci-tabs>
+                                                                            </layout-column>
+                                                                        </layout-row>
+                                                                    </stacked-pane>
+                                                                    <stacked-pane id="SP_ReadMessageNoIODD"
+                                                                        value="false">
+                                                                        <layout-row id="RowLayout216"
+                                                                            style="justify-content: space-between">
+                                                                            <layout-column id="ColumnLayout59"
+                                                                                style="align-items: stretch">
+                                                                                <layout-row id="RowLayout45"
+                                                                                    class="myCustomSpacerVert10_CSK_Module_MultiIOLinkSMI"
+                                                                                    style="flex-grow: 0; flex-shrink: 0">
+                                                                                </layout-row>
+                                                                                <layout-row id="RowLayout42"
+                                                                                    style="justify-content: space-between">
+                                                                                    <layout-column id="ColumnLayout82"
+                                                                                        style="align-items: stretch">
+                                                                                        <davinci-value-display
+                                                                                            id="VD_ProcessData"
+                                                                                            label="Process data (NO IODD)">
+                                                                                        </davinci-value-display>
+                                                                                        <layout-row id="RowLayout38"
+                                                                                            style="justify-content: space-between">
+                                                                                            <layout-column
+                                                                                                id="ColumnLayout67"
+                                                                                                style="align-items: stretch; flex-grow: 3">
+                                                                                                <davinci-value-display
+                                                                                                    id="VD_ReadMessageProcessDataStartByte"
+                                                                                                    value="Start Byte">
+                                                                                                </davinci-value-display>
+                                                                                            </layout-column>
+                                                                                            <layout-column
+                                                                                                id="ColumnLayout80"
+                                                                                                style="align-items: stretch; flex-grow: 3">
+                                                                                                <davinci-value-display
+                                                                                                    id="VD_ReadMessageProcessDataEndByte"
+                                                                                                    value="End Byte (or bit position)"
+                                                                                                    title="Set end byte to cut out of process data or position of bit to read if unpack format is 'bit'.">
+                                                                                                </davinci-value-display>
+                                                                                            </layout-column>
+                                                                                            <layout-column
+                                                                                                id="ColumnLayout75"
+                                                                                                style="align-items: stretch; flex-grow: 3">
+                                                                                                <davinci-value-display
+                                                                                                    id="VD_ReadMessageProcessDataUnpackFormat"
+                                                                                                    value="Unpack format"
+                                                                                                    title="Set unpack format to interpret raw data and to unpack via internal LUA function 'string.unpack' (e.g. '>I4' to unpack 4 Bytes unsigned INT, big endian byte order or use custom format 'bit' to read the status of a specific bit).">
+                                                                                                </davinci-value-display>
+                                                                                            </layout-column>
+                                                                                            <layout-column
+                                                                                                id="ColumnLayout1"
+                                                                                                style="align-items: stretch; flex-grow: 2">
+                                                                                            </layout-column>
+                                                                                        </layout-row>
+                                                                                        <layout-row id="RowLayout37"
+                                                                                            style="justify-content: space-between">
+                                                                                            <layout-column
+                                                                                                id="ColumnLayout60"
+                                                                                                style="align-items: stretch; flex-grow: 3">
+                                                                                                <davinci-numeric-field
+                                                                                                    id="NF_ReadMessageStartByte"
+                                                                                                    type="outline"
+                                                                                                    min="0" max="10000"
+                                                                                                    ticks="1"
+                                                                                                    group-separator=","
+                                                                                                    decimal-separator="."
+                                                                                                    format-pattern="0"
+                                                                                                    title="Set start byte (starts at 0) to cut out of process data.">
+                                                                                                    <crown-edpws-binding
+                                                                                                        property="value"
+                                                                                                        name="CSK_MultiIOLinkSMI/OnNewStatusReadMessageProcessDataStartByte"
+                                                                                                        update-on-resume>
+                                                                                                    </crown-edpws-binding>
+                                                                                                    <crown-binding
+                                                                                                        event="change"
+                                                                                                        name="CSK_MultiIOLinkSMI/setReadMessageProcessDataStartByte"
+                                                                                                        path="param/args/pos"
+                                                                                                        auto-commit>
+                                                                                                    </crown-binding>
+                                                                                                </davinci-numeric-field>
+                                                                                            </layout-column>
+                                                                                            <layout-column
+                                                                                                id="ColumnLayout65"
+                                                                                                style="align-items: stretch; flex-grow: 3">
+                                                                                                <davinci-numeric-field
+                                                                                                    id="NF_ReadMessageEndByte"
+                                                                                                    type="outline"
+                                                                                                    min="0" max="10000"
+                                                                                                    ticks="1"
+                                                                                                    group-separator=","
+                                                                                                    decimal-separator="."
+                                                                                                    format-pattern="0"
+                                                                                                    title="Set end byte to cut out of process data or position of bit to read if unpack format is 'bit'.">
+                                                                                                    <crown-edpws-binding
+                                                                                                        property="value"
+                                                                                                        name="CSK_MultiIOLinkSMI/OnNewStatusReadMessageProcessDataEndByte"
+                                                                                                        update-on-resume>
+                                                                                                    </crown-edpws-binding>
+                                                                                                    <crown-binding
+                                                                                                        event="change"
+                                                                                                        name="CSK_MultiIOLinkSMI/setReadMessageProcessDataEndByte"
+                                                                                                        path="param/args/pos"
+                                                                                                        auto-commit>
+                                                                                                    </crown-binding>
+                                                                                                </davinci-numeric-field>
+                                                                                            </layout-column>
+                                                                                            <layout-column
+                                                                                                id="ColumnLayout64"
+                                                                                                style="align-items: stretch; flex-grow: 3">
+                                                                                                <davinci-text-field
+                                                                                                    id="TF_ReadMessageUnpackFormat"
+                                                                                                    type="text"
+                                                                                                    title="Set unpack format to interpret raw data and to unpack via internal LUA function 'string.unpack' (e.g. '>I4' to unpack 4 Bytes unsigned INT, big endian byte order or use custom format 'bit' to read the status of a specific bit).">
+                                                                                                    <crown-edpws-binding
+                                                                                                        property="value"
+                                                                                                        name="CSK_MultiIOLinkSMI/OnNewStatusReadMessageProcessDataUnpackFormat"
+                                                                                                        update-on-resume>
+                                                                                                    </crown-edpws-binding>
+                                                                                                    <crown-binding
+                                                                                                        event="change"
+                                                                                                        name="CSK_MultiIOLinkSMI/setReadMessageProcessDataUnpackFormat"
+                                                                                                        path="param/args/format"
+                                                                                                        auto-commit>
+                                                                                                    </crown-binding>
+                                                                                                </davinci-text-field>
+                                                                                            </layout-column>
+                                                                                            <layout-column
+                                                                                                id="ColumnLayout223"
+                                                                                                style="align-items: center; flex-grow: 2">
+                                                                                                <davinci-button
+                                                                                                    id="Button_TestTrigger"
+                                                                                                    class="myCustomButton_CSK_Module_MultiIOLinkSMI"
+                                                                                                    type="outline"
+                                                                                                    icon-position="append"
+                                                                                                    icon="action/search">
+                                                                                                    <span></span>
+                                                                                                    <crown-binding
+                                                                                                        event="submit"
+                                                                                                        name="CSK_MultiIOLinkSMI/triggerUnpackDataTestViaUI"
+                                                                                                        auto-commit>
+                                                                                                    </crown-binding>
+                                                                                                </davinci-button>
+                                                                                            </layout-column>
+                                                                                        </layout-row>
+                                                                                        <davinci-value-display
+                                                                                            id="VD_UnpackedData">
+                                                                                            <crown-edpws-binding
+                                                                                                property="value"
+                                                                                                name="CSK_MultiIOLinkSMI/OnNewStatusUnpackDataTestResult"
+                                                                                                update-on-resume>
+                                                                                            </crown-edpws-binding>
+                                                                                        </davinci-value-display>
                                                                                     </layout-column>
                                                                                 </layout-row>
-                                                                                <davinci-text-area
-                                                                                    id="TA_ReadDataMessageResult"
-                                                                                    label="Latest received payload"
-                                                                                    readonly multiline
-                                                                                    style="height: 300px">
-                                                                                    <crown-on property="value"
-                                                                                        crown-event="CSK_MultiIOLinkSMI/OnNewReadDataMessage">
-                                                                                    </crown-on>
-                                                                                </davinci-text-area>
                                                                             </layout-column>
-                                                                        </layout-row>
-                                                                    </davinci-tab>
-                                                                    <davinci-tab id="Tab_JSONTemplate"
-                                                                        label="JSON Template">
-                                                                        <layout-row id="RowLayout36">
-                                                                            <layout-column id="ColumnLayout56"
+                                                                            <layout-column id="ColumnLayout50"
                                                                                 style="align-items: stretch">
-                                                                                <davinci-text-area
-                                                                                    id="TA_ReadMessageJsonTemplate"
-                                                                                    readonly multiline
-                                                                                    label="JSON template"
-                                                                                    style="height: 300px">
-                                                                                    <crown-on property="value"
-                                                                                        crown-event="CSK_MultiIOLinkSMI/OnNewReadJSONTemplate">
-                                                                                    </crown-on>
-                                                                                </davinci-text-area>
                                                                             </layout-column>
                                                                         </layout-row>
-                                                                    </davinci-tab>
-                                                                </davinci-tabs>
+                                                                    </stacked-pane>
+                                                                    <crown-edpws-binding property="value"
+                                                                        name="CSK_MultiIOLinkSMI/OnNewStatusReadMessageIODDActive"
+                                                                        update-on-resume
+                                                                        converter="function(value) {return value.toString();}">
+                                                                    </crown-edpws-binding>
+                                                                </stacked-view>
                                                             </layout-column>
                                                         </layout-row>
                                                     </stacked-pane>
@@ -1346,6 +1682,18 @@
                                                         <layout-row id="RowLayout446">
                                                             <layout-column id="ColumnLayout66"
                                                                 style="align-items: stretch">
+                                                                <davinci-text-field id="TF_WriteMessageEventName"
+                                                                    type="text" label="Event name to register to"
+                                                                    placeholder="like 'CSK_Module.OnNewEvent'. The first event parameter will be used to write to the IOLink device. The JSON format should match the selected message format.">
+                                                                    <crown-set event="change"
+                                                                        crown-function="CSK_MultiIOLinkSMI/setIODDWriteMessageEventName"
+                                                                        protocol="crownMSGPACK"
+                                                                        crown-path="newWriteMessageEventName">
+                                                                    </crown-set>
+                                                                    <crown-on property="value"
+                                                                        crown-event="CSK_MultiIOLinkSMI/OnNewWriteMessageEventName">
+                                                                    </crown-on>
+                                                                </davinci-text-field>
                                                                 <davinci-collapse id="Collapse_WriteMessageInfo"
                                                                     collapsed-title="Show Function call infos"
                                                                     expanded-title="Hide">

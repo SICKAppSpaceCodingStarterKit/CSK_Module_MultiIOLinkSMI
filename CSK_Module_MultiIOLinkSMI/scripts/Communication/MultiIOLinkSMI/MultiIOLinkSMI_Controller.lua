@@ -76,9 +76,10 @@ local testIODDMessageToWrite = ''
 local function emptyFunction()
 end
 Script.serveFunction("CSK_MultiIOLinkSMI.processInstanceNUM", emptyFunction)
-Script.serveEvent("CSK_MultiIOLinkSMI.OnNewResultNUM", "MultiIOLinkSMI_OnNewResultNUM")
 Script.serveEvent("CSK_MultiIOLinkSMI.OnNewValueToForwardNUM", "MultiIOLinkSMI_OnNewValueToForwardNUM")
 Script.serveEvent("CSK_MultiIOLinkSMI.OnNewValueUpdateNUM", "MultiIOLinkSMI_OnNewValueUpdateNUM")
+Script.serveEvent("CSK_MultiIOLinkSMI.OnNewReadMessage_INSTANCE_PORT_MESSAGENAME", "MultiIOLinkSMI_OnNewReadMessage_INSTANCE_PORT_MESSAGENAME")
+Script.serveEvent("CSK_MultiIOLinkSMI.OnNewRawReadMessage_INSTANCE_PORT_MESSAGENAME", "MultiIOLinkSMI_OnNewRawReadMessage_INSTANCE_PORT_MESSAGENAME")
 ----------------------------------------------------------------
 -- Real events
 ----------------------------------------------------------------
@@ -131,11 +132,24 @@ Script.serveEvent('CSK_MultiIOLinkSMI.OnNewListProcessDataCondition',         'M
 
 Script.serveEvent('CSK_MultiIOLinkSMI.OnNewListIODDReadMessages',             'MultiIOLinkSMI_OnNewListIODDReadMessages')
 Script.serveEvent('CSK_MultiIOLinkSMI.OnNewStatusIODDReadMessageSelected',    'MultiIOLinkSMI_OnNewStatusIODDReadMessageSelected')
+Script.serveEvent('CSK_MultiIOLinkSMI.OnNewStatusReadMessageMode',            'MultiIOLinkSMI_OnNewStatusReadMessageMode')
+
+Script.serveEvent('CSK_MultiIOLinkSMI.OnNewStatusReadMessageProcessDataStartByte',    'MultiIOLinkSMI_OnNewStatusReadMessageProcessDataStartByte')
+Script.serveEvent('CSK_MultiIOLinkSMI.OnNewStatusReadMessageProcessDataEndByte',      'MultiIOLinkSMI_OnNewStatusReadMessageProcessDataEndByte')
+Script.serveEvent('CSK_MultiIOLinkSMI.OnNewStatusReadMessageProcessDataUnpackFormat', 'MultiIOLinkSMI_OnNewStatusReadMessageProcessDataUnpackFormat')
+Script.serveEvent('CSK_MultiIOLinkSMI.OnNewStatusUnpackDataTestResult',               'MultiIOLinkSMI_OnNewStatusUnpackDataTestResult')
+Script.serveEvent('CSK_MultiIOLinkSMI.OnNewStatusProcessDataTestResult',               'MultiIOLinkSMI_OnNewStatusProcessDataTestResult')
 
 Script.serveEvent('CSK_MultiIOLinkSMI.OnNewSelectedIODDReadMessage',          'MultiIOLinkSMI_OnNewSelectedIODDReadMessage')
 Script.serveEvent('CSK_MultiIOLinkSMI.OnNewTriggerType',                      'MultiIOLinkSMI_OnNewTriggerType')
 Script.serveEvent('CSK_MultiIOLinkSMI.OnNewTriggerValue',                     'MultiIOLinkSMI_OnNewTriggerValue')
+
+Script.serveEvent('CSK_MultiIOLinkSMI.OnNewSearchBegin',                      'MultiIOLinkSMI_OnNewSearchBegin')
+Script.serveEvent('CSK_MultiIOLinkSMI.OnNewSearchEnd',                        'MultiIOLinkSMI_OnNewSearchEnd')
+
+Script.serveEvent('CSK_MultiIOLinkSMI.OnNewStatusAutoStartReadMessageTimer',  'MultiIOLinkSMI_OnNewStatusAutoStartReadMessageTimer')
 Script.serveEvent('CSK_MultiIOLinkSMI.OnNewStatusReadMessageTimerActive',     'MultiIOLinkSMI_OnNewStatusReadMessageTimerActive')
+Script.serveEvent('CSK_MultiIOLinkSMI.OnNewStatusReadMessageIODDActive',      'MultiIOLinkSMI_OnNewStatusReadMessageIODDActive')
 
 Script.serveEvent('CSK_MultiIOLinkSMI.OnNewListIODDWriteMessages',            'MultiIOLinkSMI_OnNewListIODDWriteMessages')
 Script.serveEvent('CSK_MultiIOLinkSMI.OnNewStatusIODDWriteMessageSelected',   'MultiIOLinkSMI_OnNewStatusIODDWriteMessageSelected')
@@ -145,6 +159,7 @@ Script.serveEvent('CSK_MultiIOLinkSMI.OnNewTestWriteIODDMessage',             'M
 
 Script.serveEvent('CSK_MultiIOLinkSMI.OnNewReadMessageEventName',             'MultiIOLinkSMI_OnNewReadMessageEventName')
 Script.serveEvent('CSK_MultiIOLinkSMI.OnNewWriteMessageFunctionName',         'MultiIOLinkSMI_OnNewWriteMessageFunctionName')
+Script.serveEvent('CSK_MultiIOLinkSMI.OnNewWriteMessageEventName',            'MultiIOLinkSMI_OnNewWriteMessageEventName')
 
 Script.serveEvent('CSK_MultiIOLinkSMI.OnNewReadJSONTemplate',                 'MultiIOLinkSMI_OnNewReadJSONTemplate')
 Script.serveEvent('CSK_MultiIOLinkSMI.OnNewWriteJSONTemplate',                'MultiIOLinkSMI_OnNewWriteJSONTemplate')
@@ -264,7 +279,7 @@ funcs.setMultiIOLinkSMI_Instances_Handle = setMultiIOLinkSMI_Instances_Handle
 local function updateUserLevel()
   if multiIOLinkSMI_Instances[selectedInstance].userManagementModuleAvailable then
     -- Trigger CSK_UserManagement module to provide events regarding user role
-    --CSK_UserManagement.pageCalled()
+    CSK_UserManagement.pageCalled()
   else
     -- If CSK_UserManagement is not active, show everything
     Script.notifyEvent("MultiIOLinkSMI_OnUserLevelAdminActive", true)
@@ -288,16 +303,15 @@ local function updateAvailablePortList()
   end
 end
 
-
 -- Function to send all relevant values to UI on resume
 --@handleOnExpiredTmrMultiIOLinkSMI()
 local function handleOnExpiredTmrMultiIOLinkSMI()
 
   Script.notifyEvent("MultiIOLinkSMI_OnNewStatusModuleVersion", 'v' .. multiIOLinkSMI_Model.version)
   Script.notifyEvent("MultiIOLinkSMI_OnNewStatusCSKStyle", multiIOLinkSMI_Model.styleForUI)
-  Script.notifyEvent('MultiIOLinkSMI_OnNewStatusModuleIsActive', _G.availableAPIs.default and _G.availableAPIs.specific)
+  Script.notifyEvent('MultiIOLinkSMI_OnNewStatusModuleIsActive', _G.availableAPIs.default and _G.availableAPIs.specificSMI)
 
-  if _G.availableAPIs.default and _G.availableAPIs.specific then
+  if _G.availableAPIs.default and _G.availableAPIs.specificSMI then
 
     updateUserLevel()
 
@@ -358,38 +372,56 @@ local function handleOnExpiredTmrMultiIOLinkSMI()
     end
     Script.notifyEvent('MultiIOLinkSMI_OnNewStatusCSKIODDInterpreterAvailable', (CSK_IODDInterpreter ~= nil))
     Script.notifyEvent('MultiIOLinkSMI_OnNewStatusIODDMatchFound', (multiIOLinkSMI_Instances[selectedInstance].parameters.ioddInfo ~= nil))
+
     if not multiIOLinkSMI_Instances[selectedInstance].parameters.ioddInfo then
       Script.notifyEvent('MultiIOLinkSMI_OnNewStatusProcessDataVariable', false)
-      return
-    end
-    Script.notifyEvent('MultiIOLinkSMI_OnNewStatusProcessDataVariable', multiIOLinkSMI_Instances[selectedInstance].parameters.ioddInfo.isProcessDataVariable)
-    if multiIOLinkSMI_Instances[selectedInstance].parameters.ioddInfo.isProcessDataVariable then
-      Script.notifyEvent('MultiIOLinkSMI_OnNewListProcessDataCondition', multiIOLinkSMI_Instances[selectedInstance].parameters.ioddInfo.processDataConditionList)
-      if multiIOLinkSMI_Instances[selectedInstance].parameters.ioddInfo.currentCondition then
-        Script.notifyEvent('MultiIOLinkSMI_OnNewProcessDataCondition', multiIOLinkSMI_Instances[selectedInstance].parameters.ioddInfo.currentCondition)
+    else
+      Script.notifyEvent('MultiIOLinkSMI_OnNewStatusProcessDataVariable', multiIOLinkSMI_Instances[selectedInstance].parameters.ioddInfo.isProcessDataVariable)
+      if multiIOLinkSMI_Instances[selectedInstance].parameters.ioddInfo.isProcessDataVariable then
+        Script.notifyEvent('MultiIOLinkSMI_OnNewListProcessDataCondition', multiIOLinkSMI_Instances[selectedInstance].parameters.ioddInfo.processDataConditionList)
+        if multiIOLinkSMI_Instances[selectedInstance].parameters.ioddInfo.currentCondition then
+          Script.notifyEvent('MultiIOLinkSMI_OnNewProcessDataCondition', multiIOLinkSMI_Instances[selectedInstance].parameters.ioddInfo.currentCondition)
+        end
       end
     end
+
     if selectedTab == 1 then
       local nameList = {}
       for name,_ in pairs(multiIOLinkSMI_Instances[selectedInstance].parameters.ioddReadMessages) do
         table.insert(nameList, name)
       end
       table.sort(nameList)
+
+      Script.notifyEvent('MultiIOLinkSMI_OnNewStatusUnpackDataTestResult', '')
+      Script.notifyEvent('MultiIOLinkSMI_OnNewStatusProcessDataTestResult', '')
+      Script.notifyEvent('MultiIOLinkSMI_OnNewStatusReadMessageMode', multiIOLinkSMI_Instances[selectedInstance].readMessageMode)
       Script.notifyEvent('MultiIOLinkSMI_OnNewListIODDReadMessages', json.encode(nameList))
       Script.notifyEvent('MultiIOLinkSMI_OnNewStatusIODDReadMessageSelected', selectedIODDReadMessage ~= '')
       Script.notifyEvent('MultiIOLinkSMI_OnNewSelectedIODDReadMessage', selectedIODDReadMessage)
       if selectedIODDReadMessage ~= '' then
         Script.notifyEvent('MultiIOLinkSMI_OnNewTriggerType', multiIOLinkSMI_Instances[selectedInstance].parameters.ioddReadMessages[selectedIODDReadMessage].triggerType)
         Script.notifyEvent('MultiIOLinkSMI_OnNewTriggerValue', tostring(multiIOLinkSMI_Instances[selectedInstance].parameters.ioddReadMessages[selectedIODDReadMessage].triggerValue))
-        Script.notifyEvent('MultiIOLinkSMI_OnNewReadMessageEventName', "CSK_MultiIOLinkSMI.OnNewReadMessage_" .. multiIOLinkSMI_Instances[selectedInstance].parameters.port .. '_' .. selectedIODDReadMessage)
-        Script.notifyEvent('MultiIOLinkSMI_OnNewReadJSONTemplate', jsonTableViewer.jsonLine2Table(
-          multiIOLinkSMI_Instances[selectedInstance].parameters.ioddReadMessages[selectedIODDReadMessage].jsonTemplate)
-        )
-        local processDataTableContent, parameterTableContent = CSK_IODDInterpreter.getReadDataTableContents('readIOLink_')
-        Script.notifyEvent('MultiIOLinkSMI_OnNewProcessDataInTableContentCSKIODDInterpreter', processDataTableContent)
-        Script.notifyEvent('MultiIOLinkSMI_OnNewReadParametersTableContentCSKIODDInterpreter', parameterTableContent)
+        Script.notifyEvent('MultiIOLinkSMI_OnNewSearchBegin', tostring(multiIOLinkSMI_Instances[selectedInstance].parameters.ioddReadMessages[selectedIODDReadMessage].searchBegin))
+        Script.notifyEvent('MultiIOLinkSMI_OnNewSearchEnd', tostring(multiIOLinkSMI_Instances[selectedInstance].parameters.ioddReadMessages[selectedIODDReadMessage].searchEnd))
+        Script.notifyEvent('MultiIOLinkSMI_OnNewStatusReadMessageIODDActive', multiIOLinkSMI_Instances[selectedInstance].parameters.ioddReadMessages[selectedIODDReadMessage].ioddActive)
+
+        if multiIOLinkSMI_Instances[selectedInstance].parameters.ioddReadMessages[selectedIODDReadMessage].ioddActive then
+          Script.notifyEvent('MultiIOLinkSMI_OnNewReadJSONTemplate', jsonTableViewer.jsonLine2Table(
+            multiIOLinkSMI_Instances[selectedInstance].parameters.ioddReadMessages[selectedIODDReadMessage].jsonTemplate)
+          )
+          local processDataTableContent, parameterTableContent = CSK_IODDInterpreter.getReadDataTableContents('readIOLink_')
+          Script.notifyEvent('MultiIOLinkSMI_OnNewProcessDataInTableContentCSKIODDInterpreter', processDataTableContent)
+          Script.notifyEvent('MultiIOLinkSMI_OnNewReadParametersTableContentCSKIODDInterpreter', parameterTableContent)
+          Script.notifyEvent('MultiIOLinkSMI_OnNewReadMessageEventName', "CSK_MultiIOLinkSMI.OnNewReadMessage_" .. tostring(selectedInstance) .. '_' .. multiIOLinkSMI_Instances[selectedInstance].parameters.port .. '_' .. selectedIODDReadMessage)
+        else
+          Script.notifyEvent('MultiIOLinkSMI_OnNewStatusReadMessageProcessDataStartByte', multiIOLinkSMI_Instances[selectedInstance].parameters.ioddReadMessages[selectedIODDReadMessage].processDataStartByte)
+          Script.notifyEvent('MultiIOLinkSMI_OnNewStatusReadMessageProcessDataEndByte', multiIOLinkSMI_Instances[selectedInstance].parameters.ioddReadMessages[selectedIODDReadMessage].processDataEndByte)
+          Script.notifyEvent('MultiIOLinkSMI_OnNewStatusReadMessageProcessDataUnpackFormat', multiIOLinkSMI_Instances[selectedInstance].parameters.ioddReadMessages[selectedIODDReadMessage].processDataUnpackFormat)
+          Script.notifyEvent('MultiIOLinkSMI_OnNewReadMessageEventName', "CSK_MultiIOLinkSMI.OnNewRawReadMessage_" .. tostring(selectedInstance) .. '_' .. multiIOLinkSMI_Instances[selectedInstance].parameters.port .. '_' .. selectedIODDReadMessage)
+        end
         Script.notifyEvent('MultiIOLinkSMI_OnNewStatusReadMessageTimerActive', multiIOLinkSMI_Model.timerActive)
-        
+        Script.notifyEvent('MultiIOLinkSMI_OnNewStatusAutoStartReadMessageTimer', multiIOLinkSMI_Instances[selectedInstance].parameters.autoStartTimer)
+
       end
     elseif selectedTab == 2 then
       local nameList = {}
@@ -401,15 +433,18 @@ local function handleOnExpiredTmrMultiIOLinkSMI()
       Script.notifyEvent('MultiIOLinkSMI_OnNewStatusIODDWriteMessageSelected', selectedIODDWriteMessage ~= '')
       Script.notifyEvent('MultiIOLinkSMI_OnNewSelectedIODDWriteMessage', selectedIODDWriteMessage)
       if selectedIODDWriteMessage ~= '' then
-        CSK_IODDInterpreter.pageCalledWriteData()
-        Script.notifyEvent('MultiIOLinkSMI_OnNewWriteMessageFunctionName', "CSK_MultiIOLinkSMI.writeMessage" .. multiIOLinkSMI_Instances[selectedInstance].parameters.port .. selectedIODDWriteMessage)
-        Script.notifyEvent('MultiIOLinkSMI_OnNewWriteJSONTemplate', jsonTableViewer.jsonLine2Table(
-          multiIOLinkSMI_Instances[selectedInstance].parameters.ioddWriteMessages[selectedIODDWriteMessage].jsonTemplate)
-        )
-        Script.notifyEvent('MultiIOLinkSMI_OnNewTestWriteIODDMessage', testIODDMessageToWrite)
-        local processDataTableContent, parameterTableContent = CSK_IODDInterpreter.getWriteDataTableContents('writeIOLink_')
-        Script.notifyEvent('MultiIOLinkSMI_OnNewProcessDataOutTableContentCSKIODDInterpreter', processDataTableContent)
-        Script.notifyEvent('MultiIOLinkSMI_OnNewWriteParametersTableContentCSKIODDInterpreter', parameterTableContent)
+        if multiIOLinkSMI_Instances[selectedInstance].parameters.ioddInfo then
+          CSK_IODDInterpreter.pageCalledWriteData()
+          Script.notifyEvent('MultiIOLinkSMI_OnNewWriteMessageEventName', multiIOLinkSMI_Instances[selectedInstance].parameters.ioddWriteMessages[selectedIODDWriteMessage].writeMessageEventName)
+          Script.notifyEvent('MultiIOLinkSMI_OnNewWriteMessageFunctionName', "CSK_MultiIOLinkSMI.writeMessage" .. multiIOLinkSMI_Instances[selectedInstance].parameters.port .. selectedIODDWriteMessage)
+          Script.notifyEvent('MultiIOLinkSMI_OnNewWriteJSONTemplate', jsonTableViewer.jsonLine2Table(
+            multiIOLinkSMI_Instances[selectedInstance].parameters.ioddWriteMessages[selectedIODDWriteMessage].jsonTemplate)
+          )
+          Script.notifyEvent('MultiIOLinkSMI_OnNewTestWriteIODDMessage', testIODDMessageToWrite)
+          local processDataTableContent, parameterTableContent = CSK_IODDInterpreter.getWriteDataTableContents('writeIOLink_')
+          Script.notifyEvent('MultiIOLinkSMI_OnNewProcessDataOutTableContentCSKIODDInterpreter', processDataTableContent)
+          Script.notifyEvent('MultiIOLinkSMI_OnNewWriteParametersTableContentCSKIODDInterpreter', parameterTableContent)
+        end
       end
     end
   end
@@ -419,7 +454,7 @@ Timer.register(tmrMultiIOLinkSMI, "OnExpired", handleOnExpiredTmrMultiIOLinkSMI)
 -- ********************* UI Setting / Submit Functions Start ********************
 
 local function pageCalled()
-  if _G.availableAPIs.default and _G.availableAPIs.specific then
+  if _G.availableAPIs.default and _G.availableAPIs.specificSMI then
     updateUserLevel() -- try to hide user specific content asap
   end
   tmrMultiIOLinkSMI:start()
@@ -442,7 +477,7 @@ local function setSelectedInstance(instance)
     testWriteParameterIndex = 0
     testWriteParameterSubindex = 0
     testIODDMessageToWrite = ''
-    if multiIOLinkSMI_Instances[selectedInstance].parameters.ioddInfo then
+    if multiIOLinkSMI_Instances[selectedInstance].parameters.ioddInfo and CSK_IODDInterpreter then
       CSK_IODDInterpreter.setSelectedInstance(multiIOLinkSMI_Instances[selectedInstance].parameters.ioddInfo.ioddInstanceId)
     end
     Script.notifyEvent('MultiIOLinkSMI_OnNewProcessingParameter', selectedInstance, 'activeInUi', true)
@@ -454,10 +489,12 @@ end
 Script.serveFunction("CSK_MultiIOLinkSMI.setSelectedInstance", setSelectedInstance)
 
 local function setSelectedTab(tabNumber)
-  if tabNumber == 1 and selectedIODDReadMessage ~= '' then
-    CSK_IODDInterpreter.setSelectedInstance(multiIOLinkSMI_Instances[selectedInstance].parameters.ioddReadMessages[selectedIODDReadMessage].ioddInstanceId)
-  elseif tabNumber == 2 and selectedIODDWriteMessage ~= '' then
-    CSK_IODDInterpreter.setSelectedInstance(multiIOLinkSMI_Instances[selectedInstance].parameters.ioddWriteMessages[selectedIODDWriteMessage].ioddInstanceId)
+  if CSK_IODDInterpreter then
+    if tabNumber == 1 and selectedIODDReadMessage ~= '' then
+      CSK_IODDInterpreter.setSelectedInstance(multiIOLinkSMI_Instances[selectedInstance].parameters.ioddReadMessages[selectedIODDReadMessage].ioddInstanceId)
+    elseif tabNumber == 2 and selectedIODDWriteMessage ~= '' then
+      CSK_IODDInterpreter.setSelectedInstance(multiIOLinkSMI_Instances[selectedInstance].parameters.ioddWriteMessages[selectedIODDWriteMessage].ioddInstanceId)
+    end
   end
   selectedTab = tabNumber
   handleOnExpiredTmrMultiIOLinkSMI()
@@ -560,7 +597,7 @@ local function handleOnNewPortEvent(port, eventType, eventCode)
       updatedInstanceNumber = instanceNumber
       local portStatus = multiIOLinkSMI_Model.IOLinkSMIhandle:getPortStatus(port)
       multiIOLinkSMI_Instances[instanceNumber].status = portStatus:getPortStatusInfo()
-      Script.notifyEvent('MultiIOLinkSMI_OnNewIOLinkPortStatus', instanceNumber, multiIOLinkSMI_Instances[instanceNumber].status)
+      Script.notifyEvent('MultiIOLinkSMI_OnNewIOLinkPortStatus', instanceNumber, multiIOLinkSMI_Instances[instanceNumber].status, port)
       break
     end
   end
@@ -613,15 +650,22 @@ local function handleOnNewPortEvent(port, eventType, eventCode)
 end
 Script.serveFunction('CSK_MultiIOLinkSMI.handleOnNewPortEvent', handleOnNewPortEvent)
 
----@return string jsonInstancePortMap 
+local function handleOnNewPortEventWithEventQualifier(port, qualifier, eventCode)
+  local eventType = IOLink.SMI.EventQualifier.getType(qualifier)
+  handleOnNewPortEvent(port, eventType, eventCode)
+end
+Script.serveFunction('CSK_MultiIOLinkSMI.handleOnNewPortEventWithEventQualifier', handleOnNewPortEventWithEventQualifier)
+
 local function getInstancePortMap()
   local map = {}
+  local list = {}
   for instanceId, instanceInfo in ipairs(multiIOLinkSMI_Instances) do
     if instanceInfo.parameters.active then
       map[tostring(instanceId)] = instanceInfo.parameters.port
     end
+    table.insert(list, instanceInfo.parameters.port)
   end
-  return json.encode(map)
+  return json.encode(map), list
 end
 Script.serveFunction('CSK_MultiIOLinkSMI.getInstancePortMap', getInstancePortMap)
 
@@ -630,31 +674,39 @@ Script.serveFunction('CSK_MultiIOLinkSMI.getInstancePortMap', getInstancePortMap
 --**************************************************************************
 
 local function readProcessData()
-  local jsonDataPointInfo = CSK_IODDInterpreter.getProcessDataInInfo()
-  if not jsonDataPointInfo then
-    return false, nil
+  if CSK_IODDInterpreter then
+    local jsonDataPointInfo = CSK_IODDInterpreter.getProcessDataInInfo()
+    if not jsonDataPointInfo then
+      return false, nil
+    end
+    local processDataInfo = json.decode(jsonDataPointInfo)
+    local readSuccess, readData = Script.callFunction(
+      'CSK_MultiIOLinkSMI.readProcessDataIODD_' .. tostring(selectedInstance),
+      json.encode(processDataInfo.ProcessDataIn)
+    )
+    return readSuccess, readData
+  else
+    return false
   end
-  local processDataInfo = json.decode(jsonDataPointInfo)
-  local readSuccess, readData = Script.callFunction(
-    'CSK_MultiIOLinkSMI.readProcessDataIODD_' .. tostring(selectedInstance),
-    json.encode(processDataInfo.ProcessDataIn)
-  )
-  return readSuccess, readData
 end
 Script.serveFunction('CSK_MultiIOLinkSMI.readProcessData', readProcessData)
 
 local function writeProcessData(jsonDataToWrite)
-  local jsonDataPointInfo = CSK_IODDInterpreter.getProcessDataOutInfo()
-  if not jsonDataPointInfo then
+  if CSK_IODDInterpreter then
+    local jsonDataPointInfo = CSK_IODDInterpreter.getProcessDataOutInfo()
+    if not jsonDataPointInfo then
+      return false
+    end
+    local processDataInfo = json.decode(jsonDataPointInfo)
+    local writeSuccess = Script.callFunction(
+      'CSK_MultiIOLinkSMI.writeProcessDataIODD_' .. tostring(selectedInstance),
+      json.encode(processDataInfo.ProcessDataOut),
+      jsonDataToWrite
+    )
+    return writeSuccess
+  else
     return false
   end
-  local processDataInfo = json.decode(jsonDataPointInfo)
-  local writeSuccess = Script.callFunction(
-    'CSK_MultiIOLinkSMI.writeProcessDataIODD_' .. tostring(selectedInstance),
-    json.encode(processDataInfo.ProcessDataOut),
-    jsonDataToWrite
-  )
-  return writeSuccess
 end
 Script.serveFunction('CSK_MultiIOLinkSMI.writeProcessData', writeProcessData)
 
@@ -802,6 +854,11 @@ Script.serveFunction('CSK_MultiIOLinkSMI.writeParameterByteArrayUI', writeParame
 --***************************Read messages scope****************************
 --**************************************************************************
 
+local function setReadMessageMode(mode)
+  multiIOLinkSMI_Instances[selectedInstance].readMessageMode = mode
+end
+Script.serveFunction('CSK_MultiIOLinkSMI.setReadMessageMode', setReadMessageMode)
+
 local function setSelectedIODDReadMessage(newSelectedMessage)
   if newSelectedMessage == '' then
     selectedIODDReadMessage = newSelectedMessage
@@ -811,20 +868,33 @@ local function setSelectedIODDReadMessage(newSelectedMessage)
   end
   selectedIODDReadMessage = newSelectedMessage
   if selectedIODDReadMessage ~= '' then
-    CSK_IODDInterpreter.setSelectedInstance(multiIOLinkSMI_Instances[selectedInstance].parameters.ioddReadMessages[selectedIODDReadMessage].ioddInstanceId)
+    if multiIOLinkSMI_Instances[selectedInstance].parameters.ioddReadMessages[selectedIODDReadMessage].ioddActive then
+      CSK_IODDInterpreter.setSelectedInstance(multiIOLinkSMI_Instances[selectedInstance].parameters.ioddReadMessages[selectedIODDReadMessage].ioddInstanceId)
+    end
   end
   handleOnExpiredTmrMultiIOLinkSMI()
 end
 Script.serveFunction('CSK_MultiIOLinkSMI.setSelectedIODDReadMessage', setSelectedIODDReadMessage)
 
 local function createIODDReadMessage()
-  if not multiIOLinkSMI_Instances[selectedInstance].parameters.ioddInfo then
-    _G.logger:info(nameOfModule .. ": No IODD info to create readMessage")
-    return
-  end
   if newReadMessageName ~= '' and multiIOLinkSMI_Instances[selectedInstance].parameters.ioddReadMessages[newReadMessageName] == nil then
-    multiIOLinkSMI_Instances[selectedInstance]:createIODDReadMessage(newReadMessageName)
-    setSelectedIODDReadMessage(newReadMessageName)
+    if multiIOLinkSMI_Instances[selectedInstance].readMessageMode == 'NO_IODD' then
+      multiIOLinkSMI_Instances[selectedInstance]:createIODDReadMessage(newReadMessageName, true)
+      setSelectedIODDReadMessage(newReadMessageName)
+      Script.notifyEvent('MultiIOLinkSMI_OnNewProcessingParameter', selectedInstance, 'readMessages', json.encode(multiIOLinkSMI_Instances[selectedInstance].parameters.ioddReadMessages))
+    else
+      if not multiIOLinkSMI_Instances[selectedInstance].parameters.ioddInfo then
+        _G.logger:info(nameOfModule .. ": No IODD info to create readMessage")
+        return
+      else
+        if CSK_IODDInterpreter then
+          multiIOLinkSMI_Instances[selectedInstance]:createIODDReadMessage(newReadMessageName)
+          setSelectedIODDReadMessage(newReadMessageName)
+        else
+          _G.logger:info(nameOfModule .. ": CSK_IODDInterpreter not available.")
+        end
+      end
+    end
   else
     _G.logger:info(nameOfModule .. ": No name for readMessage")
   end
@@ -851,6 +921,16 @@ local function deleteIODDReadMessage()
 end
 Script.serveFunction('CSK_MultiIOLinkSMI.deleteIODDReadMessage', deleteIODDReadMessage)
 
+local function deleteAllReadMessages()
+  for key, value in pairs(multiIOLinkSMI_Instances[selectedInstance].parameters.ioddReadMessages) do
+    multiIOLinkSMI_Instances[selectedInstance]:deleteIODDReadMessage(key)
+  end
+  Script.notifyEvent('MultiIOLinkSMI_OnNewProcessingParameter', selectedInstance, 'readMessages', json.encode(multiIOLinkSMI_Instances[selectedInstance].parameters.ioddReadMessages))
+  setSelectedIODDReadMessage('')
+  handleOnExpiredTmrMultiIOLinkSMI()
+end
+Script.serveFunction('CSK_MultiIOLinkSMI.deleteAllReadMessages', deleteAllReadMessages)
+
 local function setTriggerType(newTriggerType)
   multiIOLinkSMI_Instances[selectedInstance].parameters.ioddReadMessages[selectedIODDReadMessage].triggerType = newTriggerType
   if newTriggerType == 'Periodic' then
@@ -876,6 +956,26 @@ local function setTriggerValue(newTriggerValue)
   Script.notifyEvent('MultiIOLinkSMI_OnNewProcessingParameter', selectedInstance, 'readMessages', json.encode(multiIOLinkSMI_Instances[selectedInstance].parameters.ioddReadMessages))
 end
 Script.serveFunction('CSK_MultiIOLinkSMI.setTriggerValue', setTriggerValue)
+
+local function setSearchBegin(pattern)
+  multiIOLinkSMI_Instances[selectedInstance].parameters.ioddReadMessages[selectedIODDReadMessage].searchBegin = pattern
+  Script.notifyEvent('MultiIOLinkSMI_OnNewProcessingParameter', selectedInstance, 'readMessages', json.encode(multiIOLinkSMI_Instances[selectedInstance].parameters.ioddReadMessages))
+end
+Script.serveFunction('CSK_MultiIOLinkSMI.setSearchBegin', setSearchBegin)
+
+local function setSearchEnd(pattern)
+  multiIOLinkSMI_Instances[selectedInstance].parameters.ioddReadMessages[selectedIODDReadMessage].searchEnd = pattern
+  Script.notifyEvent('MultiIOLinkSMI_OnNewProcessingParameter', selectedInstance, 'readMessages', json.encode(multiIOLinkSMI_Instances[selectedInstance].parameters.ioddReadMessages))
+end
+Script.serveFunction('CSK_MultiIOLinkSMI.setSearchEnd', setSearchEnd)
+
+local function setAutoStartReadMessageTimer(status)
+  _G.logger:info(nameOfModule .. ": Set status of AutoStart of read message timer to " .. tostring(status))
+  for key in pairs(multiIOLinkSMI_Instances) do
+    multiIOLinkSMI_Instances[key].parameters.autoStartTimer = status
+  end
+end
+Script.serveFunction('CSK_MultiIOLinkSMI.setAutoStartReadMessageTimer', setAutoStartReadMessageTimer)
 
 local function setReadMessageTimerActive(status)
   _G.logger:info(nameOfModule .. ": Set read message timer status to " .. tostring(status))
@@ -931,20 +1031,65 @@ local function getIODDReadMessageJSONTemplate(messageName)
 end
 Script.serveFunction('CSK_MultiIOLinkSMI.getIODDReadMessageJSONTemplate', getIODDReadMessageJSONTemplate)
 
+local function setReadMessageProcessDataStartByte(pos)
+  _G.logger:info(nameOfModule .. ": Set processData startByte to " .. tostring(pos))
+  multiIOLinkSMI_Instances[selectedInstance].parameters.ioddReadMessages[selectedIODDReadMessage].processDataStartByte = pos
+  Script.notifyEvent('MultiIOLinkSMI_OnNewProcessingParameter', selectedInstance, 'readMessages', json.encode(multiIOLinkSMI_Instances[selectedInstance].parameters.ioddReadMessages))
+end
+Script.serveFunction('CSK_MultiIOLinkSMI.setReadMessageProcessDataStartByte', setReadMessageProcessDataStartByte)
+
+local function setReadMessageProcessDataEndByte(pos)
+  _G.logger:info(nameOfModule .. ": Set readMessage endByte to " .. tostring(pos))
+  multiIOLinkSMI_Instances[selectedInstance].parameters.ioddReadMessages[selectedIODDReadMessage].processDataEndByte = pos
+  Script.notifyEvent('MultiIOLinkSMI_OnNewProcessingParameter', selectedInstance, 'readMessages', json.encode(multiIOLinkSMI_Instances[selectedInstance].parameters.ioddReadMessages))
+end
+Script.serveFunction('CSK_MultiIOLinkSMI.setReadMessageProcessDataEndByte', setReadMessageProcessDataEndByte)
+
+local function setReadMessageProcessDataUnpackFormat(format)
+  _G.logger:info(nameOfModule .. ": Set readMessage unpack format to " .. tostring(format))
+  multiIOLinkSMI_Instances[selectedInstance].parameters.ioddReadMessages[selectedIODDReadMessage].processDataUnpackFormat = format
+  Script.notifyEvent('MultiIOLinkSMI_OnNewProcessingParameter', selectedInstance, 'readMessages', json.encode(multiIOLinkSMI_Instances[selectedInstance].parameters.ioddReadMessages))
+end
+Script.serveFunction('CSK_MultiIOLinkSMI.setReadMessageProcessDataUnpackFormat', setReadMessageProcessDataUnpackFormat)
+
+local function triggerProcessDataTestViaUI()
+  local _, readSuccess, data = Script.callFunction('CSK_MultiIOLinkSMI.readIODDMessage' .. tostring(selectedInstance), selectedIODDReadMessage)
+  if readSuccess then
+    Script.notifyEvent('MultiIOLinkSMI_OnNewStatusProcessDataTestResult', 'Payload = ' .. tostring(data))
+  else
+    Script.notifyEvent('MultiIOLinkSMI_OnNewStatusProcessDataTestResult', 'Something went wrong...')
+  end
+end
+Script.serveFunction('CSK_MultiIOLinkSMI.triggerProcessDataTestViaUI', triggerProcessDataTestViaUI)
+
+local function triggerUnpackDataTestViaUI()
+  local _, readSuccess, data = Script.callFunction('CSK_MultiIOLinkSMI.readMessageNoIODD' .. tostring(selectedInstance), selectedIODDReadMessage)
+  if readSuccess then
+    Script.notifyEvent('MultiIOLinkSMI_OnNewStatusUnpackDataTestResult', 'Unpacked data = ' .. tostring(data))
+  else
+    Script.notifyEvent('MultiIOLinkSMI_OnNewStatusUnpackDataTestResult', 'Something went wrong...')
+  end
+end
+Script.serveFunction('CSK_MultiIOLinkSMI.triggerUnpackDataTestViaUI', triggerUnpackDataTestViaUI)
+
 --**************************************************************************
 --**************************Write messages scope****************************
 --**************************************************************************
 
 local function setSelectedIODDWriteMessage(newSelectedMessage)
-  if newSelectedMessage == '' then
+  if CSK_IODDInterpreter then
+    if newSelectedMessage == '' then
+      selectedIODDWriteMessage = newSelectedMessage
+    end
+    if selectedInstance == '' or not multiIOLinkSMI_Instances[selectedInstance] or not multiIOLinkSMI_Instances[selectedInstance].parameters.ioddWriteMessages[newSelectedMessage] then
+      return
+    end
     selectedIODDWriteMessage = newSelectedMessage
-  end
-  if selectedInstance == '' or not multiIOLinkSMI_Instances[selectedInstance] or not multiIOLinkSMI_Instances[selectedInstance].parameters.ioddWriteMessages[newSelectedMessage] then
-    return
-  end
-  selectedIODDWriteMessage = newSelectedMessage
-  if selectedIODDWriteMessage ~= '' then
-    CSK_IODDInterpreter.setSelectedInstance(multiIOLinkSMI_Instances[selectedInstance].parameters.ioddWriteMessages[selectedIODDWriteMessage].ioddInstanceId)
+    if selectedIODDWriteMessage ~= '' then
+      CSK_IODDInterpreter.setSelectedInstance(multiIOLinkSMI_Instances[selectedInstance].parameters.ioddWriteMessages[selectedIODDWriteMessage].ioddInstanceId)
+    end
+  else
+    _G.logger:info(nameOfModule .. ": CSK_IODDInterpreter not available.")
   end
   handleOnExpiredTmrMultiIOLinkSMI()
 end
@@ -972,6 +1117,15 @@ local function setIODDWriteMessageName(newName)
   end
 end
 Script.serveFunction('CSK_MultiIOLinkSMI.setIODDWriteMessageName', setIODDWriteMessageName)
+
+local function setIODDWriteMessageEventName(newWriteMessageEventName)
+  if multiIOLinkSMI_Instances[selectedInstance].parameters.ioddWriteMessages[selectedIODDWriteMessage] then
+    _G.logger:info(nameOfModule .. ": Set event to register write message = " .. tostring(newWriteMessageEventName))
+    multiIOLinkSMI_Instances[selectedInstance].parameters.ioddWriteMessages[selectedIODDWriteMessage].writeMessageEventName = newWriteMessageEventName
+    Script.notifyEvent('MultiIOLinkSMI_OnNewProcessingParameter', selectedInstance, 'writeMessages', json.encode(multiIOLinkSMI_Instances[selectedInstance].parameters.ioddWriteMessages))
+  end
+end
+Script.serveFunction('CSK_MultiIOLinkSMI.setIODDWriteMessageEventName', setIODDWriteMessageEventName)
 
 local function deleteIODDWriteMessage()
   if selectedIODDWriteMessage == '' then
@@ -1292,23 +1446,25 @@ local function updateProcessingParameters()
 end
 
 local function getStatusModuleActive()
-  return _G.availableAPIs.default and _G.availableAPIs.specific
+  return _G.availableAPIs.default and _G.availableAPIs.specificSMI
 end
 Script.serveFunction('CSK_MultiIOLinkSMI.getStatusModuleActive', getStatusModuleActive)
 
 local function clearFlowConfigRelevantConfiguration()
-  -- No usage so far...maybe for future usage
-  --[[
   for i = 1, #multiIOLinkSMI_Instances do
     setSelectedInstance(i)
-    for key, value in pairs(multiIOLinkSMI_Instances[i].parameters.ioddReadMessages) do
-      setSelectedIODDReadMessage(key)
-      deleteIODDReadMessage()
+    for key, value in pairs(multiIOLinkSMI_Instances[i].parameters.ioddWriteMessages) do
+      setSelectedIODDWriteMessage(key)
+      setIODDWriteMessageEventName('')
     end
   end
-  ]]
 end
 Script.serveFunction('CSK_MultiIOLinkSMI.clearFlowConfigRelevantConfiguration', clearFlowConfigRelevantConfiguration)
+
+local function stopFlowConfigRelevantProvider()
+  setReadMessageTimerActive(false)
+end
+Script.serveFunction('CSK_MultiIOLinkSMI.stopFlowConfigRelevantProvider', stopFlowConfigRelevantProvider)
 
 local function getParameters(instanceNo)
   if instanceNo <= #multiIOLinkSMI_Instances then
@@ -1378,7 +1534,14 @@ local function loadParameters()
       end
       ---------------------------------------
       multiIOLinkSMI_Instances[selectedInstance].parameters = helperFuncs.convertContainer2Table(data)
+
+      multiIOLinkSMI_Instances[selectedInstance].parameters = helperFuncs.checkParameters(multiIOLinkSMI_Instances[selectedInstance].parameters, helperFuncs.defaultParameters)
+
       updateProcessingParameters()
+
+      if multiIOLinkSMI_Instances[selectedInstance].parameters.autoStartTimer then
+        startReadMessageTimer()
+      end
 
       tmrMultiIOLinkSMI:start()
       return true
@@ -1412,7 +1575,7 @@ Script.serveFunction('CSK_MultiIOLinkSMI.setFlowConfigPriority', setFlowConfigPr
 --- Function to react on initial load of persistent parameters
 local function handleOnInitialDataLoaded()
 
-  if _G.availableAPIs.default and _G.availableAPIs.specific then
+  if _G.availableAPIs.default and _G.availableAPIs.specificSMI then
 
     _G.logger:fine(nameOfModule .. ': Try to initially load parameter from CSK_PersistentData module.')
     -- Check if CSK_PersistentData version is > 1.x.x
@@ -1462,7 +1625,7 @@ end
 Script.register("CSK_PersistentData.OnInitialDataLoaded", handleOnInitialDataLoaded)
 
 local function resetModule()
-  if _G.availableAPIs.default and _G.availableAPIs.specific then
+  if _G.availableAPIs.default and _G.availableAPIs.specificSMI then
     clearFlowConfigRelevantConfiguration()
 
     for i = 1, #multiIOLinkSMI_Instances do

@@ -49,7 +49,7 @@ local multiIOLinkSMI_Instances = {} -- Handle all instances
 -- Check / edit this script to see/edit functions which communicate with the UI
 local multiIOLinkSMIController = require('Communication/MultiIOLinkSMI/MultiIOLinkSMI_Controller')
 
-if _G.availableAPIs.default and _G.availableAPIs.specific and Engine.getEnumValues('IOLinkMasterPorts') ~= nil then
+if _G.availableAPIs.default and _G.availableAPIs.specificSMI and Engine.getEnumValues('IOLinkMasterPorts') ~= nil then
   local setInstanceHandle = require('Communication/MultiIOLinkSMI/FlowConfig/MultiIOLinkSMI_FlowConfig')
   table.insert(multiIOLinkSMI_Instances, multiIOLinkSMI_Model.create(1))
   multiIOLinkSMIController.setMultiIOLinkSMI_Instances_Handle(multiIOLinkSMI_Instances) -- share handle of instances
@@ -90,7 +90,7 @@ local function main()
   CSK_MultiIOLinkSMI.setIODDReadMessageName('readMessageTitle')
   CSK_MultiIOLinkSMI.createIODDReadMessage()
   CSK_MultiIOLinkSMI.setSelectedIODDReadMessage('readMessageTitle')
-  -- Register to "CSK_MultiIOLinkSMI.OnNewReadMessage_[port]_[readMessageTitle]"-event
+  -- Register to "CSK_MultiIOLinkSMI.OnNewReadMessage_[instance]_[port]_[readMessageTitle]"-event
 
   -- Write message handling
   CSK_MultiIOLinkSMI.createIODDWriteMessage()
@@ -114,7 +114,7 @@ local function main()
   ]]
   ----------------------------------------------------------------------------------------
 
-  if _G.availableAPIs.default and _G.availableAPIs.specific then
+  if _G.availableAPIs.default and _G.availableAPIs.specificSMI then
     CSK_MultiIOLinkSMI.setSelectedInstance(1)
     CSK_MultiIOLinkSMI.pageCalled()
   end

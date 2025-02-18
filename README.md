@@ -15,11 +15,12 @@ The app includes an intuitive GUI to setup communication with IOLink device.
 4. You can send and receive values to/from device as decimal byte arrays for testing purposes (no IODD needed, see upper part of ReadMessage/WriteMessage UI)
 ![plot](./docu/media/mainPage.png)
 
-If there is available [IODD interpreter](https://github.com/SICKAppSpaceCodingStarterKit/CSK_Module_IODDInterpreter) with loaded IODD file for the connected device, it is possible to create customized IODD read and write messages:
+If there is available [IODD interpreter](https://github.com/SICKAppSpaceCodingStarterKit/CSK_Module_IODDInterpreter) with loaded IODD file for the connected device, it is possible to create customized IODD read and write messages.
+Without the IODDInterpreter, still it is possible to create custom read messages:
 
 ### Read data
 
-1. Set name for new ReadMessage
+1. Set name for new ReadMessage and type of read message
 2. Create new ReadMessage
 3. Select when you want to read data, periodically (period in ms) or on some CROWN event
 4. Select process data you want to read from device
@@ -59,6 +60,7 @@ Tested on
 
 |Device|Firmware version|Module version|
 |--|--|--|
+|SIM1012|V2.4.2|V3.0.0|
 |SIM1012|V2.4.2|V2.1.1|
 |SIM1012|V2.4.2|V2.1.0|
 |SIM1012|V2.4.2|V2.0.0|
@@ -67,7 +69,7 @@ Tested on
 
 NOTE! Writing process data to IO-Link device works after SIM1012 firmware version 2.3.0
 
-This application / module is part of the SICK AppSpace Coding Starter Kit developing approach.  
+This module is part of the SICK AppSpace Coding Starter Kit developing approach.  
 It is programmed in an object-oriented way. Some of the modules use kind of "classes" in Lua to make it possible to reuse code / classes in other projects.  
 In general, it is not neccessary to code this way, but the architecture of this app can serve as a sample to be used especially for bigger projects and to make it easier to share code.  
 Please check the [documentation](https://github.com/SICKAppSpaceCodingStarterKit/.github/blob/main/docu/SICKAppSpaceCodingStarterKit_Documentation.md) of CSK for further information.  

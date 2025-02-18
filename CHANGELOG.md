@@ -1,15 +1,44 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## Release 3.0.0
+
+### New features
+- Provide features even without CSK_Module_IODDInterpreter
+- Create readMessages without IODD information, by setting start-/endByte (or bit position within byte) and unpack format
+- Optionally search and cut relevant part out of created JSON within readMessage
+- Register to event to forward content as writeMessage
+- New FlowConfig block 'OnNewDataAuto' which automatically creates readMessages and optionally checks to power selected port (WARNING: Do NOT mix with manual readMessage setup)
+- New FlowConfig block 'WriteProcessData'
+- React on "OnStopFlowConfigProviders" event of FlowConfig modul to stop pulling IO-Link data
+- Check and handle different kind of IOLink.SMI APIs
+- Function to delete all existing readMessages
+- Check if persistent data to load provides all relevant parameters. Otherwise add default values
+- Selectable if timers for readMessages should start automatically after parameters were loaded
+
+### Improvements
+- Changed event name "OnNewReadMessage_PORT_MESSAGENAME" to "OnNewReadMessage_INSTANCE_PORT_MESSAGENAME" to make it possible to switch between ports during runtime
+- Do not start readMessage timers automatically with creation of readMessage
+- Use new event 'OnNewRawReadMessage_INSTANCE_PORT_MESSAGENAME" within FlowConfig (only providing data content as first parameter)
+- If using FlowConfig, start readMessage timers after 5 seconds
+- Add info about port within "OnNewIOLinkPortStatus" event
+- Add list of ports related to instances within "getInstancePortMap" function
+- Better handling if CSK_IODDInterpreter is not available
+
+### Bugfix
+- Issue with CSK_UserManagement support
+- Error if sending process data without any selection
+- Error in handling IODD data
+
 ## Release 2.1.1
 
 ### Bugfixes
-writing of process data and parameters is available again
+- writing of process data and parameters is available again
 
 ## Release 2.1.0
 
 ### New features
-Now it is possible to read subindexes (even if the subindex access is not supported). Requires IODD interpreter v2.1.0 or more
+- Now it is possible to read subindexes (even if the subindex access is not supported). Requires IODD interpreter v2.1.0 or more
 
 ### Improvements
 - Speeding up of data parsing when reading from IO-Link device
