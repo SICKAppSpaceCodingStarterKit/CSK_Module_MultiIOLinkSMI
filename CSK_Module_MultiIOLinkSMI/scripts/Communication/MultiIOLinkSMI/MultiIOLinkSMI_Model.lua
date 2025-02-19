@@ -4,7 +4,6 @@
 -- including its parameters and functions
 --*****************************************************************
 local json = require('Communication/MultiIOLinkSMI/helper/Json')
-local helperFuncs = require "Communication.MultiIOLinkSMI.helper.funcs"
 local converter = require('Communication/MultiIOLinkSMI/helper/DataConverter')
 --**************************************************************************
 --**********************Start Global Scope *********************************
@@ -145,7 +144,7 @@ function multiIOLinkSMI.create(multiIOLinkSMIInstanceNo)
 
   -- Parameters to be saved permanently if wanted
   self.parameters = {}
-  self.parameters = require('Communication/MultiIOLinkSMI/MultiIOLinkSMI_Parameters') -- Load default parameters
+  self.parameters = self.helperFuncs.defaultParameters.getParameters() -- Load default parameters
 
   -- Parameters to give to the processing script
   self.multiIOLinkSMIProcessingParams = Container.create()

@@ -1535,7 +1535,7 @@ local function loadParameters()
       ---------------------------------------
       multiIOLinkSMI_Instances[selectedInstance].parameters = helperFuncs.convertContainer2Table(data)
 
-      multiIOLinkSMI_Instances[selectedInstance].parameters = helperFuncs.checkParameters(multiIOLinkSMI_Instances[selectedInstance].parameters, helperFuncs.defaultParameters)
+      multiIOLinkSMI_Instances[selectedInstance].parameters = helperFuncs.checkParameters(multiIOLinkSMI_Instances[selectedInstance].parameters, helperFuncs.defaultParameters.getParameters())
 
       updateProcessingParameters()
 
