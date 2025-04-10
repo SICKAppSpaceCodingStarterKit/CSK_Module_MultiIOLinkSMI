@@ -654,14 +654,14 @@ local function updateIODDReadMessages()
         end
       end
       Script.notifyEvent(localEventName, success, queueSize, timestamp2-timestamp1, messageContent, errorMessage)
-      Script.notifyEvent(localEventName2, messageContent)
+      Script.notifyEvent(localEventName2, messageContent, timestamp1)
     end
 
     if not Script.isServedAsEvent(crownEventName) then
       Script.serveEvent(crownEventName, localEventName, 'bool:1:,int:1:,int:1:,string:?:,string:?:')
     end
     if not Script.isServedAsEvent(crownEventName2) then
-      Script.serveEvent(crownEventName2, localEventName2, 'auto:1:')
+      Script.serveEvent(crownEventName2, localEventName2, 'auto:1:,int:1')
     end
     if messageInfo.triggerType == "Periodic" then
       ioddReadMessagesTimers[messageName] = Timer.create()

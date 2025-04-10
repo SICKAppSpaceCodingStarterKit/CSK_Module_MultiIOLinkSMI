@@ -6,13 +6,12 @@
         <layout-row id="RowLayout49">
             <layout-column id="ColumnLayout70" style="align-items: stretch">
                 <layout-row id="RowLayout01" style="align-items: baseline">
-                    <davinci-value-display id="VD_Title" class="myCustomLabel_CSK_Module_MultiIOLinkSMI"
-                        value="IO-Link SMI">
-                    </davinci-value-display>
+                    <h1 id="Heading_Title" class="myCustomLabel_CSK_Module_MultiIOLinkSMI">
+                        IO-Link SMI
+                    </h1>
                     <davinci-value-display id="VD_Version">
-                        <crown-edpws-binding property="value" name="CSK_MultiIOLinkSMI/OnNewStatusModuleVersion"
-                            update-on-resume>
-                        </crown-edpws-binding>
+                        <crown-on property="value" crown-event="CSK_MultiIOLinkSMI/OnNewStatusModuleVersion">
+                        </crown-on>
                     </davinci-value-display>
                 </layout-row>
             </layout-column>
@@ -60,9 +59,9 @@
                                                             style="justify-content: center; align-items: center">
                                                             <davinci-button id="B_IOLink_AddInstance"
                                                                 class="myCustomButton_CSK_Module_MultiIOLinkSMI"
-                                                                type="outline" icon-position="append"
-                                                                title="Add new IOLink instance to project"
-                                                                icon="content/add">
+                                                                type="outline"
+                                                                title="Add new IOLink instance to project">
+                                                                <davinci-icon icon="content/add"></davinci-icon>
                                                                 <span></span>
                                                                 <crown-binding event="submit"
                                                                     name="CSK_MultiIOLinkSMI/addInstance" auto-commit>
@@ -70,9 +69,9 @@
                                                             </davinci-button>
                                                             <davinci-button id="Button_ResetInstances"
                                                                 class="myCustomButton_CSK_Module_MultiIOLinkSMI"
-                                                                type="outline" icon-position="append"
-                                                                title="Reset instances to one single instance. New setup needs to be saved and restart app to clear old threads."
-                                                                icon="action/delete">
+                                                                type="outline"
+                                                                title="Reset instances to one single instance. New setup needs to be saved and restart app to clear old threads.">
+                                                                <davinci-icon icon="action/delete"></davinci-icon>
                                                                 <span></span>
                                                                 <crown-binding event="submit"
                                                                     name="CSK_MultiIOLinkSMI/resetInstances"
@@ -125,9 +124,10 @@
                                                                     style="justify-content: center; align-items: center">
                                                                     <davinci-button id="B_LoadConfig"
                                                                         class="myCustomButton_CSK_Module_MultiIOLinkSMI"
-                                                                        type="outline" icon-position="append"
-                                                                        title="Load configured parameters from CSK_PersistentData module."
-                                                                        icon="action/history">
+                                                                        type="outline"
+                                                                        title="Load configured parameters from CSK_PersistentData module.">
+                                                                        <davinci-icon icon="action/history">
+                                                                        </davinci-icon>
                                                                         <span></span>
                                                                         <crown-binding event="submit"
                                                                             name="CSK_MultiIOLinkSMI/loadParameters"
@@ -141,9 +141,10 @@
                                                                     </davinci-button>
                                                                     <davinci-button id="B_SaveConfig"
                                                                         class="myCustomButton_CSK_Module_MultiIOLinkSMI"
-                                                                        type="outline" icon-position="append"
-                                                                        title="Save current configured parameters of this module within CSK_PersistentData module."
-                                                                        icon="content/save">
+                                                                        type="outline"
+                                                                        title="Save current configured parameters of this module within CSK_PersistentData module.">
+                                                                        <davinci-icon icon="content/save">
+                                                                        </davinci-icon>
                                                                         <span></span>
                                                                         <crown-binding event="submit"
                                                                             name="CSK_MultiIOLinkSMI/sendParameters"
@@ -414,11 +415,12 @@
                                                                                 path="public/tempIODD.xml" is-file
                                                                                 icon="file/file_upload">
                                                                                 <span>Upload IODD</span>
-                                                                                <crown-binding event="finished"
-                                                                                    name="CSK_MultiIOLinkSMI/uploadFinishedCSKIODDInterpreter"
-                                                                                    path="param/args/uploadSuccess"
-                                                                                    auto-commit>
-                                                                                </crown-binding>
+                                                                                <crown-set event="finished"
+                                                                                    crown-function="CSK_MultiIOLinkSMI/uploadFinishedCSKIODDInterpreter"
+                                                                                    protocol="crownMSGPACK"
+                                                                                    crown-path="uploadSuccess"
+                                                                                    converter="(value)=>{console.log(`event finished ${JSON.stringify(value)}`); return typeof value == 'boolean' ? value : value.success;}">
+                                                                                </crown-set>
                                                                             </appspace-file-upload-button>
                                                                         </layout-row>
                                                                     </layout-column>
@@ -664,9 +666,10 @@
                                                                                         id="B_TestReadProcessData"
                                                                                         class="myCustomButton_CSK_Module_MultiIOLinkSMI"
                                                                                         type="outline"
-                                                                                        icon-position="append"
-                                                                                        icon="action/search"
                                                                                         title="Read process data">
+                                                                                        <davinci-icon
+                                                                                            icon="action/search">
+                                                                                        </davinci-icon>
                                                                                         <span></span>
                                                                                         <crown-set event="submit"
                                                                                             crown-function="CSK_MultiIOLinkSMI/readProcessDataByteArrayUI"
@@ -738,9 +741,10 @@
                                                                                         id="B_TestReadParameter"
                                                                                         class="myCustomButton_CSK_Module_MultiIOLinkSMI"
                                                                                         type="outline"
-                                                                                        icon-position="append"
-                                                                                        title="Read parameter"
-                                                                                        icon="action/search">
+                                                                                        title="Read parameter">
+                                                                                        <davinci-icon
+                                                                                            icon="action/search">
+                                                                                        </davinci-icon>
                                                                                         <span></span>
                                                                                         <crown-set event="submit"
                                                                                             crown-function="CSK_MultiIOLinkSMI/readParameterByteArrayUI"
@@ -774,7 +778,7 @@
                                                             <layout-column id="ColumnLayout27"
                                                                 style="align-items: stretch; flex-grow: 3">
                                                                 <davinci-text-field id="TF_ReadMessageName" type="text"
-                                                                    label="Message title">
+                                                                    label="ReadMessage Name">
                                                                     <crown-on property="value"
                                                                         crown-event="CSK_MultiIOLinkSMI/OnNewSelectedIODDReadMessage">
                                                                     </crown-on>
@@ -831,9 +835,9 @@
                                                                     style="justify-content: space-evenly">
                                                                     <davinci-button id="B_CreateReadMessage"
                                                                         class="myCustomButton_CSK_Module_MultiIOLinkSMI"
-                                                                        type="primary" icon-position="append"
-                                                                        title="Create new read data message"
-                                                                        icon="content/add">
+                                                                        type="primary"
+                                                                        title="Create new read data message">
+                                                                        <davinci-icon icon="content/add"></davinci-icon>
                                                                         <span></span>
                                                                         <crown-set event="submit"
                                                                             crown-function="CSK_MultiIOLinkSMI/createIODDReadMessage"
@@ -842,8 +846,9 @@
                                                                     </davinci-button>
                                                                     <davinci-button id="B_DeleteReadMessage"
                                                                         class="myCustomButton_CSK_Module_MultiIOLinkSMI"
-                                                                        type="outline" icon-position="append"
-                                                                        icon="action/delete" title="Delete message">
+                                                                        type="outline" title="Delete message">
+                                                                        <davinci-icon icon="action/delete">
+                                                                        </davinci-icon>
                                                                         <span></span>
                                                                         <crown-set event="submit"
                                                                             crown-function="CSK_MultiIOLinkSMI/deleteIODDReadMessage"
@@ -904,9 +909,9 @@
                                                                                     id="Button_PauseReadMsgTimer"
                                                                                     class="myCustomButton_CSK_Module_MultiIOLinkSMI"
                                                                                     type="outline"
-                                                                                    icon-position="append"
-                                                                                    icon="av/pause"
                                                                                     title="Pause timers of all instances and readMessages.">
+                                                                                    <davinci-icon icon="av/pause">
+                                                                                    </davinci-icon>
                                                                                     <span></span>
                                                                                     <crown-binding event="submit"
                                                                                         name="CSK_MultiIOLinkSMI/pauseReadMessageTimer"
@@ -920,9 +925,9 @@
                                                                                     id="Button_StartReadMsgTimer"
                                                                                     class="myCustomButton_CSK_Module_MultiIOLinkSMI"
                                                                                     type="outline"
-                                                                                    icon-position="append"
-                                                                                    icon="av/play_arrow"
                                                                                     title="Start timers of all instances and readMessages.">
+                                                                                    <davinci-icon icon="av/play_arrow">
+                                                                                    </davinci-icon>
                                                                                     <span></span>
                                                                                     <crown-binding event="submit"
                                                                                         name="CSK_MultiIOLinkSMI/startReadMessageTimer"
@@ -1112,9 +1117,10 @@
                                                                                                                 <davinci-button
                                                                                                                     id="Button_TriggerProcessData"
                                                                                                                     class="myCustomButton_CSK_Module_MultiIOLinkSMI"
-                                                                                                                    type="outline"
-                                                                                                                    icon-position="append"
-                                                                                                                    icon="action/search">
+                                                                                                                    type="outline">
+                                                                                                                    <davinci-icon
+                                                                                                                        icon="action/search">
+                                                                                                                    </davinci-icon>
                                                                                                                     <span></span>
                                                                                                                     <crown-binding
                                                                                                                         event="submit"
@@ -1126,11 +1132,10 @@
                                                                                                         </layout-row>
                                                                                                         <davinci-value-display
                                                                                                             id="VD_ProcessDataTest">
-                                                                                                            <crown-edpws-binding
+                                                                                                            <crown-on
                                                                                                                 property="value"
-                                                                                                                name="CSK_MultiIOLinkSMI/OnNewStatusProcessDataTestResult"
-                                                                                                                update-on-resume>
-                                                                                                            </crown-edpws-binding>
+                                                                                                                crown-event="CSK_MultiIOLinkSMI/OnNewStatusProcessDataTestResult">
+                                                                                                            </crown-on>
                                                                                                         </davinci-value-display>
                                                                                                     </layout-column>
                                                                                                     <layout-column
@@ -1224,9 +1229,10 @@
                                                                                                                 id="B_RefreshLiveReadData"
                                                                                                                 class="myCustomButton_CSK_Module_MultiIOLinkSMI"
                                                                                                                 type="outline"
-                                                                                                                icon-position="append"
-                                                                                                                icon="navigation/refresh"
                                                                                                                 title="Refresh live payload">
+                                                                                                                <davinci-icon
+                                                                                                                    icon="navigation/refresh">
+                                                                                                                </davinci-icon>
                                                                                                                 <span></span>
                                                                                                                 <crown-set
                                                                                                                     event="submit"
@@ -1238,9 +1244,10 @@
                                                                                                                 id="B_ReadPayload"
                                                                                                                 class="myCustomButton_CSK_Module_MultiIOLinkSMI"
                                                                                                                 type="outline"
-                                                                                                                icon-position="append"
-                                                                                                                icon="action/search"
                                                                                                                 title="Read payload">
+                                                                                                                <davinci-icon
+                                                                                                                    icon="action/search">
+                                                                                                                </davinci-icon>
                                                                                                                 <span></span>
                                                                                                                 <crown-set
                                                                                                                     event="submit"
@@ -1416,9 +1423,10 @@
                                                                                                 <davinci-button
                                                                                                     id="Button_TestTrigger"
                                                                                                     class="myCustomButton_CSK_Module_MultiIOLinkSMI"
-                                                                                                    type="outline"
-                                                                                                    icon-position="append"
-                                                                                                    icon="action/search">
+                                                                                                    type="outline">
+                                                                                                    <davinci-icon
+                                                                                                        icon="action/search">
+                                                                                                    </davinci-icon>
                                                                                                     <span></span>
                                                                                                     <crown-binding
                                                                                                         event="submit"
@@ -1430,11 +1438,9 @@
                                                                                         </layout-row>
                                                                                         <davinci-value-display
                                                                                             id="VD_UnpackedData">
-                                                                                            <crown-edpws-binding
-                                                                                                property="value"
-                                                                                                name="CSK_MultiIOLinkSMI/OnNewStatusUnpackDataTestResult"
-                                                                                                update-on-resume>
-                                                                                            </crown-edpws-binding>
+                                                                                            <crown-on property="value"
+                                                                                                crown-event="CSK_MultiIOLinkSMI/OnNewStatusUnpackDataTestResult">
+                                                                                            </crown-on>
                                                                                         </davinci-value-display>
                                                                                     </layout-column>
                                                                                 </layout-row>
@@ -1516,9 +1522,10 @@
                                                                             style="align-items: flex-end; flex-grow: 2">
                                                                             <davinci-button id="B_TestWriteProcessData"
                                                                                 class="myCustomButton_CSK_Module_MultiIOLinkSMI"
-                                                                                type="outline" icon-position="append"
-                                                                                title="Write process data"
-                                                                                icon="content/create">
+                                                                                type="outline"
+                                                                                title="Write process data">
+                                                                                <davinci-icon icon="content/create">
+                                                                                </davinci-icon>
                                                                                 <span></span>
                                                                                 <crown-set event="submit"
                                                                                     crown-function="CSK_MultiIOLinkSMI/writeProcessDataByteArrayUI"
@@ -1585,9 +1592,9 @@
                                                                             style="align-items: center">
                                                                             <davinci-button id="B_TestWriteParameter"
                                                                                 class="myCustomButton_CSK_Module_MultiIOLinkSMI"
-                                                                                type="outline" icon-position="append"
-                                                                                title="Write parameter"
-                                                                                icon="content/create">
+                                                                                type="outline" title="Write parameter">
+                                                                                <davinci-icon icon="content/create">
+                                                                                </davinci-icon>
                                                                                 <span></span>
                                                                                 <crown-set event="submit"
                                                                                     crown-function="CSK_MultiIOLinkSMI/writeParameterByteArrayUI"
@@ -1651,9 +1658,9 @@
                                                                 <layout-row id="RowLayout74">
                                                                     <davinci-button id="B_CreateWriteMessage"
                                                                         class="myCustomButton_CSK_Module_MultiIOLinkSMI"
-                                                                        type="primary" icon-position="append"
-                                                                        title="Create new write data message"
-                                                                        icon="content/add">
+                                                                        type="primary"
+                                                                        title="Create new write data message">
+                                                                        <davinci-icon icon="content/add"></davinci-icon>
                                                                         <span></span>
                                                                         <crown-set event="submit"
                                                                             crown-function="CSK_MultiIOLinkSMI/createIODDWriteMessage"
@@ -1662,8 +1669,9 @@
                                                                     </davinci-button>
                                                                     <davinci-button id="B_DeleteWriteMessage"
                                                                         class="myCustomButton_CSK_Module_MultiIOLinkSMI"
-                                                                        type="outline" icon-position="append"
-                                                                        title="Delete message" icon="action/delete">
+                                                                        type="outline" title="Delete message">
+                                                                        <davinci-icon icon="action/delete">
+                                                                        </davinci-icon>
                                                                         <span></span>
                                                                         <crown-set event="submit"
                                                                             crown-function="CSK_MultiIOLinkSMI/deleteIODDWriteMessage"
@@ -1823,9 +1831,10 @@ write success (bool); write queue size (int); time taken to read message (int); 
                                                                                         id="B_RefreshLiveWriteData"
                                                                                         class="myCustomButton_CSK_Module_MultiIOLinkSMI"
                                                                                         type="outline"
-                                                                                        icon-position="append"
-                                                                                        title="Refresh live payload"
-                                                                                        icon="navigation/refresh">
+                                                                                        title="Refresh live payload">
+                                                                                        <davinci-icon
+                                                                                            icon="navigation/refresh">
+                                                                                        </davinci-icon>
                                                                                         <span></span>
                                                                                         <crown-set event="submit"
                                                                                             crown-function="CSK_MultiIOLinkSMI/refreshWriteDataResult"
@@ -1884,9 +1893,10 @@ write success (bool); write queue size (int); time taken to read message (int); 
                                                                                     <davinci-button id="B_SendPyaload"
                                                                                         class="myCustomButton_CSK_Module_MultiIOLinkSMI"
                                                                                         type="outline"
-                                                                                        icon-position="append"
-                                                                                        title="Send payload"
-                                                                                        icon="content/send">
+                                                                                        title="Send payload">
+                                                                                        <davinci-icon
+                                                                                            icon="content/send">
+                                                                                        </davinci-icon>
                                                                                         <span></span>
                                                                                         <crown-set event="submit"
                                                                                             crown-function="CSK_MultiIOLinkSMI/writeIODDMessageFromUI"
