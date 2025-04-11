@@ -877,35 +877,40 @@ end
 Script.serveFunction('CSK_MultiIOLinkSMI.setSelectedIODDReadMessage', setSelectedIODDReadMessage)
 
 local function createIODDReadMessage()
-  if newReadMessageName ~= '' and multiIOLinkSMI_Instances[selectedInstance].parameters.ioddReadMessages[newReadMessageName] == nil then
-    if multiIOLinkSMI_Instances[selectedInstance].readMessageMode == 'NO_IODD' then
-      multiIOLinkSMI_Instances[selectedInstance]:createIODDReadMessage(newReadMessageName, true)
-      setSelectedIODDReadMessage(newReadMessageName)
-      Script.notifyEvent('MultiIOLinkSMI_OnNewProcessingParameter', selectedInstance, 'readMessages', json.encode(multiIOLinkSMI_Instances[selectedInstance].parameters.ioddReadMessages))
-    else
-      if not multiIOLinkSMI_Instances[selectedInstance].parameters.ioddInfo then
-        _G.logger:info(nameOfModule .. ": No IODD info to create readMessage")
-        return
+  if newReadMessageName ~= '' then
+    if multiIOLinkSMI_Instances[selectedInstance].parameters.ioddReadMessages[newReadMessageName] == nil then
+      if multiIOLinkSMI_Instances[selectedInstance].readMessageMode == 'NO_IODD' then
+        multiIOLinkSMI_Instances[selectedInstance]:createIODDReadMessage(newReadMessageName, true)
+        setSelectedIODDReadMessage(newReadMessageName)
+        Script.notifyEvent('MultiIOLinkSMI_OnNewProcessingParameter', selectedInstance, 'readMessages', json.encode(multiIOLinkSMI_Instances[selectedInstance].parameters.ioddReadMessages))
       else
-        if CSK_IODDInterpreter then
-          multiIOLinkSMI_Instances[selectedInstance]:createIODDReadMessage(newReadMessageName)
-          setSelectedIODDReadMessage(newReadMessageName)
+        if not multiIOLinkSMI_Instances[selectedInstance].parameters.ioddInfo then
+          _G.logger:info(nameOfModule .. ": No IODD info to create readMessage")
+          return
         else
-          _G.logger:info(nameOfModule .. ": CSK_IODDInterpreter not available.")
+          if CSK_IODDInterpreter then
+            multiIOLinkSMI_Instances[selectedInstance]:createIODDReadMessage(newReadMessageName)
+            setSelectedIODDReadMessage(newReadMessageName)
+          else
+            _G.logger:info(nameOfModule .. ": CSK_IODDInterpreter not available.")
+          end
         end
       end
+    else
+      setSelectedIODDReadMessage(newReadMessageName)
+      _G.logger:info(nameOfModule .. ": ReadMessage already exists.")
+      handleOnExpiredTmrMultiIOLinkSMI()
     end
   else
-    _G.logger:info(nameOfModule .. ": No name for readMessage")
+    _G.logger:info(nameOfModule .. ": No name for readMessage.")
   end
 end
 Script.serveFunction('CSK_MultiIOLinkSMI.createIODDReadMessage', createIODDReadMessage)
 
 local function setIODDReadMessageName(newName)
+  newReadMessageName = newName
   if multiIOLinkSMI_Instances[selectedInstance].parameters.ioddReadMessages[newName] then
     handleOnExpiredTmrMultiIOLinkSMI()
-  else
-    newReadMessageName = newName
   end
 end
 Script.serveFunction('CSK_MultiIOLinkSMI.setIODDReadMessageName', setIODDReadMessageName)

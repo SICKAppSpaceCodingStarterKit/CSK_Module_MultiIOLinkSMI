@@ -8,8 +8,10 @@ All notable changes to this project will be documented in this file.
 
 ### Improvements
 - Minor docu improvements
+- Minor update of readMessageName check
 
 ### Bugfix
+- 'OnNewDataAuto' FlowConfig block did not work with initial load of persistent data
 - Legacy bindings of ValueDisplay elements and FileUpload feature within UI did not work if deployed with VS Code AppSpace SDK
 - UI differs if deployed via Appstudio or VS Code AppSpace SDK
 - Fullscreen icon of iFrame was visible
