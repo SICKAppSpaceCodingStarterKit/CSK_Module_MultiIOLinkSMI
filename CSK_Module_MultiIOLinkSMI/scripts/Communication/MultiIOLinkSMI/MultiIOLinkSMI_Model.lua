@@ -73,6 +73,7 @@ function multiIOLinkSMI.getDeviceIdentification(port)
     vendorText = '',
     deviceId = '',
     productName = '',
+    productID = '',
     productText = '',
     statusInfo = ''
   }
@@ -92,6 +93,10 @@ function multiIOLinkSMI.getDeviceIdentification(port)
     local productName = multiIOLinkSMI.IOLinkSMIhandle:deviceRead(port, 18, 0)
     if productName then
       deviceInfo.productName = converter.toDataType(productName, 'StringT')
+    end
+    local productID = multiIOLinkSMI.IOLinkSMIhandle:deviceRead(port, 19, 0)
+    if productID then
+      deviceInfo.productID = converter.toDataType(productID, 'StringT')
     end
     local productText = multiIOLinkSMI.IOLinkSMIhandle:deviceRead(port, 20, 0)
     if productText then

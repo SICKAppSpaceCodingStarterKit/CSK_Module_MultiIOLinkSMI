@@ -322,6 +322,16 @@
                                                                 </crown-on>
                                                             </davinci-value-display>
                                                         </layout-row>
+                                                        <layout-row id="RowLayout591">
+                                                            <davinci-value-display id="VD_Static_DeviceID"
+                                                                label="Device ID:">
+                                                            </davinci-value-display>
+                                                            <davinci-value-display id="VD_DeviceID">
+                                                                <crown-on property="value"
+                                                                    crown-event="CSK_MultiIOLinkSMI/OnNewDeviceId">
+                                                                </crown-on>
+                                                            </davinci-value-display>
+                                                        </layout-row>
                                                         <layout-row id="RowLayout60">
                                                             <davinci-value-display id="VD_Static_ProductName"
                                                                 label="Product name:">
@@ -520,6 +530,16 @@
                                                                     <davinci-value-display id="VD_NewDeviceVendorText">
                                                                         <crown-on property="value"
                                                                             crown-event="CSK_MultiIOLinkSMI/OnNewNewDeviceVendorText">
+                                                                        </crown-on>
+                                                                    </davinci-value-display>
+                                                                </layout-row>
+                                                                <layout-row id="RowLayout91">
+                                                                    <davinci-value-display id="VD_Static_NewDeviceId"
+                                                                        label="Device ID:">
+                                                                    </davinci-value-display>
+                                                                    <davinci-value-display id="VD_NewDeviceId">
+                                                                        <crown-on property="value"
+                                                                            crown-event="CSK_MultiIOLinkSMI/OnNewNewDeviceDeviceId">
                                                                         </crown-on>
                                                                     </davinci-value-display>
                                                                 </layout-row>
