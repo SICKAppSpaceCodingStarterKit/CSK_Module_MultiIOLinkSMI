@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.12">
 <meta name="author" content="SICK AG">
-<title>Documentation - CSK_Module_MultiIOLinkSMI 3.0.1</title>
+<title>Documentation - CSK_Module_MultiIOLinkSMI 3.1.0</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <style>
 /* Stylesheet for CodeRay to match GitHub theme | MIT License | http://foundation.zurb.com */
@@ -615,11 +615,11 @@ h1,h2,h3,h4,h5,h6{color:#007cc1}
 </head>
 <body class="article toc2 toc-left">
 <div id="header">
-<h1>Documentation - CSK_Module_MultiIOLinkSMI 3.0.1</h1>
+<h1>Documentation - CSK_Module_MultiIOLinkSMI 3.1.0</h1>
 <div class="details">
 <span id="author" class="author">SICK AG</span><br>
-<span id="revnumber">version 3.0.1,</span>
-<span id="revdate">2025-02-14</span>
+<span id="revnumber">version 3.1.0,</span>
+<span id="revdate">2025-04-10</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -919,11 +919,11 @@ h1,h2,h3,h4,h5,h6{color:#007cc1}
 </tr>
 <tr>
 <th class="tableblock halign-left valign-top"><p class="tableblock">Version</p></th>
-<td class="tableblock halign-left valign-top"><p class="tableblock">3.0.1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3.1.0</p></td>
 </tr>
 <tr>
 <th class="tableblock halign-left valign-top"><p class="tableblock">Date</p></th>
-<td class="tableblock halign-left valign-top"><p class="tableblock">2025-02-14</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2025-04-10</p></td>
 </tr>
 <tr>
 <th class="tableblock halign-left valign-top"><p class="tableblock">Author</p></th>
@@ -8205,6 +8205,12 @@ INFO: Other modules can check via "Script.isServedAsEvent" if event exists.</p>
 <td class="tableblock halign-left valign-top"><p class="tableblock">?</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Manually unpacked part of process data (no IODD Interpreter used).</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">timestamp</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">INT</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Timestamp</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -8212,7 +8218,7 @@ INFO: Other modules can check via "Script.isServedAsEvent" if event exists.</p>
 <h6 id="_sample_auto_generated_138">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnNewRawReadMessage_INSTANCE_PORT_MESSAGENAME</span>(data)
+<pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnNewRawReadMessage_INSTANCE_PORT_MESSAGENAME</span>(data, timestamp)
   <span class="comment">-- Do something</span>
 <span class="keyword">end</span>
 
@@ -11049,7 +11055,7 @@ Provide IO-Link data of created readMessages.
 <td class="tableblock halign-left valign-top"><p class="tableblock">ReadMessageName</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">STRING</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Name of read message to receive data.
+<td class="tableblock halign-left valign-top"><p class="tableblock">Name of read message (e.g. 'Distance') to receive data.
 IMPORTANT: Please make sure that related readMessage already exists.</p></td>
 </tr>
 </tbody>
@@ -11215,7 +11221,7 @@ Provide IO-Link data of created readMessages.
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">handle</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">BINARY</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HANDLE</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Handle to internally used FlowConfig instance.</p></td>
 </tr>
@@ -11223,9 +11229,10 @@ Provide IO-Link data of created readMessages.
 <td class="tableblock halign-left valign-top"><p class="tableblock">OnNewData</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">STRING</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">'CSK_MultiIOLinkSMI.OnNewRawReadMessage_[PORT]_[READMESSAGENAME]'
+<td class="tableblock halign-left valign-top"><p class="tableblock">'CSK_MultiIOLinkSMI.OnNewRawReadMessage_[INSTANCE]<em>[PORT]</em>[READMESSAGENAME]'
 Parameter:
-1: Data (auto)</p></td>
+1: Data (auto)
+2: Timestamp (INT)</p></td>
 </tr>
 </tbody>
 </table>
@@ -11513,7 +11520,7 @@ Provide IO-Link data.
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">handle</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">BINARY</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HANDLE</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Handle to internally used FlowConfig instance.</p></td>
 </tr>
@@ -11521,9 +11528,10 @@ Provide IO-Link data.
 <td class="tableblock halign-left valign-top"><p class="tableblock">OnNewData</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">STRING</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">'CSK_MultiIOLinkSMI.OnNewRawReadMessage_[PORT]_[READMESSAGENAME]'
+<td class="tableblock halign-left valign-top"><p class="tableblock">'CSK_MultiIOLinkSMI.OnNewRawReadMessage_[INSTANCE]<em>[PORT]</em>[READMESSAGENAME]'
 Parameter:
-1: Data (auto)</p></td>
+1: Data (AUTO)
+2: Timestamp (INT)</p></td>
 </tr>
 </tbody>
 </table>
@@ -11776,8 +11784,8 @@ Parameter:
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 3.0.1<br>
-Last updated 2025-02-14 13:31:03 +0100
+Version 3.1.0<br>
+Last updated 2025-04-10 15:01:32 +0200
 </div>
 </div>
 <script type="text/javascript">

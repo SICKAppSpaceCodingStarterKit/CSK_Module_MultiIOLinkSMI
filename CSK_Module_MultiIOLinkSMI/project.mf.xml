@@ -499,6 +499,7 @@ INFO: Other modules can check via "Script.isServedAsEvent" if event exists.</des
 INSTANCE and PORT will be replaced by the instanceIdentifier and sensor port the device is connected to (S1,S2 ...) and MESSAGENAME by the configured name of the message (e.g. "OnNewRawReadMessage_1_S1_MyMessage"). +
 INFO: Other modules can check via "Script.isServedAsEvent" if event exists.</desc>
                     <param desc="Manually unpacked part of process data (no IODD Interpreter used)." multiplicity="?" name="data" type="auto"/>
+                    <param desc="Timestamp" multiplicity="1" name="timestamp" type="int"/>
                 </event>
                 <event name="OnNewWriteMessageEventName">
                     <trait>released</trait>
@@ -1149,13 +1150,13 @@ Provide IO-Link data of created readMessages.</desc>
 
 Provide IO-Link data of created readMessages.</desc>
                         <param desc="Handle to internally used FlowConfig instance." multiplicity="1" name="handle" type="handle"/>
-                        <param desc="'CSK_MultiIOLinkSMI.OnNewRawReadMessage_[PORT]_[READMESSAGENAME]'&#10;&#10;Parameter:&#10;1: Data (auto)" multiplicity="1" name="OnNewData" type="string"/>
+                        <param desc="'CSK_MultiIOLinkSMI.OnNewRawReadMessage_[INSTANCE]_[PORT]_[READMESSAGENAME]'&#10;&#10;Parameter:&#10;1: Data (auto)&#10;2: Timestamp (INT)" multiplicity="1" name="OnNewData" type="string"/>
                     </event>
                     <function name="create">
                         <trait>released</trait>
                         <desc>Internally used CSK_FlowConfig create function.</desc>
                         <param desc="IO-Link port." multiplicity="1" name="Port" ref="MultiIOLinkSMI_FC.IOLinkMasterPorts" type="enum"/>
-                        <param desc="Name of read message to receive data.&#10;IMPORTANT: Please make sure that related readMessage already exists." multiplicity="1" name="ReadMessageName" type="string"/>
+                        <param desc="Name of read message (e.g. 'Distance') to receive data.&#10;IMPORTANT: Please make sure that related readMessage already exists." multiplicity="1" name="ReadMessageName" type="string"/>
                         <return desc="Handle to internally used FlowConfig instance." multiplicity="1" name="handle" type="handle"/>
                     </function>
                     <function name="register">
@@ -1184,7 +1185,7 @@ Might get in conflict with parallel done configurations!
 
 Provide IO-Link data.</desc>
                         <param desc="Handle to internally used FlowConfig instance." multiplicity="1" name="handle" type="handle"/>
-                        <param desc="'CSK_MultiIOLinkSMI.OnNewRawReadMessage_[PORT]_[READMESSAGENAME]'&#10;&#10;Parameter:&#10;1: Data (auto)" multiplicity="1" name="OnNewData" type="string"/>
+                        <param desc="'CSK_MultiIOLinkSMI.OnNewRawReadMessage_[INSTANCE]_[PORT]_[READMESSAGENAME]'&#10;&#10;Parameter:&#10;1: Data (AUTO)&#10;2: Timestamp (INT)" multiplicity="1" name="OnNewData" type="string"/>
                     </event>
                     <function name="create">
                         <trait>released</trait>
@@ -1231,7 +1232,7 @@ Set source event of incoming data to use for writeMessage.</desc>
             </crown>
         </crown>
         <meta key="author">SICK AG</meta>
-        <meta key="version">3.0.1</meta>
+        <meta key="version">3.1.0</meta>
         <meta key="priority">low</meta>
         <meta key="copy-protected">false</meta>
         <meta key="read-protected">false</meta>

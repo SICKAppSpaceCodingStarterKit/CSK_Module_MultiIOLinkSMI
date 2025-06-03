@@ -54,6 +54,7 @@ local function handleIOLinkSetup()
   end
 
   for key, value in ipairs(portInfos) do
+    value.portActive = false
     local instanceAmount = CSK_MultiIOLinkSMI.getInstancesAmount()
     if instanceAmount < key then
       CSK_MultiIOLinkSMI.addInstance()
@@ -83,14 +84,14 @@ local function handleOnNewIOLinkPortStatus(instance, status, port)
 
           -- Add readMessages
           for subKey, subValue in ipairs(value.messageInfos.names) do
-           CSK_MultiIOLinkSMI.setIODDReadMessageName(subValue)
-           CSK_MultiIOLinkSMI.setReadMessageMode('NO_IODD')
-           CSK_MultiIOLinkSMI.createIODDReadMessage()
-           CSK_MultiIOLinkSMI.setTriggerType('Periodic')
-           CSK_MultiIOLinkSMI.setTriggerValue(value.messageInfos.cycleTimes[subKey])
-           CSK_MultiIOLinkSMI.setReadMessageProcessDataStartByte(value.messageInfos.startBytes[subKey])
-           CSK_MultiIOLinkSMI.setReadMessageProcessDataEndByte(value.messageInfos.endBytes[subKey])
-           CSK_MultiIOLinkSMI.setReadMessageProcessDataUnpackFormat(value.messageInfos.unpackFormats[subKey])
+            CSK_MultiIOLinkSMI.setIODDReadMessageName(subValue)
+            CSK_MultiIOLinkSMI.setReadMessageMode('NO_IODD')
+            CSK_MultiIOLinkSMI.createIODDReadMessage()
+            CSK_MultiIOLinkSMI.setTriggerType('Periodic')
+            CSK_MultiIOLinkSMI.setTriggerValue(value.messageInfos.cycleTimes[subKey])
+            CSK_MultiIOLinkSMI.setReadMessageProcessDataStartByte(value.messageInfos.startBytes[subKey])
+            CSK_MultiIOLinkSMI.setReadMessageProcessDataEndByte(value.messageInfos.endBytes[subKey])
+            CSK_MultiIOLinkSMI.setReadMessageProcessDataUnpackFormat(value.messageInfos.unpackFormats[subKey])
           end
         end
       end

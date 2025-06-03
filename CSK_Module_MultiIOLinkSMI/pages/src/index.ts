@@ -12,6 +12,10 @@ document.addEventListener('sopasjs-ready', () => {
   page_Setup.remove();
 
   setTimeout(() => {
+    const element = document.querySelector("div.sjs-wrapper > div > div.sjs-fullscreen-toggle")
+    if(element) {
+      element.parentElement.removeChild(element)
+    }
     document.title = 'CSK_Module_MultiIOLinkSMI'
   }, 500);
 })

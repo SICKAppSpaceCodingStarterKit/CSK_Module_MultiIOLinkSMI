@@ -343,7 +343,8 @@ local function handleOnExpiredTmrMultiIOLinkSMI()
       Script.notifyEvent('MultiIOLinkSMI_OnNewVendorId', deviceInfo.vendorId)
       Script.notifyEvent('MultiIOLinkSMI_OnNewVendorName', deviceInfo.vendorName)
       Script.notifyEvent('MultiIOLinkSMI_OnNewVendorText', deviceInfo.vendorText)
-      Script.notifyEvent('MultiIOLinkSMI_OnNewProductId', deviceInfo.deviceId)
+      Script.notifyEvent('MultiIOLinkSMI_OnNewProductId', deviceInfo.productID)
+      Script.notifyEvent('MultiIOLinkSMI_OnNewDeviceId', deviceInfo.deviceId)
       Script.notifyEvent('MultiIOLinkSMI_OnNewProductName', deviceInfo.productName)
       Script.notifyEvent('MultiIOLinkSMI_OnNewProductText', deviceInfo.productText)
     else
@@ -354,6 +355,7 @@ local function handleOnExpiredTmrMultiIOLinkSMI()
       Script.notifyEvent('MultiIOLinkSMI_OnNewVendorName', "")
       Script.notifyEvent('MultiIOLinkSMI_OnNewVendorText', "")
       Script.notifyEvent('MultiIOLinkSMI_OnNewProductId', "")
+      Script.notifyEvent('MultiIOLinkSMI_OnNewDeviceId', "")
       Script.notifyEvent('MultiIOLinkSMI_OnNewProductName', "")
       Script.notifyEvent('MultiIOLinkSMI_OnNewProductText', "")
     end
@@ -366,7 +368,8 @@ local function handleOnExpiredTmrMultiIOLinkSMI()
       Script.notifyEvent('MultiIOLinkSMI_OnNewNewDeviceVendorId', deviceInfo.vendorId)
       Script.notifyEvent('MultiIOLinkSMI_OnNewNewDeviceVendorName', deviceInfo.vendorName)
       Script.notifyEvent('MultiIOLinkSMI_OnNewNewDeviceVendorText', deviceInfo.vendorText)
-      Script.notifyEvent('MultiIOLinkSMI_OnNewNewDeviceProductId', deviceInfo.deviceId)
+      Script.notifyEvent('MultiIOLinkSMI_OnNewNewDeviceProductId', deviceInfo.productID)
+      Script.notifyEvent('MultiIOLinkSMI_OnNewNewDeviceDeviceId', deviceInfo.deviceId)
       Script.notifyEvent('MultiIOLinkSMI_OnNewNewDeviceProductName', deviceInfo.productName)
       Script.notifyEvent('MultiIOLinkSMI_OnNewNewDeviceProductText', deviceInfo.productText)
     end
@@ -877,35 +880,40 @@ end
 Script.serveFunction('CSK_MultiIOLinkSMI.setSelectedIODDReadMessage', setSelectedIODDReadMessage)
 
 local function createIODDReadMessage()
-  if newReadMessageName ~= '' and multiIOLinkSMI_Instances[selectedInstance].parameters.ioddReadMessages[newReadMessageName] == nil then
-    if multiIOLinkSMI_Instances[selectedInstance].readMessageMode == 'NO_IODD' then
-      multiIOLinkSMI_Instances[selectedInstance]:createIODDReadMessage(newReadMessageName, true)
-      setSelectedIODDReadMessage(newReadMessageName)
-      Script.notifyEvent('MultiIOLinkSMI_OnNewProcessingParameter', selectedInstance, 'readMessages', json.encode(multiIOLinkSMI_Instances[selectedInstance].parameters.ioddReadMessages))
-    else
-      if not multiIOLinkSMI_Instances[selectedInstance].parameters.ioddInfo then
-        _G.logger:info(nameOfModule .. ": No IODD info to create readMessage")
-        return
+  if newReadMessageName ~= '' then
+    if multiIOLinkSMI_Instances[selectedInstance].parameters.ioddReadMessages[newReadMessageName] == nil then
+      if multiIOLinkSMI_Instances[selectedInstance].readMessageMode == 'NO_IODD' then
+        multiIOLinkSMI_Instances[selectedInstance]:createIODDReadMessage(newReadMessageName, true)
+        setSelectedIODDReadMessage(newReadMessageName)
+        Script.notifyEvent('MultiIOLinkSMI_OnNewProcessingParameter', selectedInstance, 'readMessages', json.encode(multiIOLinkSMI_Instances[selectedInstance].parameters.ioddReadMessages))
       else
-        if CSK_IODDInterpreter then
-          multiIOLinkSMI_Instances[selectedInstance]:createIODDReadMessage(newReadMessageName)
-          setSelectedIODDReadMessage(newReadMessageName)
+        if not multiIOLinkSMI_Instances[selectedInstance].parameters.ioddInfo then
+          _G.logger:info(nameOfModule .. ": No IODD info to create readMessage")
+          return
         else
-          _G.logger:info(nameOfModule .. ": CSK_IODDInterpreter not available.")
+          if CSK_IODDInterpreter then
+            multiIOLinkSMI_Instances[selectedInstance]:createIODDReadMessage(newReadMessageName)
+            setSelectedIODDReadMessage(newReadMessageName)
+          else
+            _G.logger:info(nameOfModule .. ": CSK_IODDInterpreter not available.")
+          end
         end
       end
+    else
+      setSelectedIODDReadMessage(newReadMessageName)
+      _G.logger:info(nameOfModule .. ": ReadMessage already exists.")
+      handleOnExpiredTmrMultiIOLinkSMI()
     end
   else
-    _G.logger:info(nameOfModule .. ": No name for readMessage")
+    _G.logger:info(nameOfModule .. ": No name for readMessage.")
   end
 end
 Script.serveFunction('CSK_MultiIOLinkSMI.createIODDReadMessage', createIODDReadMessage)
 
 local function setIODDReadMessageName(newName)
+  newReadMessageName = newName
   if multiIOLinkSMI_Instances[selectedInstance].parameters.ioddReadMessages[newName] then
     handleOnExpiredTmrMultiIOLinkSMI()
-  else
-    newReadMessageName = newName
   end
 end
 Script.serveFunction('CSK_MultiIOLinkSMI.setIODDReadMessageName', setIODDReadMessageName)
