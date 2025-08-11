@@ -167,6 +167,7 @@ Script.serveEvent('CSK_MultiIOLinkSMI.OnNewReadDataMessage',                  'M
 Script.serveEvent('CSK_MultiIOLinkSMI.OnNewReadDataSuccess',                  'MultiIOLinkSMI_OnNewReadDataSuccess')
 Script.serveEvent('CSK_MultiIOLinkSMI.OnNewWriteDataMessage',                 'MultiIOLinkSMI_OnNewWriteDataMessage')
 Script.serveEvent('CSK_MultiIOLinkSMI.OnNewWriteDataSuccess',                 'MultiIOLinkSMI_OnNewWriteDataSuccess')
+Script.serveEvent('CSK_MultiIOLinkSMI.OnNewProcessDataExtraByteLength',       'MultiIOLinkSMI_OnNewProcessDataExtraByteLength')
 
 Script.serveEvent('CSK_MultiIOLinkSMI.OnNewReadParameterByteArray',           'MultiIOLinkSMI_OnNewReadParameterByteArray')
 Script.serveEvent('CSK_MultiIOLinkSMI.OnNewReadProcessDataByteArray',         'MultiIOLinkSMI_OnNewReadProcessDataByteArray')
@@ -435,6 +436,7 @@ local function handleOnExpiredTmrMultiIOLinkSMI()
       Script.notifyEvent('MultiIOLinkSMI_OnNewListIODDWriteMessages', json.encode(nameList))
       Script.notifyEvent('MultiIOLinkSMI_OnNewStatusIODDWriteMessageSelected', selectedIODDWriteMessage ~= '')
       Script.notifyEvent('MultiIOLinkSMI_OnNewSelectedIODDWriteMessage', selectedIODDWriteMessage)
+      Script.notifyEvent('MultiIOLinkSMI_OnNewProcessDataExtraByteLength', multiIOLinkSMI_Instances[selectedInstance].parameters.extraByteLength)
       if selectedIODDWriteMessage ~= '' then
         if multiIOLinkSMI_Instances[selectedInstance].parameters.ioddInfo then
           CSK_IODDInterpreter.pageCalledWriteData()
@@ -1187,6 +1189,12 @@ local function getIODDWriteMessageJSONTemplate(messageName)
 end
 Script.serveFunction('CSK_MultiIOLinkSMI.getIODDWriteMessageJSONTemplate', getIODDWriteMessageJSONTemplate)
 
+local function setProcessDataExtraByteLength(extraBytes)
+  multiIOLinkSMI_Instances[selectedInstance].parameters.extraByteLength = extraBytes
+  Script.notifyEvent('MultiIOLinkSMI_OnNewProcessingParameter', selectedInstance, 'extraByteLength', extraBytes)
+end
+Script.serveFunction('CSK_MultiIOLinkSMI.setProcessDataExtraByteLength', setProcessDataExtraByteLength)
+
 --**************************************************************************
 --*************Copy/Paste device configuration from outside*****************
 --**************************************************************************
@@ -1460,17 +1468,24 @@ Script.serveFunction('CSK_MultiIOLinkSMI.getStatusModuleActive', getStatusModule
 
 local function clearFlowConfigRelevantConfiguration()
   for i = 1, #multiIOLinkSMI_Instances do
-    setSelectedInstance(i)
-    for key, value in pairs(multiIOLinkSMI_Instances[i].parameters.ioddWriteMessages) do
-      setSelectedIODDWriteMessage(key)
-      setIODDWriteMessageEventName('')
+    if multiIOLinkSMI_Instances[i].parameters.flowConfigPriority == true then
+      setSelectedInstance(i)
+      for key, value in pairs(multiIOLinkSMI_Instances[i].parameters.ioddWriteMessages) do
+        setSelectedIODDWriteMessage(key)
+        setIODDWriteMessageEventName('')
+      end
     end
   end
 end
 Script.serveFunction('CSK_MultiIOLinkSMI.clearFlowConfigRelevantConfiguration', clearFlowConfigRelevantConfiguration)
 
 local function stopFlowConfigRelevantProvider()
-  setReadMessageTimerActive(false)
+  for i = 1, #multiIOLinkSMI_Instances do
+    if multiIOLinkSMI_Instances[i].parameters.flowConfigPriority == true then
+      setReadMessageTimerActive(false)
+      break
+    end
+  end
 end
 Script.serveFunction('CSK_MultiIOLinkSMI.stopFlowConfigRelevantProvider', stopFlowConfigRelevantProvider)
 

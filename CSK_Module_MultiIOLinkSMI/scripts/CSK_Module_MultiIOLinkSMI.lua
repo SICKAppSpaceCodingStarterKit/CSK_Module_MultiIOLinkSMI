@@ -50,10 +50,9 @@ local multiIOLinkSMI_Instances = {} -- Handle all instances
 local multiIOLinkSMIController = require('Communication/MultiIOLinkSMI/MultiIOLinkSMI_Controller')
 
 if _G.availableAPIs.default and _G.availableAPIs.specificSMI and Engine.getEnumValues('IOLinkMasterPorts') ~= nil then
-  local setInstanceHandle = require('Communication/MultiIOLinkSMI/FlowConfig/MultiIOLinkSMI_FlowConfig')
+  require('Communication/MultiIOLinkSMI/FlowConfig/MultiIOLinkSMI_FlowConfig')
   table.insert(multiIOLinkSMI_Instances, multiIOLinkSMI_Model.create(1))
   multiIOLinkSMIController.setMultiIOLinkSMI_Instances_Handle(multiIOLinkSMI_Instances) -- share handle of instances
-  setInstanceHandle(multiIOLinkSMI_Instances)
 else
   _G.logger:warning("CSK_MultiIOLinkSMI: Relevant CROWN(s) not available on device. Module is not supported...")
 end

@@ -20,6 +20,7 @@ local function getParameters()
   multiIOLinkSMIParameters.ioddReadMessages = {} -- Table contatining information about read messages. Each read message has its own IODD Interpreter instance
   multiIOLinkSMIParameters.ioddWriteMessages = {} -- Table contatining information about write messages. Each write message has its own IODD Interpreter instance
   multiIOLinkSMIParameters.autoStartTimer = false -- Status if read message timers should be started automatically after parameters were loaded
+  multiIOLinkSMIParameters.extraByteLength = 1 -- Extra bytes to add to ProcessData Out byte length
 
   return multiIOLinkSMIParameters
 end

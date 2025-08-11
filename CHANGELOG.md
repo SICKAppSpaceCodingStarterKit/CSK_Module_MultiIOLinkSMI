@@ -1,6 +1,14 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## Release 3.2.0
+
+### New features
+- New function to edit amount of extra bytes to add to process data byte length
+
+### Improvements
+- FlowConfig handling
+
 ## Release 3.1.0
 
 ### New features

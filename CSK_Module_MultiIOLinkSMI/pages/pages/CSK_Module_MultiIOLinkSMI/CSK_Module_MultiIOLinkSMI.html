@@ -1515,16 +1515,48 @@
                                                                         style="align-items: center">
                                                                         <layout-column id="ColumnLayout32"
                                                                             style="align-items: stretch; flex-grow: 4">
-                                                                            <davinci-value-display id="VD_WriteStatus"
-                                                                                value="Status:">
-                                                                            </davinci-value-display>
-                                                                            <davinci-value-display
-                                                                                id="VD_LatestTestCommandStatus2"
-                                                                                value="-">
-                                                                                <crown-on property="value"
-                                                                                    crown-event="CSK_MultiIOLinkSMI/OnNewTestCommandState">
-                                                                                </crown-on>
-                                                                            </davinci-value-display>
+                                                                            <layout-row id="RowLayout90">
+                                                                                <layout-column id="ColumnLayout90"
+                                                                                    style="align-items: stretch">
+                                                                                    <davinci-value-display
+                                                                                        id="VD_WriteStatus"
+                                                                                        value="Status">
+                                                                                    </davinci-value-display>
+                                                                                    <davinci-value-display
+                                                                                        id="VD_LatestTestCommandStatus2"
+                                                                                        value="-">
+                                                                                        <crown-on property="value"
+                                                                                            crown-event="CSK_MultiIOLinkSMI/OnNewTestCommandState">
+                                                                                        </crown-on>
+                                                                                    </davinci-value-display>
+                                                                                </layout-column>
+                                                                                <layout-column id="ColumnLayout92"
+                                                                                    style="align-items: stretch">
+                                                                                    <davinci-value-display
+                                                                                        id="VD_ExtraBytes"
+                                                                                        value="Extra byte length"
+                                                                                        title="Amount of extra bytes to add to PDLength of output process data.">
+                                                                                    </davinci-value-display>
+                                                                                    <davinci-numeric-field
+                                                                                        id="NF_ExtraByteLength"
+                                                                                        type="outline" min="0" max="20"
+                                                                                        ticks="1" group-separator=","
+                                                                                        decimal-separator="."
+                                                                                        format-pattern="0"
+                                                                                        title="Amount of extra bytes to add to PDLength of output process data.">
+                                                                                        <crown-edpws-binding
+                                                                                            property="value"
+                                                                                            name="CSK_MultiIOLinkSMI/OnNewProcessDataExtraByteLength"
+                                                                                            update-on-resume>
+                                                                                        </crown-edpws-binding>
+                                                                                        <crown-binding event="change"
+                                                                                            name="CSK_MultiIOLinkSMI/setProcessDataExtraByteLength"
+                                                                                            path="param/args/extraBytes"
+                                                                                            auto-commit>
+                                                                                        </crown-binding>
+                                                                                    </davinci-numeric-field>
+                                                                                </layout-column>
+                                                                            </layout-row>
                                                                         </layout-column>
                                                                         <layout-column id="ColumnLayout35"
                                                                             style="align-items: stretch; flex-grow: 4">
