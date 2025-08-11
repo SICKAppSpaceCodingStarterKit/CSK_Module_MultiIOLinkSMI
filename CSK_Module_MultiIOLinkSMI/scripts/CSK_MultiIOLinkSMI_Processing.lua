@@ -33,6 +33,7 @@ processingParams.activeInUi = false
 -- processingParams.name = scriptParams:get('name') -- future use
 processingParams.active = scriptParams:get('active')
 processingParams.port = scriptParams:get('port')
+processingParams.extraByteLength = scriptParams:get('extraByteLength')
 processingParams.showLiveValue = false
 
 local ioddReadMessages = {} -- table with configured read messages
@@ -174,7 +175,7 @@ local function writeBinaryProcessData(data)
     -- Byte 1= Process data valid
     -- Byte 2= Byte length of data
     -- Byte 3= Data
-    local l_data = string.char(0x01, #data+1) .. data
+    local l_data = string.char(0x01, #data + processingParams.extraByteLength) .. data
     l_returnCode, detailErrorCode = IOLink.SMI.setPDOut(processingParams.SMIhandle, processingParams.port, l_data)
   end
 

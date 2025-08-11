@@ -160,6 +160,7 @@ function multiIOLinkSMI.create(multiIOLinkSMIInstanceNo)
   --self.multiIOLinkSMIProcessingParams:add('name', self.parameters.name, 'STRING') -- future usage
   self.multiIOLinkSMIProcessingParams:add('active', self.parameters.active, 'BOOL')
   self.multiIOLinkSMIProcessingParams:add('port', self.parameters.port, 'STRING')
+  self.multiIOLinkSMIProcessingParams:add('extraByteLength', self.parameters.extraByteLength, 'INT')
 
   -- Handle processing
   Script.startScript(self.parameters.processingFile, self.multiIOLinkSMIProcessingParams)

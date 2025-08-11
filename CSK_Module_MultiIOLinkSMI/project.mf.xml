@@ -510,6 +510,10 @@ INFO: Other modules can check via "Script.isServedAsEvent" if event exists.</des
                     <desc>Notify status if ALL readMessage timers should start automatically after parameters were loaded.</desc>
                     <param desc="Status" multiplicity="1" name="status" type="bool"/>
                 </event>
+                <event name="OnNewProcessDataExtraByteLength">
+                    <desc>Notify amount of extra bytes to add to byte length of process data output.</desc>
+                    <param desc="Amount of extra bytes." multiplicity="1" name="extraBytes" type="int"/>
+                </event>
                 <function name="setParameterName">
                     <desc>Function to set the name of the parameters if saved/loaded via the CSK_PersistentData module.</desc>
                     <param desc="Name of the parameter" multiplicity="1" name="name" type="string"/>
@@ -1129,6 +1133,10 @@ NUM will be replaced by the number of instance (e.g. "readProcessDataBinary_1").
                     <desc>Function to set status if ALL readMessage timers should be started automatically by loading parameters.</desc>
                     <param desc="Status" multiplicity="1" name="status" type="bool"/>
                 </function>
+                <function name="setProcessDataExtraByteLength">
+                    <desc>Function to set amount of extra bytes to add to process data byte length.</desc>
+                    <param desc="Amount of extra bytes." multiplicity="1" name="extraBytes" type="int"/>
+                </function>
             </serves>
         </crown>
         <crown name="MultiIOLinkSMI_FC">
@@ -1232,7 +1240,7 @@ Set source event of incoming data to use for writeMessage.</desc>
             </crown>
         </crown>
         <meta key="author">SICK AG</meta>
-        <meta key="version">3.1.0</meta>
+        <meta key="version">3.2.0</meta>
         <meta key="priority">low</meta>
         <meta key="copy-protected">false</meta>
         <meta key="read-protected">false</meta>

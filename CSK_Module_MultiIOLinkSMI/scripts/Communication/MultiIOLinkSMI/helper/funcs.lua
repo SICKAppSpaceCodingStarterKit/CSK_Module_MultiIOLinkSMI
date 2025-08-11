@@ -125,7 +125,9 @@ local function convertTable2Container(data)
       val2add = convertTable2Container(val)
       valType = 'OBJECT'
     end
-    if type(val) == 'string' then valType = 'STRING' end
+    if type(val) == 'string' then
+      valType = 'STRING'
+    end
     cont:add(key, val2add, valType)
   end
   return cont
