@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## Release 3.3.0
+
+### Improvements
+- Show result of pattern search within the IO-Link payload on UI
+- Show status info of IODD Interpreter on UI
+
 ## Release 3.2.0
 
 ### New features
