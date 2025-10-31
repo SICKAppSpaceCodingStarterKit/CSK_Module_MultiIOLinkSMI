@@ -60,6 +60,7 @@ Tested on
 
 |Device|Firmware version|Module version|
 |--|--|--|
+|SIM300|V1.1.0|V3.3.0|
 |SIM300|V1.1.0|V3.2.0|
 |SIM300|V0.2.1|V3.1.0|
 |SIM300|V0.2.1|V3.0.1|

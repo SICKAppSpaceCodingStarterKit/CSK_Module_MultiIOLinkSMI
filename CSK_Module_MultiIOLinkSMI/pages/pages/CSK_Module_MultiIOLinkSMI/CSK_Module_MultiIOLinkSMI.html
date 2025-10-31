@@ -433,6 +433,30 @@
                                                                                 </crown-set>
                                                                             </appspace-file-upload-button>
                                                                         </layout-row>
+                                                                        <layout-row id="RowLayout92"
+                                                                            style="align-items: center">
+                                                                            <layout-column id="ColumnLayout93"
+                                                                                style="align-items: stretch">
+                                                                                <davinci-value-display
+                                                                                    id="VD_IODDInterpreterInfo"
+                                                                                    label="IODD Interpreter Info">
+                                                                                    <crown-on property="value"
+                                                                                        crown-event="CSK_MultiIOLinkSMI/OnNewStatusShowIODDInterpreterInfo">
+                                                                                    </crown-on>
+                                                                                </davinci-value-display>
+                                                                            </layout-column>
+                                                                            <layout-column id="ColumnLayout94"
+                                                                                style="align-items: stretch">
+                                                                                <davinci-drop-down
+                                                                                    id="DD_AvailableIODDs"
+                                                                                    label="Available IODDs">
+                                                                                    <crown-on property="data"
+                                                                                        crown-event="CSK_MultiIOLinkSMI/OnNewStatusListIODD"
+                                                                                        converter="convertToList">
+                                                                                    </crown-on>
+                                                                                </davinci-drop-down>
+                                                                            </layout-column>
+                                                                        </layout-row>
                                                                     </layout-column>
                                                                 </layout-row>
                                                             </stacked-pane>
@@ -1155,6 +1179,13 @@
                                                                                                             <crown-on
                                                                                                                 property="value"
                                                                                                                 crown-event="CSK_MultiIOLinkSMI/OnNewStatusProcessDataTestResult">
+                                                                                                            </crown-on>
+                                                                                                        </davinci-value-display>
+                                                                                                        <davinci-value-display
+                                                                                                            id="VD_ProcessDataFinalTest">
+                                                                                                            <crown-on
+                                                                                                                property="value"
+                                                                                                                crown-event="CSK_MultiIOLinkSMI/OnNewStatusProcessDataFinalTestResult">
                                                                                                             </crown-on>
                                                                                                         </davinci-value-display>
                                                                                                     </layout-column>

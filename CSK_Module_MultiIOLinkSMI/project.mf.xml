@@ -514,6 +514,18 @@ INFO: Other modules can check via "Script.isServedAsEvent" if event exists.</des
                     <desc>Notify amount of extra bytes to add to byte length of process data output.</desc>
                     <param desc="Amount of extra bytes." multiplicity="1" name="extraBytes" type="int"/>
                 </event>
+                <event name="OnNewStatusShowIODDInterpreterInfo">
+                    <desc>Notify info regarding IODD Interpreter.</desc>
+                    <param desc="Status" multiplicity="1" name="status" type="string"/>
+                </event>
+                <event name="OnNewStatusListIODD">
+                    <desc>Notify list of available IODDs.</desc>
+                    <param desc="List of available IODDs." multiplicity="1" name="list" type="string"/>
+                </event>
+                <event name="OnNewStatusProcessDataFinalTestResult">
+                    <desc>Notfiy payload after searched and cut relevant part within payload.</desc>
+                    <param desc="Final payload." multiplicity="1" name="payload" type="string"/>
+                </event>
                 <function name="setParameterName">
                     <desc>Function to set the name of the parameters if saved/loaded via the CSK_PersistentData module.</desc>
                     <param desc="Name of the parameter" multiplicity="1" name="name" type="string"/>
@@ -1240,7 +1252,7 @@ Set source event of incoming data to use for writeMessage.</desc>
             </crown>
         </crown>
         <meta key="author">SICK AG</meta>
-        <meta key="version">3.2.0</meta>
+        <meta key="version">3.3.0</meta>
         <meta key="priority">low</meta>
         <meta key="copy-protected">false</meta>
         <meta key="read-protected">false</meta>
