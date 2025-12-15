@@ -1,6 +1,16 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## Release 3.4.0
+
+### New features
+- Possibility to add a prefix and postfix for write messages
+
+### Improvements
+- Plain text search is used now for pattern search
+- Automatically set a pattern search within read message when selecting single process data or parameter
+- Improved handling if connecting SLT device
+
 ## Release 3.3.0
 
 ### Improvements

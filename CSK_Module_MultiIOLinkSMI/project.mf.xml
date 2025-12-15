@@ -82,7 +82,7 @@ The following functions can be used for reading or writing data by selected inst
                     <desc>Event to share processing parameters to the instances.</desc>
                     <param desc="Number of the instance to receive the parameter." multiplicity="1" name="objectNo" type="int"/>
                     <param desc="Name of the parameter." multiplicity="1" name="parameter" type="string"/>
-                    <param desc="Value of the parameter." multiplicity="1" name="value" type="auto"/>
+                    <param desc="Value of the parameter." multiplicity="?" name="value" type="auto"/>
                     <param desc="If parameter is for specifici internal used object, its number." multiplicity="?" name="internalObjectNo" type="int"/>
                 </event>
                 <event name="OnNewSelectedInstance">
@@ -525,6 +525,14 @@ INFO: Other modules can check via "Script.isServedAsEvent" if event exists.</des
                 <event name="OnNewStatusProcessDataFinalTestResult">
                     <desc>Notfiy payload after searched and cut relevant part within payload.</desc>
                     <param desc="Final payload." multiplicity="1" name="payload" type="string"/>
+                </event>
+                <event name="OnNewWriteMessagePrefix">
+                    <desc>Notify prefix of currently selected write message.</desc>
+                    <param desc="Prefix" multiplicity="1" name="prefix" type="string"/>
+                </event>
+                <event name="OnNewWriteMessagePostfix">
+                    <desc>Notify profix of currently selected write message.</desc>
+                    <param desc="Profix" multiplicity="1" name="profix" type="string"/>
                 </event>
                 <function name="setParameterName">
                     <desc>Function to set the name of the parameters if saved/loaded via the CSK_PersistentData module.</desc>
@@ -1149,6 +1157,14 @@ NUM will be replaced by the number of instance (e.g. "readProcessDataBinary_1").
                     <desc>Function to set amount of extra bytes to add to process data byte length.</desc>
                     <param desc="Amount of extra bytes." multiplicity="1" name="extraBytes" type="int"/>
                 </function>
+                <function name="setWriteMessagePrefix">
+                    <desc>Function to set prefix for currently selected write message.</desc>
+                    <param desc="Prefix to use for currently selected write message." multiplicity="1" name="prefix" type="string"/>
+                </function>
+                <function name="setWriteMessagePostfix">
+                    <desc>Function to set postfix for currently selected write message.</desc>
+                    <param desc="Postfix to use for currently selected write message." multiplicity="1" name="postfix" type="string"/>
+                </function>
             </serves>
         </crown>
         <crown name="MultiIOLinkSMI_FC">
@@ -1252,7 +1268,7 @@ Set source event of incoming data to use for writeMessage.</desc>
             </crown>
         </crown>
         <meta key="author">SICK AG</meta>
-        <meta key="version">3.3.0</meta>
+        <meta key="version">3.4.0</meta>
         <meta key="priority">low</meta>
         <meta key="copy-protected">false</meta>
         <meta key="read-protected">false</meta>

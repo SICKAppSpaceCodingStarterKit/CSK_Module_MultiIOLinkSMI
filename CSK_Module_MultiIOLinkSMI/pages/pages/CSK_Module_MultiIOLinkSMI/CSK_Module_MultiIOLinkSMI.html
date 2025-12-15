@@ -405,119 +405,6 @@
                                                     class="myCustomFrameLabel_CSK_Module_MultiIOLinkSMI"
                                                     label="IODD Info" style="align-self: flex-start; flex-shrink: 0">
                                                 </davinci-value-display>
-                                                <stacked-view id="SV_isCSKIODDInterpreterAvailable">
-                                                    <stacked-pane id="SP_ModuleISAavailable" value="true">
-                                                        <stacked-view id="SV_IODDMatchFound">
-                                                            <stacked-pane id="SP_IODDMatchIsNOTFound" value="false">
-                                                                <layout-row id="RowLayout4">
-                                                                    <layout-column id="ColumnLayout14"
-                                                                        style="align-items: stretch">
-                                                                        <davinci-callout id="C_LoadIODD" type="warning">
-                                                                            <span>
-                                                                                Please load IODD file for the device to start setting read and write data.
-                                                                            </span>
-                                                                        </davinci-callout>
-                                                                        <layout-row id="RowLayout21"
-                                                                            style="justify-content: flex-end">
-                                                                            <appspace-file-upload-button
-                                                                                id="FUB_IODDUpload"
-                                                                                button-type="outline"
-                                                                                path="public/tempIODD.xml" is-file
-                                                                                icon="file/file_upload">
-                                                                                <span>Upload IODD</span>
-                                                                                <crown-set event="finished"
-                                                                                    crown-function="CSK_MultiIOLinkSMI/uploadFinishedCSKIODDInterpreter"
-                                                                                    protocol="crownMSGPACK"
-                                                                                    crown-path="uploadSuccess"
-                                                                                    converter="(value)=>{console.log(`event finished ${JSON.stringify(value)}`); return typeof value == 'boolean' ? value : value.success;}">
-                                                                                </crown-set>
-                                                                            </appspace-file-upload-button>
-                                                                        </layout-row>
-                                                                        <layout-row id="RowLayout92"
-                                                                            style="align-items: center">
-                                                                            <layout-column id="ColumnLayout93"
-                                                                                style="align-items: stretch">
-                                                                                <davinci-value-display
-                                                                                    id="VD_IODDInterpreterInfo"
-                                                                                    label="IODD Interpreter Info">
-                                                                                    <crown-on property="value"
-                                                                                        crown-event="CSK_MultiIOLinkSMI/OnNewStatusShowIODDInterpreterInfo">
-                                                                                    </crown-on>
-                                                                                </davinci-value-display>
-                                                                            </layout-column>
-                                                                            <layout-column id="ColumnLayout94"
-                                                                                style="align-items: stretch">
-                                                                                <davinci-drop-down
-                                                                                    id="DD_AvailableIODDs"
-                                                                                    label="Available IODDs">
-                                                                                    <crown-on property="data"
-                                                                                        crown-event="CSK_MultiIOLinkSMI/OnNewStatusListIODD"
-                                                                                        converter="convertToList">
-                                                                                    </crown-on>
-                                                                                </davinci-drop-down>
-                                                                            </layout-column>
-                                                                        </layout-row>
-                                                                    </layout-column>
-                                                                </layout-row>
-                                                            </stacked-pane>
-                                                            <stacked-pane id="SP_IODDMatchIsFound" value="true">
-                                                                <stacked-view id="SV_IsProcessDataVariable">
-                                                                    <stacked-pane id="SP_ProcessDataISVariable"
-                                                                        value="true">
-                                                                        <layout-row id="RowLayout16">
-                                                                            <layout-column id="ColumnLayout13"
-                                                                                style="align-items: stretch">
-                                                                                <davinci-drop-down
-                                                                                    id="DD_ProcessDataStrictureOptions"
-                                                                                    label="Process data structure options"
-                                                                                    title="Select process data structure option. It will be saved and reloaded in case the device is reconnected.">
-                                                                                    <crown-on property="data"
-                                                                                        crown-event="CSK_MultiIOLinkSMI/OnNewListProcessDataCondition"
-                                                                                        converter="convertToList">
-                                                                                    </crown-on>
-                                                                                    <crown-on property="value"
-                                                                                        crown-event="CSK_MultiIOLinkSMI/OnNewProcessDataCondition">
-                                                                                    </crown-on>
-                                                                                    <crown-set event="change"
-                                                                                        crown-function="CSK_MultiIOLinkSMI/setProcessDataCondition"
-                                                                                        protocol="crownMSGPACK"
-                                                                                        crown-path="newCondition">
-                                                                                    </crown-set>
-                                                                                </davinci-drop-down>
-                                                                            </layout-column>
-                                                                        </layout-row>
-                                                                    </stacked-pane>
-                                                                    <stacked-pane id="SP_ProcessDataisNOTVariable"
-                                                                        value="false">
-                                                                        <davinci-callout id="Callout_NoIODDProcessData"
-                                                                            type="info">
-                                                                            <span>No process data format selection available.</span>
-                                                                        </davinci-callout>
-                                                                    </stacked-pane>
-                                                                    <crown-on property="value"
-                                                                        crown-event="CSK_MultiIOLinkSMI/OnNewStatusProcessDataVariable"
-                                                                        converter="function(value) {return value.toString();}">
-                                                                    </crown-on>
-                                                                </stacked-view>
-                                                            </stacked-pane>
-                                                            <crown-on property="value"
-                                                                crown-event="CSK_MultiIOLinkSMI/OnNewStatusIODDMatchFound"
-                                                                converter="function(value) {return value.toString();}">
-                                                            </crown-on>
-                                                        </stacked-view>
-                                                    </stacked-pane>
-                                                    <stacked-pane id="SP_ModuleIsNOTAvailable" value="false">
-                                                        <davinci-callout id="C_NoCSKIODDInterpreter" type="warning">
-                                                            <span>
-                                                                No valid CSK IODD Interpreter module is found in the project. Setting interpreted read and write data is not possible.
-                                                            </span>
-                                                        </davinci-callout>
-                                                    </stacked-pane>
-                                                    <crown-on property="value"
-                                                        crown-event="CSK_MultiIOLinkSMI/OnNewStatusCSKIODDInterpreterAvailable"
-                                                        converter="function(value) {return value.toString();}">
-                                                    </crown-on>
-                                                </stacked-view>
                                                 <stacked-view id="SV_IsNewDeviceDiscovered">
                                                     <stacked-pane id="SP_NewDeviceIsDiscovered" value="true">
                                                         <layout-row id="RowLayout20">
@@ -647,6 +534,126 @@
                                                     </stacked-pane>
                                                     <crown-on property="value"
                                                         crown-event="CSK_MultiIOLinkSMI/OnNewStatusNewDeviceFound"
+                                                        converter="function(value) {return value.toString();}">
+                                                    </crown-on>
+                                                </stacked-view>
+                                                <stacked-view id="SV_isCSKIODDInterpreterAvailable">
+                                                    <stacked-pane id="SP_ModuleISAavailable" value="true">
+                                                        <stacked-view id="SV_IODDMatchFound">
+                                                            <stacked-pane id="SP_IODDMatchIsNOTFound" value="false">
+                                                                <layout-row id="RowLayout4">
+                                                                    <layout-column id="ColumnLayout14"
+                                                                        style="align-items: stretch">
+                                                                        <davinci-callout id="C_LoadIODD" type="warning">
+                                                                            <span>
+                                                                                Please load IODD file for the device to start setting read and write data.
+                                                                            </span>
+                                                                        </davinci-callout>
+                                                                        <layout-row id="RowLayout21"
+                                                                            style="justify-content: flex-end">
+                                                                            <appspace-file-upload-button
+                                                                                id="FUB_IODDUpload"
+                                                                                button-type="outline"
+                                                                                path="public/tempIODD.xml" is-file
+                                                                                icon="file/file_upload">
+                                                                                <span>Upload IODD</span>
+                                                                                <crown-set event="finished"
+                                                                                    crown-function="CSK_MultiIOLinkSMI/uploadFinishedCSKIODDInterpreter"
+                                                                                    protocol="crownMSGPACK"
+                                                                                    crown-path="uploadSuccess"
+                                                                                    converter="(value)=>{console.log(`event finished ${JSON.stringify(value)}`); return typeof value == 'boolean' ? value : value.success;}">
+                                                                                </crown-set>
+                                                                            </appspace-file-upload-button>
+                                                                        </layout-row>
+                                                                        <layout-row id="RowLayout92"
+                                                                            style="align-items: center">
+                                                                            <layout-column id="ColumnLayout93"
+                                                                                style="align-items: stretch">
+                                                                                <davinci-value-display
+                                                                                    id="VD_IODDInterpreterInfo"
+                                                                                    label="IODD Interpreter Info">
+                                                                                    <crown-on property="value"
+                                                                                        crown-event="CSK_MultiIOLinkSMI/OnNewStatusShowIODDInterpreterInfo">
+                                                                                    </crown-on>
+                                                                                </davinci-value-display>
+                                                                            </layout-column>
+                                                                            <layout-column id="ColumnLayout94"
+                                                                                style="align-items: stretch">
+                                                                                <davinci-drop-down
+                                                                                    id="DD_AvailableIODDs"
+                                                                                    label="Available IODDs">
+                                                                                    <crown-on property="data"
+                                                                                        crown-event="CSK_MultiIOLinkSMI/OnNewStatusListIODD"
+                                                                                        converter="convertToList">
+                                                                                    </crown-on>
+                                                                                </davinci-drop-down>
+                                                                            </layout-column>
+                                                                        </layout-row>
+                                                                    </layout-column>
+                                                                </layout-row>
+                                                            </stacked-pane>
+                                                            <stacked-pane id="SP_IODDMatchIsFound" value="true">
+                                                                <layout-row id="RowLayout94">
+                                                                    <layout-column id="ColumnLayout97"
+                                                                        style="align-items: stretch">
+                                                                        <stacked-view id="SV_IsProcessDataVariable">
+                                                                            <stacked-pane id="SP_ProcessDataISVariable"
+                                                                                value="true">
+                                                                                <layout-row id="RowLayout16">
+                                                                                    <layout-column id="ColumnLayout13"
+                                                                                        style="align-items: stretch">
+                                                                                        <davinci-drop-down
+                                                                                            id="DD_ProcessDataStrictureOptions"
+                                                                                            label="Process data structure options"
+                                                                                            title="Select process data structure option. It will be saved and reloaded in case the device is reconnected.">
+                                                                                            <crown-on property="data"
+                                                                                                crown-event="CSK_MultiIOLinkSMI/OnNewListProcessDataCondition"
+                                                                                                converter="convertToList">
+                                                                                            </crown-on>
+                                                                                            <crown-on property="value"
+                                                                                                crown-event="CSK_MultiIOLinkSMI/OnNewProcessDataCondition">
+                                                                                            </crown-on>
+                                                                                            <crown-set event="change"
+                                                                                                crown-function="CSK_MultiIOLinkSMI/setProcessDataCondition"
+                                                                                                protocol="crownMSGPACK"
+                                                                                                crown-path="newCondition">
+                                                                                            </crown-set>
+                                                                                        </davinci-drop-down>
+                                                                                    </layout-column>
+                                                                                </layout-row>
+                                                                            </stacked-pane>
+                                                                            <stacked-pane
+                                                                                id="SP_ProcessDataisNOTVariable"
+                                                                                value="false">
+                                                                                <davinci-callout
+                                                                                    id="Callout_NoIODDProcessData"
+                                                                                    type="info">
+                                                                                    <span>Default process data format active.</span>
+                                                                                </davinci-callout>
+                                                                            </stacked-pane>
+                                                                            <crown-on property="value"
+                                                                                crown-event="CSK_MultiIOLinkSMI/OnNewStatusProcessDataVariable"
+                                                                                converter="function(value) {return value.toString();}">
+                                                                            </crown-on>
+                                                                        </stacked-view>
+                                                                    </layout-column>
+                                                                </layout-row>
+                                                            </stacked-pane>
+                                                            <crown-on property="value"
+                                                                crown-event="CSK_MultiIOLinkSMI/OnNewStatusIODDMatchFound"
+                                                                converter="function(value) {return value.toString();}">
+                                                            </crown-on>
+                                                        </stacked-view>
+                                                    </stacked-pane>
+                                                    <stacked-pane id="SP_ModuleIsNOTAvailable" value="false">
+                                                        <davinci-callout id="C_NoCSKIODDInterpreter" type="warning">
+                                                            <span>
+                                                                No valid CSK IODD Interpreter module is found in the project. Setting interpreted read and write data is not possible.
+                                                            </span>
+                                                        </davinci-callout>
+                                                    </stacked-pane>
+                                                    <crown-on property="value"
+                                                        crown-event="CSK_MultiIOLinkSMI/OnNewStatusCSKIODDInterpreterAvailable"
                                                         converter="function(value) {return value.toString();}">
                                                     </crown-on>
                                                 </stacked-view>
@@ -1250,6 +1257,110 @@
                                                                                                         crown-event="CSK_MultiIOLinkSMI/OnNewReadParametersTableContentCSKIODDInterpreter">
                                                                                                     </crown-on>
                                                                                                 </curie-table>
+                                                                                                <layout-row
+                                                                                                    id="RowLayout86_2"
+                                                                                                    class="myCustomBorderBottom_CSK_Module_MultiIOLinkSMI">
+                                                                                                </layout-row>
+                                                                                                <layout-row
+                                                                                                    id="RowLayout87_2"
+                                                                                                    class="myCustomSpacerVert20_CSK_Module_MultiIOLinkSMI">
+                                                                                                </layout-row>
+                                                                                                <davinci-value-display
+                                                                                                    id="VD_OptionalPatternSearch_2"
+                                                                                                    value="Pattern search (optional)">
+                                                                                                </davinci-value-display>
+                                                                                                <layout-row
+                                                                                                    id="RowLayout26_2">
+                                                                                                    <layout-column
+                                                                                                        id="ColumnLayout23_2"
+                                                                                                        style="align-items: stretch">
+                                                                                                        <layout-row
+                                                                                                            id="RowLayout85_2">
+                                                                                                            <layout-column
+                                                                                                                id="ColumnLayout85_2"
+                                                                                                                style="align-items: stretch; flex-grow: 3">
+                                                                                                                <davinci-text-field
+                                                                                                                    id="TF_SearchStart_2"
+                                                                                                                    type="text"
+                                                                                                                    label="Start pattern to cut out of payload"
+                                                                                                                    title="Optional pattern to search for as start position to cut out within the process data payload.">
+                                                                                                                    <crown-edpws-binding
+                                                                                                                        property="value"
+                                                                                                                        name="CSK_MultiIOLinkSMI/OnNewSearchBegin"
+                                                                                                                        update-on-resume>
+                                                                                                                    </crown-edpws-binding>
+                                                                                                                    <crown-binding
+                                                                                                                        event="change"
+                                                                                                                        name="CSK_MultiIOLinkSMI/setSearchBegin"
+                                                                                                                        path="param/args/pattern"
+                                                                                                                        auto-commit>
+                                                                                                                    </crown-binding>
+                                                                                                                </davinci-text-field>
+                                                                                                            </layout-column>
+                                                                                                            <layout-column
+                                                                                                                id="ColumnLayout86_2"
+                                                                                                                style="align-items: stretch; flex-grow: 3">
+                                                                                                                <davinci-text-field
+                                                                                                                    id="TF_SearchEnd_2"
+                                                                                                                    type="text"
+                                                                                                                    label="End pattern to cut out of payload"
+                                                                                                                    title="Optional pattern to search for as end position to cut out within the process data payload.">
+                                                                                                                    <crown-edpws-binding
+                                                                                                                        property="value"
+                                                                                                                        name="CSK_MultiIOLinkSMI/OnNewSearchEnd"
+                                                                                                                        update-on-resume>
+                                                                                                                    </crown-edpws-binding>
+                                                                                                                    <crown-binding
+                                                                                                                        event="change"
+                                                                                                                        name="CSK_MultiIOLinkSMI/setSearchEnd"
+                                                                                                                        path="param/args/pattern"
+                                                                                                                        auto-commit>
+                                                                                                                    </crown-binding>
+                                                                                                                </davinci-text-field>
+                                                                                                            </layout-column>
+                                                                                                            <layout-column
+                                                                                                                id="ColumnLayout88_2"
+                                                                                                                style="align-items: center">
+                                                                                                                <davinci-button
+                                                                                                                    id="Button_TriggerData"
+                                                                                                                    class="myCustomButton_CSK_Module_MultiIOLinkSMI"
+                                                                                                                    type="outline">
+                                                                                                                    <davinci-icon
+                                                                                                                        icon="action/search">
+                                                                                                                    </davinci-icon>
+                                                                                                                    <span></span>
+                                                                                                                    <crown-binding
+                                                                                                                        event="submit"
+                                                                                                                        name="CSK_MultiIOLinkSMI/triggerProcessDataTestViaUI"
+                                                                                                                        auto-commit>
+                                                                                                                    </crown-binding>
+                                                                                                                </davinci-button>
+                                                                                                            </layout-column>
+                                                                                                        </layout-row>
+                                                                                                        <davinci-value-display
+                                                                                                            id="VD_DataTest">
+                                                                                                            <crown-on
+                                                                                                                property="value"
+                                                                                                                crown-event="CSK_MultiIOLinkSMI/OnNewStatusProcessDataTestResult">
+                                                                                                            </crown-on>
+                                                                                                        </davinci-value-display>
+                                                                                                        <davinci-value-display
+                                                                                                            id="VD_DataFinalTest">
+                                                                                                            <crown-on
+                                                                                                                property="value"
+                                                                                                                crown-event="CSK_MultiIOLinkSMI/OnNewStatusProcessDataFinalTestResult">
+                                                                                                            </crown-on>
+                                                                                                        </davinci-value-display>
+                                                                                                    </layout-column>
+                                                                                                    <layout-column
+                                                                                                        id="ColumnLayout87_2"
+                                                                                                        style="align-items: stretch">
+                                                                                                    </layout-column>
+                                                                                                </layout-row>
+                                                                                                <layout-row
+                                                                                                    id="RowLayout88_2"
+                                                                                                    class="myCustomSpacerVert10_CSK_Module_MultiIOLinkSMI">
+                                                                                                </layout-row>
                                                                                             </layout-column>
                                                                                         </layout-row>
                                                                                     </davinci-tab>
@@ -1847,6 +1958,46 @@ write success (bool); write queue size (int); time taken to read message (int); 
                                                                                         crown-path="rowData">
                                                                                     </crown-set>
                                                                                 </curie-table>
+                                                                                <layout-row id="RowLayout93">
+                                                                                    <layout-column id="ColumnLayout95"
+                                                                                        style="align-items: stretch">
+                                                                                        <davinci-text-field
+                                                                                            id="TF_WriteMessagePrefix"
+                                                                                            type="text" label="Prefix"
+                                                                                            title="Prefix to use for write message.">
+                                                                                            <crown-binding
+                                                                                                event="change"
+                                                                                                name="CSK_MultiIOLinkSMI/setWriteMessagePrefix"
+                                                                                                path="param/args/prefix"
+                                                                                                auto-commit>
+                                                                                            </crown-binding>
+                                                                                            <crown-edpws-binding
+                                                                                                property="value"
+                                                                                                name="CSK_MultiIOLinkSMI/OnNewWriteMessagePrefix"
+                                                                                                update-on-resume>
+                                                                                            </crown-edpws-binding>
+                                                                                        </davinci-text-field>
+                                                                                    </layout-column>
+                                                                                    <layout-column id="ColumnLayout96"
+                                                                                        style="align-items: stretch">
+                                                                                        <davinci-text-field
+                                                                                            id="TF_WriteMessagePostfix"
+                                                                                            type="text" label="Postfix"
+                                                                                            title="Postfix to use for write message.">
+                                                                                            <crown-binding
+                                                                                                event="change"
+                                                                                                name="CSK_MultiIOLinkSMI/setWriteMessagePostfix"
+                                                                                                path="param/args/postfix"
+                                                                                                auto-commit>
+                                                                                            </crown-binding>
+                                                                                            <crown-edpws-binding
+                                                                                                property="value"
+                                                                                                name="CSK_MultiIOLinkSMI/OnNewWriteMessagePostfix"
+                                                                                                update-on-resume>
+                                                                                            </crown-edpws-binding>
+                                                                                        </davinci-text-field>
+                                                                                    </layout-column>
+                                                                                </layout-row>
                                                                             </layout-column>
                                                                         </layout-row>
                                                                     </davinci-tab>

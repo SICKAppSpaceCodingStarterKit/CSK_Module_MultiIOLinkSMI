@@ -60,6 +60,7 @@ Tested on
 
 |Device|Firmware version|Module version|
 |--|--|--|
+|SIM300|V1.2.0|V3.4.0|
 |SIM300|V1.1.0|V3.3.0|
 |SIM300|V1.1.0|V3.2.0|
 |SIM300|V0.2.1|V3.1.0|
@@ -69,8 +70,8 @@ Tested on
 |SIM1012|V2.4.2|V2.1.1|
 |SIM1012|V2.4.2|V2.1.0|
 |SIM1012|V2.4.2|V2.0.0|
-|SICK AppEngine|V1.7.0|V2.0.0|
 |SIM1012|V2.3.0|v1.0.0|
+|SICK AppEngine|V1.7.0|V2.0.0|
 
 NOTE! Writing process data to IO-Link device works after SIM1012 firmware version 2.3.0
 

@@ -638,12 +638,12 @@ local function updateIODDReadMessages()
       local timestamp2 = DateTime.getTimestamp()
 
       if messageContent and messageInfo.searchBegin ~= '' then
-        local findString = string.find(messageContent, messageInfo.searchBegin, 0)
+        local findString = string.find(messageContent, messageInfo.searchBegin, 0, true)
         if findString then
           if messageInfo.searchEnd == '' then
             messageContent = string.sub(messageContent, findString + #messageInfo.searchBegin)
           else
-            local findString2 = string.find(messageContent, messageInfo.searchEnd, findString + #messageInfo.searchBegin)
+            local findString2 = string.find(messageContent, messageInfo.searchEnd, findString + #messageInfo.searchBegin, true)
             if findString2 then
               messageContent = string.sub(messageContent, findString + #messageInfo.searchBegin, findString2 - 1)
             else
@@ -763,7 +763,7 @@ local function updateIODDWriteMessages()
       end
       local timestamp1 = DateTime.getTimestamp()
       local errorMessage = ''
-      local messageWriteSuccess, messageWriteErrorMessage = writeIODDMessage(messageName, jsonDataToWrite)
+      local messageWriteSuccess, messageWriteErrorMessage = writeIODDMessage(messageName, messageInfo.prefix .. jsonDataToWrite .. messageInfo.postfix)
       local queueSize = ioddWriteMessagesQueue:getSize()
       if not messageWriteSuccess then
         errorMessage = errorMessage .. 'Failed to write data to device;'
@@ -828,6 +828,16 @@ local function activateInstance()
   Script.sleep(200)
 end
 
+local sltTmr = Timer.create()
+sltTmr:setPeriodic(false)
+sltTmr:setExpirationTime(1000)
+
+local function handleOnExpired()
+  writeParameterByteArray(204, 0, '{"value":[1]}')
+  writeParameterByteArray(204, 0, '{"value":[0]}')
+end
+Timer.register(sltTmr, 'OnExpired', handleOnExpired)
+
 --- Function to handle updates of processing parameters from Controller
 ---@param multiIOLinkSMINo int Number of instance to update
 ---@param parameter string Parameter to update
@@ -844,6 +854,12 @@ local function handleOnNewProcessingParameter(multiIOLinkSMINo, parameter, value
         ioddReadMessagesTimers[readMessageName]:start()
       end
     end
+
+  elseif parameter == 'checkSLT' then
+    if value == processingParams.port then
+      sltTmr:start()
+    end
+
   elseif multiIOLinkSMINo == multiIOLinkSMIInstanceNumber then -- set parameter only in selected script
     _G.logger:fine(nameOfModule .. ": Update parameter '" .. parameter .. "' of multiIOLinkSMIInstanceNo." .. tostring(multiIOLinkSMINo) .. " to value = " .. tostring(value))
     if parameter == "readMessages" then

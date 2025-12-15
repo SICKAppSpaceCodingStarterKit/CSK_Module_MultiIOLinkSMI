@@ -93,6 +93,9 @@ function multiIOLinkSMI.getDeviceIdentification(port)
     local productName = multiIOLinkSMI.IOLinkSMIhandle:deviceRead(port, 18, 0)
     if productName then
       deviceInfo.productName = converter.toDataType(productName, 'StringT')
+      if deviceInfo.productName == 'SLT060-0B010J700' then
+        Script.notifyEvent('MultiIOLinkSMI_OnNewProcessingParameter', 0, 'checkSLT', port)
+      end
     end
     local productID = multiIOLinkSMI.IOLinkSMIhandle:deviceRead(port, 19, 0)
     if productID then
@@ -409,6 +412,8 @@ function multiIOLinkSMI:createIODDWriteMessage(messageName)
 if CSK_IODDInterpreter then
     self.parameters.ioddWriteMessages[messageName] = {
       writeMessageEventName = "",
+      prefix = "",
+      postfix = "",
       ioddInstanceId = self.parameters.ioddInfo.ioddInstanceId .. '_WriteMessage_' .. messageName
     }
     CSK_IODDInterpreter.addInstance()
